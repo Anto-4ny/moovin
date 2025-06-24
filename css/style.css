@@ -303,6 +303,7 @@
         width: 75% !important;
         background-color: #fff !important;
         border-right: 1px solid #eaeaea;
+        color: var(--primary) !important;
     }
 
     /* Modern mobile dropdown */
