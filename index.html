@@ -44,78 +44,86 @@
 
 <!-- Navbar Start -->
 <div class="container-fluid nav-bar bg-white sticky-top">
-    <nav class="navbar navbar-expand-lg navbar-light py-0 px-4 shadow-sm">
-        <a href="index" class="navbar-brand d-flex align-items-center text-center">
-            <div class="icon p-2 me-2">
-                <img class="img-fluid" src="img/icon-deal.png" alt="Moovin Logo" style="width: 30px; height: 30px;">
-            </div>
+    <nav class="navbar navbar-expand-lg navbar-light py-0 px-3 shadow-sm">
+        <a href="index" class="navbar-brand d-flex align-items-center">
+            <img src="img/icon-deal.png" alt="Moovin Logo" style="width: 24px; height: 24px;" class="me-2">
             <div class="text-start">
-                <h1 class="m-0 text-secondary">Moovin</h1>
-                <small class="text-muted" style="font-size: 12px;">Rent · Repairs · Real Estate</small>
+                <h4 class="m-0 text-secondary" style="font-size: 18px;">Moovin</h4>
+                <small class="text-muted" style="font-size: 10px;">Rent · Repairs</small>
             </div>
         </a>
-        <button type="button" class="navbar-toggler border-0" data-bs-toggle="offcanvas" data-bs-target="#moovinMenu" aria-controls="moovinMenu">
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#moovinMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Offcanvas Menu for Small Screens -->
-        <div class="offcanvas offcanvas-start text-bg-light" tabindex="-1" id="moovinMenu" style="width: 50%;">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title">Menu</h5>
-                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-            </div>
-            <div class="offcanvas-body">
-                <div class="navbar-nav">
-                    <a href="index" class="nav-item nav-link active">Home</a>
-                    <a href="about" class="nav-item nav-link">About Us</a>
-                    <a href="property-list" class="nav-item nav-link">Browse Properties</a>
-                    <a href="book-repair" class="nav-item nav-link">Book a Repair</a>
-                    <a href="track-repair" class="nav-item nav-link">Track Repair</a>
-                    <a href="property-agent" class="nav-item nav-link">Our Agents</a>
-                    <a href="testimonial" class="nav-item nav-link">Testimonials</a>
-                    <a href="faq" class="nav-item nav-link">FAQs</a>
-                    <a href="contact" class="nav-item nav-link">Contact</a>
-                    <a href="login" class="nav-item nav-link">Login</a>
-                    <a href="register" class="nav-item nav-link">Register</a>
-                    <a href="add-property.html" class="btn btn-dark border border-white text-white mt-3">Add Property</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Regular Nav (Desktop) -->
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto align-items-lg-center">
-                <a href="index" class="nav-item nav-link active">Home</a>
-                <a href="about" class="nav-item nav-link">About Us</a>
-
+        <!-- Desktop Nav Left -->
+        <div class="collapse navbar-collapse">
+            <div class="navbar-nav d-none d-lg-flex align-items-center">
+                <a href="index" class="nav-link">Home</a>
+                <a href="about" class="nav-link">About</a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
-                    <div class="dropdown-menu rounded-0 m-0">
+                    <div class="dropdown-menu">
                         <a href="property-list" class="dropdown-item">Browse Properties</a>
                         <a href="book-repair" class="dropdown-item">Book a Repair</a>
                         <a href="track-repair" class="dropdown-item">Track Repair</a>
                     </div>
                 </div>
-
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu rounded-0 m-0">
+                    <div class="dropdown-menu">
                         <a href="property-agent" class="dropdown-item">Our Agents</a>
                         <a href="testimonial" class="dropdown-item">Testimonials</a>
                         <a href="faq" class="dropdown-item">FAQs</a>
                     </div>
                 </div>
-
-                <a href="contact" class="nav-item nav-link">Contact</a>
-                <a href="login" class="nav-item nav-link">Login</a>
-                <a href="register" class="nav-item nav-link">Register</a>
+                <a href="contact" class="nav-link">Contact</a>
             </div>
 
-            <a href="add-property" class="btn btn-dark border border-white text-white px-3 ms-lg-3 mt-2 mt-lg-0">Add Property</a>
+            <!-- Desktop Nav Right -->
+            <div class="ms-auto d-none d-lg-flex align-items-center">
+                <a href="login" class="nav-link small">Login</a>
+                <a href="register" class="nav-link small">Register</a>
+                <a href="add-property" class="btn btn-dark border border-white text-white btn-sm ms-2">Add Property</a>
+            </div>
+        </div>
+
+        <!-- Offcanvas for mobile -->
+        <div class="offcanvas offcanvas-start text-bg-light" id="moovinMenu" tabindex="-1" style="width: 50%;">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+                <a href="index" class="nav-link">Home</a>
+                <a href="about" class="nav-link">About</a>
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Services</a>
+                    <div class="dropdown-menu">
+                        <a href="property-list" class="dropdown-item">Browse Properties</a>
+                        <a href="book-repair" class="dropdown-item">Book a Repair</a>
+                        <a href="track-repair" class="dropdown-item">Track Repair</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Pages</a>
+                    <div class="dropdown-menu">
+                        <a href="property-agent" class="dropdown-item">Our Agents</a>
+                        <a href="testimonial" class="dropdown-item">Testimonials</a>
+                        <a href="faq" class="dropdown-item">FAQs</a>
+                    </div>
+                </div>
+                <a href="contact" class="nav-link">Contact</a>
+                <a href="login" class="nav-link">Login</a>
+                <a href="register" class="nav-link">Register</a>
+                <a href="add-property" class="btn btn-dark border-white text-white mt-3">Add Property</a>
+            </div>
         </div>
     </nav>
 </div>
 <!-- Navbar End -->
+
 
 <!-- Header Start -->
 <div class="container-fluid header bg-white p-0">
