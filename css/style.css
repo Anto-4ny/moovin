@@ -630,71 +630,85 @@
 }
 
 
-/*** Footer ***/
+/*** Footer Adjustments ***/
+
+/* Use black (primary) background and white text */
+.footer {
+    background-color: var(--primary);
+    color: #fff;
+}
+
+/* Social Icons - Blue icons with white borders */
 .footer .btn.btn-social {
-    margin-right: 5px;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--light);
-    border: 1px solid rgba(255,255,255,0.5);
-    border-radius: 35px;
+    background-color: transparent;
+    color: var(--secondary);
+    border: 1px solid #fff;
     transition: .3s;
 }
 
 .footer .btn.btn-social:hover {
-    color: var(--primary);
-    border-color: var(--light);
+    background-color: var(--secondary);
+    color: #fff;
+    border-color: #fff;
 }
 
+/* Link buttons - subtle white with hover effect */
 .footer .btn.btn-link {
-    display: block;
-    margin-bottom: 5px;
-    padding: 0;
-    text-align: left;
-    font-size: 15px;
-    font-weight: normal;
-    text-transform: capitalize;
-    transition: .3s;
-}
-
-.footer .btn.btn-link::before {
-    position: relative;
-    content: "\f105";
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    margin-right: 10px;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .footer .btn.btn-link:hover {
+    color: #fff;
     letter-spacing: 1px;
-    box-shadow: none;
 }
 
+/* Arrows */
+.footer .btn.btn-link::before {
+    color: var(--secondary);
+}
+
+/* Newsletter Input - white border and text */
 .footer .form-control {
-    border-color: rgba(255,255,255,0.5);
+    background-color: transparent;
+    border: 1px solid #ffffff;
+    color: #fff;
 }
 
+.footer .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Newsletter Button - Blue background with white text */
+.footer .btn.btn-primary {
+    background-color: var(--secondary);
+    border: 1px solid #fff;
+    color: #fff;
+    transition: 0.3s ease;
+}
+
+.footer .btn.btn-primary:hover {
+    background-color: #fff;
+    color: var(--secondary);
+}
+
+/* White dividers */
 .footer .copyright {
-    padding: 25px 0;
-    font-size: 15px;
-    border-top: 1px solid rgba(256, 256, 256, .1);
+    border-top: 1px solid #fff;
 }
 
-.footer .copyright a {
-    color: var(--light);
-}
-
+/* Footer links at bottom */
 .footer .footer-menu a {
-    margin-right: 15px;
-    padding-right: 15px;
-    border-right: 1px solid rgba(255, 255, 255, .1);
+    color: #fff;
+    border-color: #fff;
 }
 
-.footer .footer-menu a:last-child {
-    margin-right: 0;
-    padding-right: 0;
-    border-right: none;
+.footer .footer-menu a:hover {
+    color: var(--secondary);
+}
+
+/* Fine-tune small text in copyright */
+.footer small,
+.footer span {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
 }
