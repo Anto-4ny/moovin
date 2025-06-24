@@ -218,9 +218,9 @@
 /* Main nav link styling (desktop) */
 .navbar-light .navbar-nav .nav-link {
     margin-right: 30px;
-    padding: 25px 0;
+    padding: 20px 12px;
     color: #000 !important;
-    font-size: 15px;
+    font-size: 13px;
     text-transform: uppercase;
     outline: none;
     font-weight: 500;
