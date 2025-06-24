@@ -31,16 +31,66 @@
 }
 
 
-/*** Button ***/
+/*** Button Base ***/
 .btn {
-    transition: .5s;
+    transition: 0.5s;
+    border-radius: 5px;
+    font-weight: 500;
 }
 
-.btn.btn-primary,
-.btn.btn-secondary {
-    color: #FFFFFF;
+/*** Primary Button: Black background, white text, black border ***/
+.btn-primary {
+    background-color: var(--primary);
+    color: #fff;
+    border: 1px solid var(--primary);
 }
 
+/*** Secondary Button: Blue background, white text, white border ***/
+.btn-secondary {
+    background-color: var(--secondary);
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+/*** Outline Versions ***/
+.btn-outline-primary {
+    background-color: #fff;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.btn-outline-secondary {
+    background-color: #fff;
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
+}
+
+/*** Button Hover States ***/
+.btn-primary:hover {
+    background-color: #fff;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.btn-secondary:hover {
+    background-color: #fff;
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    color: #fff;
+    border: 1px solid var(--primary);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--secondary);
+    color: #fff;
+    border: 1px solid var(--secondary);
+}
+
+/*** Square Buttons ***/
 .btn-square {
     width: 38px;
     height: 38px;
@@ -64,7 +114,18 @@
     align-items: center;
     justify-content: center;
     font-weight: normal;
-    border-radius: 50px;
+    border-radius: 50%;
+    border: 1px solid var(--primary); /* Add border to match color scheme */
+    background-color: var(--primary);
+    color: #fff;
+}
+
+/* Optional: Hover for square buttons */
+.btn-square:hover,
+.btn-sm-square:hover,
+.btn-lg-square:hover {
+    background-color: #fff;
+    color: var(--primary);
 }
 
 
