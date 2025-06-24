@@ -686,8 +686,8 @@
 
 /* Use black (primary) background and white text */
 .footer {
-    background-color: var(--primary);
-    color: #fff;
+    background-color: black;
+    color: white;
 }
 
 /* Social Icons - Blue icons with white borders */
