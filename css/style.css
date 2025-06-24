@@ -1,8 +1,8 @@
 /********** All CSS **********/
 
 :root {
-    --primary: #000000;   /* Black */
-    --secondary: #007BFF; /* Blue */
+    --primary: #000000;   
+    --secondary: #007BFF; 
     --light: #EFFDF5;
     --dark: #0E2E50;
 }
@@ -686,8 +686,8 @@
 
 /* Use black (primary) background and white text */
 .footer {
-    background-color: black;
-    color: white;
+    background-color: var(--primary) !important;
+    color: #fff !important;;
 }
 
 /* Social Icons - Blue icons with white borders */
