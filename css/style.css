@@ -462,9 +462,6 @@
 }
 
 
-
-
-
 /*** Category ***/
 /* Category Section Styles */
 .category-box {
@@ -513,35 +510,90 @@
 }
 
 
-/*** Property List ***/
+/*** Property List Customizations ***/
+
+/* Main Text Color */
+.property-item,
+.property-item p,
+.property-item h5,
+.property-item h6,
+.property-item a {
+    color: #000;
+}
+
+/* Tab Buttons */
 .nav-pills .nav-item .btn {
-    color: var(--dark);
+    color: #000;
+    border: 1px solid var(--secondary);
+    background-color: transparent;
+    font-weight: 500;
 }
 
 .nav-pills .nav-item .btn:hover,
 .nav-pills .nav-item .btn.active {
-    color: #FFFFFF;
+    background-color: var(--secondary);
+    color: #fff;
+    border-color: var(--secondary);
 }
 
+/* Category Badges */
+.property-item .bg-primary {
+    background-color: #007BFF !important; /* Blue - For Rent */
+}
+.property-item .bg-sale {
+    background-color: #28a745 !important; /* Green - For Sale */
+}
+.property-item .bg-featured {
+    background-color: #6f42c1 !important; /* Purple - Featured */
+}
+
+/* Property Icon Colors */
+.property-item .fa-map-marker-alt {
+    color: #d63384; /* Pink */
+}
+.property-item .fa-ruler-combined {
+    color: #20c997; /* Teal */
+}
+.property-item .fa-bed {
+    color: #fd7e14; /* Orange */
+}
+.property-item .fa-bath {
+    color: #17a2b8; /* Cyan */
+}
+
+/* Browse More Button */
+.property-item .btn-primary {
+    background-color: var(--secondary);
+    color: #fff;
+    border: 1px solid #fff;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.property-item .btn-primary:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+/* Shadow & Hover on Property Cards */
 .property-item {
-    box-shadow: 0 0 30px rgba(0, 0, 0, .08);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.07);
+    transition: transform 0.3s ease;
 }
 
-.property-item img {
-    transition: .5s;
+.property-item:hover {
+    transform: translateY(-5px);
 }
 
-.property-item:hover img {
-    transform: scale(1.1);
-}
-
+/* Divider Styles */
 .property-item .border-top {
-    border-top: 1px dashed rgba(0, 185, 142, .3) !important;
+    border-top: 1px solid #ddd !important;
 }
 
 .property-item .border-end {
-    border-right: 1px dashed rgba(0, 185, 142, .3) !important;
+    border-right: 1px solid #ddd !important;
 }
+
 
 /*** CALL TO ACTION ***/
 .border-dashed-custom {
