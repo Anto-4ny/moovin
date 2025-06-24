@@ -182,13 +182,29 @@
 
 
 
-/*** Header ***/
+/*** Header Tweaks ***/
 @media (min-width: 992px) {
     .header {
         margin-top: -120px;
     }
 }
 
+@media (max-width: 768px) {
+    .header-carousel .owl-nav {
+        left: 25px;
+    }
+
+    .header .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .header .p-md-5 {
+        padding: 2rem !important;
+    }
+}
+
+/*** Carousel Arrows ***/
 .header-carousel .owl-nav {
     position: absolute;
     top: 50%;
@@ -206,8 +222,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #FFFFFF;
-    background: var(--primary);
+    color: #fff;
+    background: var(--secondary); /* Blue from :root */
     border-radius: 40px;
     font-size: 20px;
     transition: .5s;
@@ -215,17 +231,12 @@
 
 .header-carousel .owl-nav .owl-prev:hover,
 .header-carousel .owl-nav .owl-next:hover {
-    background: var(--dark);
+    background: var(--primary); /* Black on hover */
 }
 
-@media (max-width: 768px) {
-    .header-carousel .owl-nav {
-        left: 25px;
-    }
-}
-
-.breadcrumb-item + .breadcrumb-item::before {
-    color: #DDDDDD;
+/*** Optional: Make header text black explicitly ***/
+.text-black {
+    color: #000 !important;
 }
 
 
