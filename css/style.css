@@ -175,13 +175,6 @@
 }
 
 
-:root {
-    --primary: #000000;
-    --secondary: #007BFF;
-    --light: #EFFDF5;
-    --dark: #0E2E50;
-}
-
 /*** Navbar ***/
 .nav-bar {
     position: relative;
@@ -307,7 +300,7 @@
     }
 
     .offcanvas-start {
-        width: 50% !important;
+        width: 75% !important;
         background-color: #fff !important;
         border-right: 1px solid #eaeaea;
     }
