@@ -618,7 +618,7 @@
     align-items: center;
     justify-content: center;
     color: #FFFFFF;
-    background: var(--primary);
+    background: var(--secondary);
     border-radius: 40px;
     font-size: 20px;
     transition: .5s;
