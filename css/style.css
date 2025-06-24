@@ -1,10 +1,11 @@
-/********** Template CSS **********/
+/********** All CSS **********/
 :root {
-    --primary: #00B98E;
-    --secondary: #FF6922;
+    --primary: #000000;  
+    --secondary: #007BFF; 
     --light: #EFFDF5;
     --dark: #0E2E50;
 }
+
 
 .back-to-top {
     position: fixed;
