@@ -379,6 +379,33 @@
 
 
 /*** Category ***/
+/* Category Section Styles */
+.category-box {
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+.category-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Optional: Make category items expand slightly on mobile */
+@media (max-width: 576px) {
+    .category-box {
+        padding: 1.5rem 1rem;
+    }
+}
+
 .cat-item div {
     background: #FFFFFF;
     border: 1px dashed rgba(0, 185, 142, .3);
@@ -428,37 +455,6 @@
 .property-item .border-end {
     border-right: 1px dashed rgba(0, 185, 142, .3) !important;
 }
-
-
-/*** Team ***/
-.team-item {
-    box-shadow: 0 0 30px rgba(0, 0, 0, .08);
-    transition: .5s;
-}
-
-.team-item .btn {
-    color: var(--primary);
-    background: #FFFFFF;
-    box-shadow: 0 0 30px rgba(0, 0, 0, .15);
-}
-
-.team-item .btn:hover {
-    color: #FFFFFF;
-    background: var(--primary);
-}
-
-.team-item:hover {
-    border-color: var(--secondary) !important;
-}
-
-.team-item:hover .bg-primary {
-    background: var(--secondary) !important;
-}
-
-.team-item:hover .bg-primary i {
-    color: var(--secondary) !important;
-}
-
 
 /*** Testimonial ***/
 .testimonial-carousel {
