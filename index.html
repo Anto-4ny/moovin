@@ -43,68 +43,107 @@
 
 
 <!-- Navbar Start -->
-<div class="container-fluid nav-bar bg-transparent">
-    <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4 shadow-sm">
-        <a href="index" class="navbar-brand d-flex align-items-center text-center">
-            <div class="icon p-2 me-2">
-                <img class="img-fluid" src="img/icon-deal.png" alt="Moovin Logo" style="width: 30px; height: 30px;">
-            </div>
-            <div class="text-start">
-                <h1 class="m-0 text-primary">Moovin</h1>
-                <small class="text-muted" style="font-size: 12px;">Rent · Repairs · Real Estate</small>
-            </div>
-        </a>
-        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto align-items-lg-center">
-                <a href="index" class="nav-item nav-link active">Home</a>
-                <a href="about" class="nav-item nav-link">About Us</a>
+<div class="container-fluid nav-bar bg-transparent sticky-top">
+  <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4 shadow-sm">
+    <a href="index" class="navbar-brand d-flex align-items-center text-center">
+      <div class="icon p-2 me-2">
+        <img class="img-fluid" src="img/icon-deal.png" alt="Moovin Logo" style="width: 30px; height: 30px;">
+      </div>
+      <div class="text-start">
+        <h1 class="m-0 text-primary">Moovin</h1>
+        <small class="text-dark" style="font-size: 12px;">Rent · Repairs · Real Estate</small>
+      </div>
+    </a>
 
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
-                    <div class="dropdown-menu rounded-0 m-0">
-                        <a href="property-list" class="dropdown-item">Browse Properties</a>
-                        <a href="book-repair" class="dropdown-item">Book a Repair</a>
-                        <a href="track-repair" class="dropdown-item">Track Repair</a>
-                    </div>
-                </div>
+    <!-- Custom mobile drawer toggle -->
+    <button class="navbar-toggler text-dark border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu rounded-0 m-0">
-                        <a href="property-agent" class="dropdown-item">Our Agents</a>
-                        <a href="testimonial" class="dropdown-item">Testimonials</a>
-                        <a href="faq" class="dropdown-item">FAQs</a>
-                    </div>
-                </div>
+    <!-- Desktop Nav -->
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <div class="navbar-nav ms-auto align-items-lg-center text-dark">
+        <a href="index" class="nav-item nav-link active text-dark">Home</a>
+        <a href="about" class="nav-item nav-link text-dark">About Us</a>
 
-                <a href="contact" class="nav-item nav-link">Contact</a>
-                <a href="login" class="nav-item nav-link">Login</a>
-                <a href="register" class="nav-item nav-link">Register</a>
-            </div>
-
-            <a href="add-property.html" class="btn btn-primary px-3 ms-lg-3 mt-2 mt-lg-0">Add Property</a>
+        <div class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown">Services</a>
+          <div class="dropdown-menu rounded-0 m-0">
+            <a href="property-list" class="dropdown-item">Browse Properties</a>
+            <a href="book-repair" class="dropdown-item">Book a Repair</a>
+            <a href="track-repair" class="dropdown-item">Track Repair</a>
+          </div>
         </div>
-    </nav>
+
+        <div class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown">Pages</a>
+          <div class="dropdown-menu rounded-0 m-0">
+            <a href="property-agent" class="dropdown-item">Our Agents</a>
+            <a href="testimonial" class="dropdown-item">Testimonials</a>
+            <a href="faq" class="dropdown-item">FAQs</a>
+          </div>
+        </div>
+
+        <a href="contact" class="nav-item nav-link text-dark">Contact</a>
+        <a href="login" class="nav-item nav-link text-dark">Login</a>
+        <a href="register" class="nav-item nav-link text-dark">Register</a>
+      </div>
+
+      <!-- Add Property Button -->
+      <a href="add-property.html" class="btn text-white border border-white bg-black px-3 ms-lg-3 mt-2 mt-lg-0">
+        Add Property
+      </a>
+    </div>
+  </nav>
+</div>
+
+<!-- Offcanvas Mobile Menu -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title text-primary">Moovin Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <a href="index" class="nav-link text-dark mb-2">Home</a>
+    <a href="about" class="nav-link text-dark mb-2">About Us</a>
+    <a href="property-list" class="nav-link text-dark mb-2">Browse Properties</a>
+    <a href="book-repair" class="nav-link text-dark mb-2">Book a Repair</a>
+    <a href="track-repair" class="nav-link text-dark mb-2">Track Repair</a>
+    <a href="property-agent" class="nav-link text-dark mb-2">Our Agents</a>
+    <a href="testimonial" class="nav-link text-dark mb-2">Testimonials</a>
+    <a href="faq" class="nav-link text-dark mb-2">FAQs</a>
+    <a href="contact" class="nav-link text-dark mb-2">Contact</a>
+    <a href="login" class="nav-link text-dark mb-2">Login</a>
+    <a href="register" class="nav-link text-dark mb-2">Register</a>
+    <a href="add-property.html" class="btn bg-black text-white border border-white mt-3 w-100">Add Property</a>
+  </div>
 </div>
 <!-- Navbar End -->
+
 
 
 <!-- Header Start -->
 <div class="container-fluid header bg-white p-0">
     <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
-        <div class="col-md-6 p-5 mt-lg-5">
-            <h1 class="display-5 animated fadeIn mb-4">
+        <!-- Text Side -->
+        <div class="col-md-6 p-4 p-md-5 mt-4 mt-lg-5 text-center text-md-start">
+            <h1 class="display-5 fw-bold mb-4 text-dark animated fadeIn">
                 Find, Rent & Maintain <span class="text-primary">Australian Properties</span> with Moovin
             </h1>
-            <p class="animated fadeIn mb-4 pb-2">
+            <p class="text-dark mb-4 pb-2 animated fadeIn">
                 Moovin makes it easy for tenants, landlords, and property agents across Australia to rent properties, request repairs, and track services — all in one smart platform.
             </p>
-            <a href="register" class="btn btn-primary py-3 px-5 me-3 animated fadeIn">Get Started</a>
-            <a href="book-repair" class="btn btn-outline-primary py-3 px-5 animated fadeIn">Book a Repair</a>
+            <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3 animated fadeIn">
+                <a href="register" class="btn btn-outline-primary border-primary text-primary bg-white px-4 py-3">
+                    Get Started
+                </a>
+                <a href="book-repair" class="btn btn-primary border-white text-white px-4 py-3">
+                    Book a Repair
+                </a>
+            </div>
         </div>
+
+        <!-- Carousel Side -->
         <div class="col-md-6 animated fadeIn">
             <div class="owl-carousel header-carousel">
                 <div class="owl-carousel-item">
@@ -173,7 +212,6 @@
 
 	    <div class="row g-4">
   <!-- Category Card -->
-  {% comment "Each category should loop in Django using a context object" %}
   <div class="col-lg-3 col-sm-6">
     <a href="#" class="d-block text-decoration-none">
       <div class="category-card h-100 p-4 rounded-4 shadow-lg position-relative overflow-hidden" style="background: linear-gradient(145deg, #f0f0f0, #ffffff); border: 2px solid #dedede;">
