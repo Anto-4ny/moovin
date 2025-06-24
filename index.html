@@ -170,110 +170,62 @@
             <h1 class="mb-3">Explore Property Categories</h1>
             <p>Whether you're a tenant looking to rent, a landlord listing a home, or an agent managing multiple properties, Moovin offers the perfect property types across Australia.</p>
         </div>
-        <div class="row g-4">
-            <!-- Apartment -->
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="#">
-                    <div class="rounded p-4">
-                        <div class="icon mb-3">
-                            <img class="img-fluid" src="img/icon-apartment.png" alt="Apartment">
-                        </div>
-                        <h6>Apartment</h6>
-                        <span>123 Properties</span>
-                    </div>
-                </a>
-            </div>
 
-            <!-- Villa -->
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.2s">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="#">
-                    <div class="rounded p-4">
-                        <div class="icon mb-3">
-                            <img class="img-fluid" src="img/icon-villa.png" alt="Villa">
-                        </div>
-                        <h6>Villa</h6>
-                        <span>123 Properties</span>
-                    </div>
-                </a>
-            </div>
+	    <div class="row g-4">
+  <!-- Category Card -->
+  {% comment "Each category should loop in Django using a context object" %}
+  <div class="col-lg-3 col-sm-6">
+    <a href="#" class="d-block text-decoration-none">
+      <div class="category-card h-100 p-4 rounded-4 shadow-lg position-relative overflow-hidden" style="background: linear-gradient(145deg, #f0f0f0, #ffffff); border: 2px solid #dedede;">
+        <div class="icon-wrapper mb-3 d-flex justify-content-center align-items-center rounded-circle" style="width: 80px; height: 80px; background: linear-gradient(145deg, #d2d2d2, #e4e4e4); margin: 0 auto;">
+          <img src="img/icon-apartment.png" class="img-fluid" alt="Apartment" style="width: 40px;">
+        </div>
+        <h6 class="text-center fw-bold text-dark">Apartment</h6>
+        <p class="text-center text-muted small mb-0">123 Listings</p>
+        <div class="ribbon bg-primary text-white fw-semibold position-absolute top-0 end-0 px-2 py-1">Popular</div>
+      </div>
+    </a>
+  </div>
 
-            <!-- House -->
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="#">
-                    <div class="rounded p-4">
-                        <div class="icon mb-3">
-                            <img class="img-fluid" src="img/icon-house.png" alt="House">
-                        </div>
-                        <h6>House</h6>
-                        <span>123 Properties</span>
-                    </div>
-                </a>
-            </div>
+  <!-- Villa -->
+  <div class="col-lg-3 col-sm-6">
+    <a href="#" class="d-block text-decoration-none">
+      <div class="category-card h-100 p-4 rounded-4 shadow position-relative bg-gradient" style="background: linear-gradient(to right, #dfe9f3, #ffffff); border-left: 5px solid #3c91e6;">
+        <div class="icon-wrapper mb-3 d-flex justify-content-center align-items-center rounded-circle bg-white shadow-sm" style="width: 80px; height: 80px; margin: 0 auto;">
+          <img src="img/icon-villa.png" class="img-fluid" alt="Villa" style="width: 40px;">
+        </div>
+        <h6 class="text-center fw-bold text-dark">Villa</h6>
+        <p class="text-center text-muted small mb-0">123 Listings</p>
+      </div>
+    </a>
+  </div>
 
-            <!-- Studio -->
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.4s">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="#">
-                    <div class="rounded p-4">
-                        <div class="icon mb-3">
-                            <img class="img-fluid" src="img/icon-condominium.png" alt="Studio">
-                        </div>
-                        <h6>Studio</h6>
-                        <span>123 Properties</span>
-                    </div>
-                </a>
-            </div>
+  <!-- House -->
+  <div class="col-lg-3 col-sm-6">
+    <a href="#" class="d-block text-decoration-none">
+      <div class="category-card h-100 p-4 rounded-3 position-relative" style="background: #fefefe; border: 1px solid #ccc; box-shadow: 0 0 15px rgba(0,0,0,0.05);">
+        <div class="icon-wrapper mb-3 d-flex justify-content-center align-items-center rounded-circle bg-primary bg-opacity-25" style="width: 80px; height: 80px; margin: 0 auto;">
+          <img src="img/icon-house.png" class="img-fluid" alt="House" style="width: 40px;">
+        </div>
+        <h6 class="text-center fw-semibold">House</h6>
+        <p class="text-center text-muted small mb-0">123 Listings</p>
+      </div>
+    </a>
+  </div>
 
-            <!-- Office Space -->
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="#">
-                    <div class="rounded p-4">
-                        <div class="icon mb-3">
-                            <img class="img-fluid" src="img/icon-housing.png" alt="Office">
-                        </div>
-                        <h6>Office Space</h6>
-                        <span>123 Properties</span>
-                    </div>
-                </a>
-            </div>
+  <!-- Studio -->
+  <div class="col-lg-3 col-sm-6">
+    <a href="#" class="d-block text-decoration-none">
+      <div class="category-card h-100 p-4 rounded bg-dark text-white text-center">
+        <div class="icon-wrapper mb-3 d-flex justify-content-center align-items-center rounded-circle bg-light bg-opacity-25" style="width: 80px; height: 80px; margin: 0 auto;">
+          <img src="img/icon-condominium.png" class="img-fluid" alt="Studio" style="width: 40px;">
+        </div>
+        <h6 class="fw-bold">Studio</h6>
+        <p class="small mb-0">123 Listings</p>
+      </div>
+    </a>
+  </div>
 
-            <!-- Retail Space -->
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.6s">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="#">
-                    <div class="rounded p-4">
-                        <div class="icon mb-3">
-                            <img class="img-fluid" src="img/icon-shop.png" alt="Retail">
-                        </div>
-                        <h6>Retail Space</h6>
-                        <span>123 Properties</span>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Warehouse -->
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="#">
-                    <div class="rounded p-4">
-                        <div class="icon mb-3">
-                            <img class="img-fluid" src="img/icon-building.png" alt="Warehouse">
-                        </div>
-                        <h6>Warehouse</h6>
-                        <span>123 Properties</span>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Garage / Parking -->
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.8s">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="#">
-                    <div class="rounded p-4">
-                        <div class="icon mb-3">
-                            <img class="img-fluid" src="img/icon-luxury.png" alt="Garage">
-                        </div>
-                        <h6>Garage / Parking</h6>
-                        <span>123 Properties</span>
-                    </div>
-                </a>
-            </div>
         </div>
     </div>
 </div>
