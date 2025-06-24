@@ -1,9 +1,55 @@
 /********** All CSS **********/
+
 :root {
-    --primary: #000000;  
-    --secondary: #007BFF; 
+    --primary: #000000;   /* Black */
+    --secondary: #007BFF; /* Blue */
     --light: #EFFDF5;
     --dark: #0E2E50;
+}
+
+/*** Override Bootstrap-like utility classes to use custom variables ***/
+
+/* Text color overrides */
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.text-secondary {
+    color: var(--secondary) !important;
+}
+
+.text-dark {
+    color: var(--dark) !important;
+}
+
+.text-light {
+    color: var(--light) !important;
+}
+
+/* Background color overrides */
+.bg-primary {
+    background-color: var(--primary) !important;
+}
+
+.bg-secondary {
+    background-color: var(--secondary) !important;
+}
+
+.bg-dark {
+    background-color: var(--dark) !important;
+}
+
+.bg-light {
+    background-color: var(--light) !important;
+}
+
+/* Border color overrides */
+.border-primary {
+    border-color: var(--primary) !important;
+}
+
+.border-secondary {
+    border-color: var(--secondary) !important;
 }
 
 
