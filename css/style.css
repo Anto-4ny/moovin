@@ -76,16 +76,23 @@
     z-index: 9999;
 }
 
+/* Sticky nav should stay fixed at top */
 .nav-bar.sticky-top {
-    position: sticky;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     padding: 0;
     z-index: 9999;
+    background: #fff;
 }
 
+/* Nav shadow */
 .navbar {
     box-shadow: 0 0 30px rgba(0, 0, 0, .08);
 }
 
+/* Font Awesome arrow styling */
 .navbar .dropdown-toggle::after {
     border: none;
     content: "\f107";
@@ -100,27 +107,36 @@
     transform: rotate(-180deg);
 }
 
+/* Main nav link styling (desktop) */
 .navbar-light .navbar-nav .nav-link {
     margin-right: 30px;
     padding: 25px 0;
-    color: #FFFFFF;
+    color: #000 !important;
     font-size: 15px;
     text-transform: uppercase;
     outline: none;
+    font-weight: 500;
 }
 
+/* Active/Hover */
 .navbar-light .navbar-nav .nav-link:hover,
 .navbar-light .navbar-nav .nav-link.active {
-    color: var(--primary);
+    color: var(--primary) !important;
 }
 
+/* Brand height */
+.navbar-light .navbar-brand {
+    height: 75px;
+}
+
+/*** Mobile Styles ***/
 @media (max-width: 991.98px) {
     .nav-bar {
         margin: 0;
         padding: 0;
     }
 
-    .navbar-light .navbar-nav .nav-link  {
+    .navbar-light .navbar-nav .nav-link {
         margin-right: 0;
         padding: 10px 0;
     }
@@ -128,17 +144,14 @@
     .navbar-light .navbar-nav {
         border-top: 1px solid #EEEEEE;
     }
+
+    /* Offcanvas custom width for small screens */
+    .offcanvas-start {
+        width: 50% !important;
+    }
 }
 
-.navbar-light .navbar-brand {
-    height: 75px;
-}
-
-.navbar-light .navbar-nav .nav-link {
-    color: var(--dark);
-    font-weight: 500;
-}
-
+/* Dropdown animation on desktop */
 @media (min-width: 992px) {
     .navbar .nav-item .dropdown-menu {
         display: block;
@@ -149,7 +162,6 @@
         opacity: 0;
         visibility: hidden;
         transition: .5s;
-        
     }
 
     .navbar .nav-item:hover .dropdown-menu {
@@ -159,6 +171,14 @@
         opacity: 1;
     }
 }
+
+/*** Add Property Button Custom Style ***/
+.btn-dark {
+    background-color: #000 !important;
+    color: #fff !important;
+    border: 1px solid #fff !important;
+}
+
 
 
 /*** Header ***/
