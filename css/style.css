@@ -732,9 +732,9 @@
 
 /* Newsletter Button - Blue background with white text */
 .footer .btn.btn-primary {
-    background-color: var(--secondary);
+    background-color: white;
     border: 1px solid #fff;
-    color: #fff;
+    color: black;
     transition: 0.3s ease;
 }
 
