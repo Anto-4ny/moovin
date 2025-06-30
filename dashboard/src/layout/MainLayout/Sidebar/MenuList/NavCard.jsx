@@ -13,7 +13,7 @@ const NavCard = () => {
         <Stack alignItems="center" spacing={2.5}>
           <CardMedia component="img" image={avatar} sx={{ width: 112 }} />
           <Stack alignItems="center">
-            <Typography variant="h5">Materially Pro</Typography>
+            <Typography variant="h5">Moovin Pro</Typography>
             <Typography variant="h6" color="secondary" textAlign="center">
               Checkout Materially Premium Features
             </Typography>

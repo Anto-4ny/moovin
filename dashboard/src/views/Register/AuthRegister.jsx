@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -17,7 +18,9 @@ import {
   InputAdornment,
   IconButton,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  RadioGroup,
+  Radio
 } from '@mui/material';
 
 // third party
@@ -29,52 +32,35 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Google from 'assets/images/social-google.svg';
 
-// ==============================|| FIREBASE REGISTER ||============================== //
-
 const AuthRegister = ({ ...rest }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = React.useState(false);
   const [checked, setChecked] = React.useState(false);
+  const [role, setRole] = React.useState('tenant');
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = (event) => event.preventDefault();
 
   return (
     <>
       <Grid container justifyContent="center">
         <Grid item xs={12}>
           <Button
-            fullWidth={true}
+            fullWidth
             sx={{
               fontSize: { md: '1rem', xs: '0.875rem' },
               fontWeight: 500,
               backgroundColor: theme.palette.grey[50],
               color: theme.palette.grey[600],
               textTransform: 'capitalize',
-              '&:hover': {
-                backgroundColor: theme.palette.grey[100]
-              }
+              '&:hover': { backgroundColor: theme.palette.grey[100] }
             }}
             size="large"
             variant="contained"
           >
-            <img
-              src={Google}
-              alt="google"
-              width="20px"
-              style={{
-                marginRight: '16px',
-                '@media (maxWidth:900px)': {
-                  marginRight: '8px'
-                }
-              }}
-            />{' '}
-            Register with Google
+            <img src={Google} alt="google" width="20px" style={{ marginRight: '16px' }} /> Register with Google
           </Button>
         </Grid>
       </Grid>
@@ -89,14 +75,32 @@ const AuthRegister = ({ ...rest }) => {
 
       <Formik
         initialValues={{
-          email: 'moovin@gmail.com',
-          password: 'aA123456',
+          email: '',
+          password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          password: Yup.string().min(6, 'Password must be at least 6 characters').max(255).required('Password is required')
         })}
+        onSubmit={async (values, { setErrors, setSubmitting }) => {
+          try {
+            const response = await axios.post('http://localhost:8000/api/auth/users/', {
+              email: values.email,
+              password: values.password,
+              role: role
+            });
+
+            console.log('Registered:', response.data);
+            navigate(`/dashboard/${role}`); // Redirect based on role
+          } catch (error) {
+            const errMsg = error?.response?.data?.email?.[0] || 'Registration failed';
+            setErrors({ submit: errMsg });
+            console.error(error);
+          } finally {
+            setSubmitting(false);
+          }
+        }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...rest}>
@@ -144,31 +148,51 @@ const AuthRegister = ({ ...rest }) => {
                 }
               />
               {touched.password && errors.password && (
-                <FormHelperText error id="standard-weight-helper-text">
-                  {' '}
-                  {errors.password}{' '}
-                </FormHelperText>
+                <FormHelperText error>{errors.password}</FormHelperText>
               )}
             </FormControl>
 
-            {errors.submit && (
-              <Box mt={3}>
-                <FormHelperText error>{errors.submit}</FormHelperText>
-              </Box>
-            )}
-            <Box my={0}>
+            {/* Role Selection */}
+            <Box mt={2}>
+              <Typography variant="subtitle1">Register as:</Typography>
+              <RadioGroup
+                row
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                name="role"
+              >
+                <FormControlLabel value="tenant" control={<Radio />} label="Tenant" />
+                <FormControlLabel value="landlord" control={<Radio />} label="Landlord" />
+                <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+              </RadioGroup>
+            </Box>
+
+            {/* Terms and conditions */}
+            <Box my={1}>
               <FormControlLabel
                 control={
-                  <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
+                  <Checkbox
+                    checked={checked}
+                    onChange={(event) => setChecked(event.target.checked)}
+                    name="checked"
+                    color="primary"
+                  />
                 }
                 label={
                   <>
                     I have read the &nbsp;
-                    <Link to="#">Terms and Conditions </Link>
+                    <Link to="#">Terms and Conditions</Link>
                   </>
                 }
               />
             </Box>
+
+            {errors.submit && (
+              <Box mt={2}>
+                <FormHelperText error>{errors.submit}</FormHelperText>
+              </Box>
+            )}
+
             <Box mt={2}>
               <Button color="primary" disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained">
                 Register
@@ -182,3 +206,4 @@ const AuthRegister = ({ ...rest }) => {
 };
 
 export default AuthRegister;
+

@@ -83,7 +83,7 @@ DATABASES = {
         'USER': 'postgres',         # your PostgreSQL user
         'PASSWORD': 'Anto-4ny', # your PostgreSQL password
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
 

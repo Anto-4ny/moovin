@@ -11,8 +11,6 @@ import AuthRegister from './AuthRegister';
 // assets
 import Logo from 'assets/images/logo-dark.svg';
 
-// ==============================|| REGISTER ||============================== //
-
 const Register = () => {
   const theme = useTheme();
 
@@ -23,54 +21,49 @@ const Register = () => {
       alignItems="center"
       sx={{ backgroundColor: theme.palette.common.black, height: '100%', minHeight: '100vh' }}
     >
-      <Grid item xs={11} md={6} lg={4}>
+      <Grid item xs={11} sm={8} md={6} lg={4}>
         <Card
           sx={{
             overflow: 'visible',
             display: 'flex',
+            flexDirection: 'column',
             position: 'relative',
             my: 3,
             mx: 'auto',
-            '& .MuiCardContent-root': {
-              flexGrow: 1,
-              flexBasis: '50%',
-              width: '50%'
-            },
             maxWidth: 475
           }}
         >
           <CardContent sx={{ p: theme.spacing(5, 4, 3, 4) }}>
-            <Grid container direction="column" spacing={4} justifyContent="center">
-              <Grid item xs={12}>
-                <Grid container justifyContent="space-between">
+            <Grid container direction="column" spacing={4}>
+              <Grid item>
+                <Grid container justifyContent="space-between" alignItems="center">
                   <Grid item>
                     <Typography color="textPrimary" gutterBottom variant="h2">
                       Register
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      To keep connected with us.
+                      To keep connected with us
                     </Typography>
                   </Grid>
                   <Grid item>
                     <RouterLink to="/">
-                      <img alt="Auth method" src={Logo} />
+                      <img alt="Auth method" src={Logo} style={{ maxHeight: 40 }} />
                     </RouterLink>
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={12}>
+
+              <Grid item>
                 <AuthRegister />
               </Grid>
-              <Grid container justifyContent="flex-start" sx={{ mt: theme.spacing(2), mb: theme.spacing(1) }}>
-                <Grid item>
-                  <Typography
-                    variant="subtitle2"
-                    color="secondary"
-                    component={RouterLink}
-                    to="/application/login"
-                    sx={{ textDecoration: 'none', pl: 2 }}
-                  >
-                    Having an account
+
+              <Grid item>
+                <Grid container justifyContent="flex-start">
+                  <Typography variant="subtitle2" color="secondary">
+                    Already have an account?&nbsp;
+                    <RouterLink to="/application/login" style={{ textDecoration: 'none', color: theme.palette.primary.main }}>
+                      Login
+                    </RouterLink>
                   </Typography>
                 </Grid>
               </Grid>
@@ -83,3 +76,4 @@ const Register = () => {
 };
 
 export default Register;
+

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -14,10 +16,13 @@ import {
   InputLabel,
   OutlinedInput,
   InputAdornment,
-  IconButton
+  IconButton,
+  RadioGroup,
+  FormControlLabel,
+  Radio
 } from '@mui/material';
 
-//  third party
+// third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 
@@ -26,11 +31,12 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Google from 'assets/images/social-google.svg';
 
-// ==============================|| FIREBASE LOGIN ||============================== //
-
 const AuthLogin = ({ ...rest }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = React.useState(false);
+  const [role, setRole] = React.useState('tenant');
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -40,12 +46,15 @@ const AuthLogin = ({ ...rest }) => {
     event.preventDefault();
   };
 
+  // Adjust this URL to your backend domain/port
+  const BACKEND_URL = 'http://localhost:8000/api/token/';
+
   return (
     <>
       <Grid container justifyContent="center">
         <Grid item xs={12}>
           <Button
-            fullWidth={true}
+            fullWidth
             sx={{
               fontSize: { md: '1rem', xs: '0.875rem' },
               fontWeight: 500,
@@ -69,7 +78,7 @@ const AuthLogin = ({ ...rest }) => {
                   marginRight: '8px'
                 }
               }}
-            />{' '}
+            />
             Sign in with Google
           </Button>
         </Grid>
@@ -93,6 +102,32 @@ const AuthLogin = ({ ...rest }) => {
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
+        onSubmit={async (values, { setErrors, setSubmitting }) => {
+          try {
+            const response = await axios.post(BACKEND_URL, {
+              email: values.email,
+              password: values.password
+            });
+
+            const token = response.data.access;
+
+            // Store the token (you can use cookies or context as needed)
+            localStorage.setItem('token', token);
+            localStorage.setItem('role', role);
+
+            // Redirect based on role
+            if (role === 'admin') {
+              navigate('/admin/dashboard');
+            } else if (role === 'landlord') {
+              navigate('/landlord/dashboard');
+            } else {
+              navigate('/tenant/dashboard');
+            }
+          } catch (err) {
+            setErrors({ submit: 'Invalid credentials or role' });
+            setSubmitting(false);
+          }
+        }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...rest}>
@@ -100,7 +135,7 @@ const AuthLogin = ({ ...rest }) => {
               error={Boolean(touched.email && errors.email)}
               fullWidth
               helperText={touched.email && errors.email}
-              label="Email Address / Username"
+              label="Email Address"
               margin="normal"
               name="email"
               onBlur={handleBlur}
@@ -110,7 +145,7 @@ const AuthLogin = ({ ...rest }) => {
               variant="outlined"
             />
 
-            <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ mt: theme.spacing(3), mb: theme.spacing(1) }}>
+            <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ mt: 3, mb: 1 }} variant="outlined">
               <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password"
@@ -135,22 +170,26 @@ const AuthLogin = ({ ...rest }) => {
                 }
               />
               {touched.password && errors.password && (
-                <FormHelperText error id="standard-weight-helper-text">
-                  {' '}
-                  {errors.password}{' '}
-                </FormHelperText>
+                <FormHelperText error>{errors.password}</FormHelperText>
               )}
             </FormControl>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Typography variant="subtitle2" color="primary" sx={{ textDecoration: 'none' }}>
-                  Forgot Password?
-                </Typography>
-              </Grid>
-            </Grid>
+
+            <Box mt={2}>
+              <Typography variant="subtitle2">Login As:</Typography>
+              <RadioGroup
+                row
+                name="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+                <FormControlLabel value="landlord" control={<Radio />} label="Landlord" />
+                <FormControlLabel value="tenant" control={<Radio />} label="Tenant" />
+              </RadioGroup>
+            </Box>
 
             {errors.submit && (
-              <Box mt={3}>
+              <Box mt={2}>
                 <FormHelperText error>{errors.submit}</FormHelperText>
               </Box>
             )}

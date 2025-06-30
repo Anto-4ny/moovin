@@ -11,7 +11,7 @@ import AuthLogin from './AuthLogin';
 // assets
 import Logo from 'assets/images/logo-dark.svg';
 
-// ==============================|| LOGIN ||============================== //
+// ==============================|| LOGIN PAGE ||============================== //
 
 const Login = () => {
   const theme = useTheme();
@@ -21,45 +21,50 @@ const Login = () => {
       container
       justifyContent="center"
       alignItems="center"
-      sx={{ backgroundColor: theme.palette.common.black, height: '100%', minHeight: '100vh' }}
+      sx={{
+        backgroundColor: theme.palette.common.black,
+        height: '100%',
+        minHeight: '100vh',
+        px: 2
+      }}
     >
-      <Grid item xs={11} sm={7} md={6} lg={4}>
+      <Grid item xs={12} sm={10} md={6} lg={4}>
         <Card
           sx={{
             overflow: 'visible',
             display: 'flex',
             position: 'relative',
-            '& .MuiCardContent-root': {
-              flexGrow: 1,
-              flexBasis: '50%',
-              width: '50%'
-            },
-            maxWidth: '475px',
-            margin: '24px auto'
+            maxWidth: 475,
+            mx: 'auto',
+            my: 4
           }}
         >
           <CardContent sx={{ p: theme.spacing(5, 4, 3, 4) }}>
-            <Grid container direction="column" spacing={4} justifyContent="center">
+            <Grid container direction="column" spacing={4}>
               <Grid item xs={12}>
-                <Grid container justifyContent="space-between">
+                <Grid container justifyContent="space-between" alignItems="center">
                   <Grid item>
                     <Typography color="textPrimary" gutterBottom variant="h2">
-                      Sign in
+                      Sign In
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      To keep connected with us.
+                      Welcome back! Login to continue.
                     </Typography>
                   </Grid>
                   <Grid item>
                     <RouterLink to="/">
-                      <img alt="Auth method" src={Logo} />
+                      <img alt="Moovin Logo" src={Logo} height="32" />
                     </RouterLink>
                   </Grid>
                 </Grid>
               </Grid>
+
+              {/* Login Form Component */}
               <Grid item xs={12}>
                 <AuthLogin />
               </Grid>
+
+              {/* Register Link */}
               <Grid container justifyContent="flex-start" sx={{ mt: theme.spacing(2), mb: theme.spacing(1) }}>
                 <Grid item>
                   <Typography
@@ -69,7 +74,7 @@ const Login = () => {
                     to="/application/register"
                     sx={{ textDecoration: 'none', pl: 2 }}
                   >
-                    Create new account
+                    Don&apos;t have an account? Create one
                   </Typography>
                 </Grid>
               </Grid>
@@ -82,3 +87,4 @@ const Login = () => {
 };
 
 export default Login;
+
