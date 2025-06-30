@@ -89,7 +89,7 @@ const AuthRegister = ({ ...rest }) => {
 
       <Formik
         initialValues={{
-          email: 'admin@phoenixcoded.net',
+          email: 'moovin@gmail.com',
           password: 'aA123456',
           submit: null
         }}
