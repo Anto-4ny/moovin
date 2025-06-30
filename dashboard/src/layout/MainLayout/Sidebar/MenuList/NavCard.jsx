@@ -15,7 +15,7 @@ const NavCard = () => {
           <Stack alignItems="center">
             <Typography variant="h5">Moovin Pro</Typography>
             <Typography variant="h6" color="secondary" textAlign="center">
-              Checkout Materially Premium Features
+              Checkout Moovin Premium Features
             </Typography>
           </Stack>
           <Button

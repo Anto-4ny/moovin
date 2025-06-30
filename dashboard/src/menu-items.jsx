@@ -44,28 +44,28 @@ const getMenuItemsByRole = (role) => {
       title: 'Home',
       type: 'item',
       icon: icons['HomeOutlinedIcon'],
-      url: '/home'
+      url: 'https://moovin-eight.vercel.app/.html'
     },
     {
       id: 'about',
       title: 'About',
       type: 'item',
       icon: icons['InfoOutlinedIcon'],
-      url: '/about'
+      url: 'https://moovin-eight.vercel.app/about.html'
     },
     {
       id: 'services',
       title: 'Services',
       type: 'item',
       icon: icons['AppsOutlinedIcon'],
-      url: '/services'
+      url: 'https://moovin-eight.vercel.app/services.html'
     },
     {
       id: 'support',
       title: 'Support',
       type: 'item',
       icon: icons['SupportAgentOutlinedIcon'],
-      url: '/support'
+      url: 'https://moovin-eight.vercel.app/contact.html'
     },
     {
       id: 'contact',
@@ -153,7 +153,7 @@ const getMenuItemsByRole = (role) => {
       {
         id: 'navigation',
         title: 'Moovin',
-        caption: 'Main Navigation',
+        caption: 'Explore',
         type: 'group',
         icon: icons['NavigationOutlinedIcon'],
         children: [...(roleSpecific[role] || [])]
