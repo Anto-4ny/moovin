@@ -1,11 +1,15 @@
+// src/routes/ThemeRoutes.jsx
+import { useEffect } from 'react';
 import { useRoutes } from 'react-router-dom';
-
-// routes
 import MainRoutes from './MainRoutes';
-import AuthenticationRoutes from './AuthenticationRoutes';
-
-// ==============================|| ROUTING RENDER ||============================== //
 
 export default function ThemeRoutes() {
-  return useRoutes([MainRoutes, AuthenticationRoutes]);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+
+    console.log('🧾 Logged in as:', role || 'None', '| token:', token || 'None');
+  }, []);
+
+  return useRoutes(MainRoutes);
 }

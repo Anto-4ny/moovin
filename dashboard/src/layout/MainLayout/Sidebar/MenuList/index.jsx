@@ -1,28 +1,33 @@
 import React from 'react';
 
-// material-ui
+// MUI
 import { Typography } from '@mui/material';
 
-// project import
+// Project imports
 import NavGroup from './NavGroup';
-import getMenuItemsByRole from 'menu-items'; // adjust path if needed
+import getMenuItemsByRole from 'menu-items'; 
 
-// ==============================|| MENULIST ||============================== //
+// ==============================|| MENU LIST ||============================== //
 
 const MenuList = () => {
-  // 1. Get role from localStorage (or use context/auth if you prefer)
-  const userRole = localStorage.getItem('user_role'); // 'admin', 'tenant', 'landlord'
-  const menuItem = getMenuItemsByRole(userRole);
+  // ✅ Ensure the correct key is used (must match what you set in localStorage)
+  const userRole = localStorage.getItem('role'); 
 
-  // 2. Render groups (usually one for navigation, one for shared pages)
-  const navItems = menuItem.items.map((item) => {
+  // ✅ Log for debugging
+  console.log('📋 MenuList role:', userRole);
+
+  const menuData = getMenuItemsByRole(userRole);
+
+  // Render grouped menu items
+  const navItems = menuData.items.map((item) => {
     if (item.type === 'group') {
       return <NavGroup key={item.id} item={item} />;
     }
 
+    // Handle fallback if type isn't 'group'
     return (
       <Typography key={item.id} variant="h6" color="error" align="center">
-        Menu Items Error
+        ⚠️ Unknown menu item type: {item.title}
       </Typography>
     );
   });
@@ -31,4 +36,5 @@ const MenuList = () => {
 };
 
 export default MenuList;
+
 

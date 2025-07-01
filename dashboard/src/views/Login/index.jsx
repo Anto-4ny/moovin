@@ -9,7 +9,7 @@ import { Card, CardContent, Typography, Grid } from '@mui/material';
 import AuthLogin from './AuthLogin';
 
 // assets
-import Logo from 'assets/images/logo-dark.svg';
+import Logo from 'assets/images/moovin-logo.png';
 
 // ==============================|| LOGIN PAGE ||============================== //
 

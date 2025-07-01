@@ -9,6 +9,7 @@ import { useMediaQuery, AppBar, Box, Toolbar } from '@mui/material';
 import { drawerWidth } from 'config.js';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import SupportButton from './SupportButton'; 
 
 // custom style
 const Main = styled((props) => <main {...props} />)(({ theme }) => ({
@@ -54,7 +55,9 @@ const MainLayout = () => {
           <Header drawerOpen={drawerOpen} drawerToggle={handleDrawerToggle} />
         </Toolbar>
       </AppBar>
+
       <Sidebar drawerOpen={drawerOpen} drawerToggle={handleDrawerToggle} />
+
       <Main
         style={{
           ...(drawerOpen && {
@@ -70,12 +73,20 @@ const MainLayout = () => {
         <Box sx={theme.mixins.toolbar} />
         <OutletDiv>
           <Outlet />
-                <Box sx={{mt:5}} > Distributed by <a href='https://themewagon.com' target='_blank'>ThemeWagon</a></Box>
-
+          <Box sx={{ mt: 5 }}>
+            Distributed by{' '}
+            <a href="https://antocapteknologies.com" target="_blank" rel="noopener noreferrer">
+              Antocap Teknologies
+            </a>
+          </Box>
         </OutletDiv>
       </Main>
+
+      {/* ✅ Floating Support Button */}
+      <SupportButton />
     </Box>
   );
 };
 
 export default MainLayout;
+

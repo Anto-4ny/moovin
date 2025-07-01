@@ -13,7 +13,7 @@ import MenuList from './MenuList';
 import { drawerWidth } from 'config.js';
 
 // assets
-import logo from 'assets/images/logo.svg';
+import logo from 'assets/images/moovin-logo.png';
 
 // custom style
 const Nav = styled((props) => <nav {...props} />)(({ theme }) => ({
@@ -28,6 +28,7 @@ const Nav = styled((props) => <nav {...props} />)(({ theme }) => ({
 const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
   const theme = useTheme();
   const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
+
   const drawer = (
     <>
       <Box sx={{ display: { md: 'none', xs: 'block' } }}>
@@ -35,7 +36,6 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
           container
           direction="row"
           justifyContent="center"
-          elevation={5}
           alignItems="center"
           spacing={0}
           sx={{
@@ -46,14 +46,15 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
           }}
         >
           <Grid item>
-            <img src={logo} alt="Logo" />
+            <Box component="img" src={logo} alt="Moovin Logo" sx={{ width: '90px', height: '67px', py: 1 }} />
           </Grid>
         </Grid>
       </Box>
+
       <Divider />
+
       <PerfectScrollbar style={{ height: 'calc(100vh - 65px)', padding: '10px' }}>
         <MenuList />
-        
       </PerfectScrollbar>
     </>
   );
@@ -91,3 +92,4 @@ Sidebar.propTypes = {
 };
 
 export default Sidebar;
+

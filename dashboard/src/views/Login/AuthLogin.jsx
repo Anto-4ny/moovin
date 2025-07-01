@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// material-ui
+// MUI
 import { useTheme } from '@mui/material/styles';
 import {
   Box,
@@ -22,32 +22,34 @@ import {
   Radio
 } from '@mui/material';
 
-// third party
+// Formik and Yup
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 
-// assets
+// Assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Google from 'assets/images/social-google.svg';
+
+const BACKEND_URL = 'http://localhost:8000/api/auth/token/login/';
 
 const AuthLogin = ({ ...rest }) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [role, setRole] = React.useState('tenant');
+  const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState('tenant');
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const savedRole = localStorage.getItem('role');
+    if (token && savedRole) {
+      navigate(`/dashboard/${savedRole}`);
+    }
+  }, [navigate]);
 
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-
-  // Adjust this URL to your backend domain/port
-  const BACKEND_URL = 'http://localhost:8000/api/auth/token/login/';
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = (event) => event.preventDefault();
 
   return (
     <>
@@ -72,12 +74,7 @@ const AuthLogin = ({ ...rest }) => {
               src={Google}
               alt="google"
               width="20px"
-              style={{
-                marginRight: '16px',
-                '@media (maxWidth:899.95px)': {
-                  marginRight: '8px'
-                }
-              }}
+              style={{ marginRight: '16px' }}
             />
             Sign in with Google
           </Button>
@@ -85,11 +82,11 @@ const AuthLogin = ({ ...rest }) => {
       </Grid>
 
       <Box alignItems="center" display="flex" mt={2}>
-        <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
+        <Divider sx={{ flexGrow: 1 }} />
         <Typography color="textSecondary" variant="h5" sx={{ m: theme.spacing(2) }}>
           OR
         </Typography>
-        <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
+        <Divider sx={{ flexGrow: 1 }} />
       </Box>
 
       <Formik
@@ -109,22 +106,22 @@ const AuthLogin = ({ ...rest }) => {
               password: values.password
             });
 
-            const token = response.data.access;
+            const { auth_token } = response.data;
+            const savedRole = role;
 
-            // Store the token (you can use cookies or context as needed)
-            localStorage.setItem('token', token);
-            localStorage.setItem('role', role);
-
-            // Redirect based on role
-            if (role === 'admin') {
-              navigate('/admin/dashboard');
-            } else if (role === 'landlord') {
-              navigate('/landlord/dashboard');
+            if (auth_token && savedRole) {
+              localStorage.setItem('token', auth_token);
+              localStorage.setItem('role', savedRole);
+              setTimeout(() => {
+                navigate(`/dashboard/${savedRole}`);
+              }, 200);
             } else {
-              navigate('/tenant/dashboard');
+              setErrors({ submit: 'Token or role not received from server.' });
             }
           } catch (err) {
-            setErrors({ submit: 'Invalid credentials or role' });
+            console.error('❌ Login error:', err);
+            setErrors({ submit: 'Invalid credentials or server error.' });
+          } finally {
             setSubmitting(false);
           }
         }}
@@ -145,7 +142,12 @@ const AuthLogin = ({ ...rest }) => {
               variant="outlined"
             />
 
-            <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ mt: 3, mb: 1 }} variant="outlined">
+            <FormControl
+              fullWidth
+              error={Boolean(touched.password && errors.password)}
+              sx={{ mt: 3, mb: 1 }}
+              variant="outlined"
+            >
               <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password"
@@ -195,7 +197,14 @@ const AuthLogin = ({ ...rest }) => {
             )}
 
             <Box mt={2}>
-              <Button color="primary" disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained">
+              <Button
+                color="primary"
+                disabled={isSubmitting}
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+              >
                 Log In
               </Button>
             </Box>
@@ -207,3 +216,4 @@ const AuthLogin = ({ ...rest }) => {
 };
 
 export default AuthLogin;
+

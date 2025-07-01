@@ -9,7 +9,7 @@ import { Card, CardContent, Typography, Grid } from '@mui/material';
 import AuthRegister from './AuthRegister';
 
 // assets
-import Logo from 'assets/images/logo-dark.svg';
+import Logo from 'assets/images/moovin-logo.png';
 
 const Register = () => {
   const theme = useTheme();

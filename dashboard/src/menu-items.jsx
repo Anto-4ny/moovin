@@ -1,173 +1,133 @@
-// assets
+// ==============================|| ICON IMPORTS ||============================== //
 import NavigationOutlinedIcon from '@mui/icons-material/NavigationOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined';
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
-import ChromeReaderModeOutlinedIcon from '@mui/icons-material/ChromeReaderModeOutlined';
-import SecurityOutlinedIcon from '@mui/icons-material/SecurityOutlined';
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
-import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
-import DomainAddOutlinedIcon from '@mui/icons-material/DomainAddOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
 import TrackChangesOutlinedIcon from '@mui/icons-material/TrackChangesOutlined';
+import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
+import DomainAddOutlinedIcon from '@mui/icons-material/DomainAddOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const icons = {
   NavigationOutlinedIcon,
   HomeOutlinedIcon,
-  ChromeReaderModeOutlinedIcon,
-  HelpOutlineOutlinedIcon,
-  SecurityOutlinedIcon,
   AccountTreeOutlinedIcon,
-  BlockOutlinedIcon,
   AppsOutlinedIcon,
   ContactSupportOutlinedIcon,
+  InfoOutlinedIcon,
+  HomeWorkOutlinedIcon,
+  TrackChangesOutlinedIcon,
   BuildOutlinedIcon,
   DomainAddOutlinedIcon,
   EditOutlinedIcon,
-  SupportAgentOutlinedIcon,
-  InfoOutlinedIcon,
-  HomeWorkOutlinedIcon,
-  TrackChangesOutlinedIcon
+  DashboardOutlinedIcon,
+  LogoutIcon
 };
 
-// ==============================|| DYNAMIC MENU FUNCTION ||============================== //
+// 🔹 Helper to color icons consistently
+const styledIcon = (IconComponent, color) => <IconComponent style={{ color }} />;
 
 const getMenuItemsByRole = (role) => {
+  // Use plain icon components, color them in NavItem via sx or style
   const commonPages = [
     {
       id: 'home',
       title: 'Home',
       type: 'item',
-      icon: icons['HomeOutlinedIcon'],
-      url: 'https://moovin-eight.vercel.app/.html'
+      icon: icons.HomeOutlinedIcon,
+      url: 'https://moovin-eight.vercel.app/.html',
+      external: true,
+      iconColor: 'black'
     },
     {
       id: 'about',
       title: 'About',
       type: 'item',
-      icon: icons['InfoOutlinedIcon'],
-      url: 'https://moovin-eight.vercel.app/about.html'
+      icon: icons.InfoOutlinedIcon,
+      url: 'https://moovin-eight.vercel.app/about.html',
+      external: true,
+      iconColor: 'blue'
     },
     {
       id: 'services',
       title: 'Services',
       type: 'item',
-      icon: icons['AppsOutlinedIcon'],
-      url: 'https://moovin-eight.vercel.app/services.html'
-    },
-    {
-      id: 'support',
-      title: 'Support',
-      type: 'item',
-      icon: icons['SupportAgentOutlinedIcon'],
-      url: 'https://moovin-eight.vercel.app/contact.html'
+      icon: icons.AppsOutlinedIcon,
+      url: 'https://moovin-eight.vercel.app/services.html',
+      external: true,
+      iconColor: 'black'
     },
     {
       id: 'contact',
-      title: 'Contact',
+      title: 'Contact Us',
       type: 'item',
-      icon: icons['ContactSupportOutlinedIcon'],
-      url: '/contact'
+      icon: icons.ContactSupportOutlinedIcon,
+      url: '/contact',
+      iconColor: 'blue'
     }
   ];
 
-  const roleSpecific = {
-    admin: [
-      {
-        id: 'admin-dashboard',
-        title: 'Admin Dashboard',
-        type: 'item',
-        icon: icons['NavigationOutlinedIcon'],
-        url: '/dashboardd'
-      }
-    ],
+  const rolePages = {
     tenant: [
       {
-        id: 'tenant-dashboard',
+        id: 'dashboard',
         title: 'Dashboard',
         type: 'item',
-        icon: icons['NavigationOutlinedIcon'],
-        url: '/dashboard'
+        icon: icons.NavigationOutlinedIcon,
+        url: '/dashboard/tenant',
+        iconColor: 'blue'
       },
       {
         id: 'book-property',
         title: 'Book Property',
         type: 'item',
-        icon: icons['HomeWorkOutlinedIcon'],
-        url: '/tenant/book-property'
+        icon: icons.HomeWorkOutlinedIcon,
+        url: '/book-property',
+        iconColor: 'black'
       },
       {
         id: 'book-repair',
         title: 'Book Repair',
         type: 'item',
-        icon: icons['BuildOutlinedIcon'],
-        url: '/tenant/book-repair'
+        icon: icons.BuildOutlinedIcon,
+        url: '/book-repair',
+        iconColor: 'blue'
       },
       {
         id: 'track-repair',
         title: 'Track Repair',
         type: 'item',
-        icon: icons['TrackChangesOutlinedIcon'],
-        url: '/tenant/track-repair'
+        icon: icons.TrackChangesOutlinedIcon,
+        url: '/track-repair',
+        iconColor: 'black'
       }
     ],
-    landlord: [
-      {
-        id: 'landlord-dashboard',
-        title: 'Dashboard',
-        type: 'item',
-        icon: icons['NavigationOutlinedIcon'],
-        url: '/dashboard'
-      },
-      {
-        id: 'manage-property',
-        title: 'Manage Property',
-        type: 'item',
-        icon: icons['HomeWorkOutlinedIcon'],
-        url: '/landlord/manage-property'
-      },
-      {
-        id: 'add-property',
-        title: 'Add Property',
-        type: 'item',
-        icon: icons['DomainAddOutlinedIcon'],
-        url: '/landlord/add-property'
-      },
-      {
-        id: 'edit-property',
-        title: 'Edit Property',
-        type: 'item',
-        icon: icons['EditOutlinedIcon'],
-        url: '/landlord/edit-property'
-      }
-    ]
+    // Repeat for admin and landlord...
   };
 
   return {
     items: [
       {
-        id: 'navigation',
-        title: 'Moovin',
-        caption: 'Explore',
+        id: 'role-section',
+        title: 'Dashboard',
+        caption: 'Quick access',
         type: 'group',
-        icon: icons['NavigationOutlinedIcon'],
-        children: [...(roleSpecific[role] || [])]
+        children: [...(rolePages[role] || [])]
       },
       {
-        id: 'common',
-        title: 'More',
+        id: 'common-section',
+        title: 'Explore',
         type: 'group',
-        icon: icons['AccountTreeOutlinedIcon'],
         children: commonPages
       }
     ]
   };
 };
 
-export default getMenuItemsByRole;
 
+export default getMenuItemsByRole;
