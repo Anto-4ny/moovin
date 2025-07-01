@@ -47,7 +47,7 @@ const AuthLogin = ({ ...rest }) => {
   };
 
   // Adjust this URL to your backend domain/port
-  const BACKEND_URL = 'http://localhost:8000/api/token/';
+  const BACKEND_URL = 'http://localhost:8000/api/auth/token/login/';
 
   return (
     <>

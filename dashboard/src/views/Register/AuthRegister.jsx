@@ -60,7 +60,8 @@ const AuthRegister = ({ ...rest }) => {
             size="large"
             variant="contained"
           >
-            <img src={Google} alt="google" width="20px" style={{ marginRight: '16px' }} /> Register with Google
+            <img src={Google} alt="google" width="20px" style={{ marginRight: '16px' }} />
+            Register with Google
           </Button>
         </Grid>
       </Grid>
@@ -76,16 +77,19 @@ const AuthRegister = ({ ...rest }) => {
       <Formik
         initialValues={{
           email: '',
+          username: '',
           password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
+          username: Yup.string().max(150).required('Username is required'),
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().min(6, 'Password must be at least 6 characters').max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setSubmitting }) => {
           try {
             const response = await axios.post('http://localhost:8000/api/auth/users/', {
+              username: values.username,
               email: values.email,
               password: values.password,
               role: role
@@ -94,7 +98,9 @@ const AuthRegister = ({ ...rest }) => {
             console.log('Registered:', response.data);
             navigate(`/dashboard/${role}`); // Redirect based on role
           } catch (error) {
-            const errMsg = error?.response?.data?.email?.[0] || 'Registration failed';
+            const errMsg = error?.response?.data?.email?.[0] ||
+                           error?.response?.data?.username?.[0] ||
+                           'Registration failed';
             setErrors({ submit: errMsg });
             console.error(error);
           } finally {
@@ -105,10 +111,23 @@ const AuthRegister = ({ ...rest }) => {
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...rest}>
             <TextField
+              error={Boolean(touched.username && errors.username)}
+              fullWidth
+              helperText={touched.username && errors.username}
+              label="Username"
+              margin="normal"
+              name="username"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.username}
+              variant="outlined"
+            />
+
+            <TextField
               error={Boolean(touched.email && errors.email)}
               fullWidth
               helperText={touched.email && errors.email}
-              label="Email Address / Username"
+              label="Email Address"
               margin="normal"
               name="email"
               onBlur={handleBlur}
