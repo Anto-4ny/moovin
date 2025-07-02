@@ -53,7 +53,7 @@ const MainRoutes = [
       {
         path: '/dashboard/tenant',
         element: (
-          <ProtectedRoute allowedRoles={['tenant']}>
+          <ProtectedRoute allowedRoles={['tenant', 'admin']}>
             <TenantDashboard />
           </ProtectedRoute>
         )
@@ -61,7 +61,7 @@ const MainRoutes = [
       {
         path: '/book-property',
         element: (
-          <ProtectedRoute allowedRoles={['tenant']}>
+          <ProtectedRoute allowedRoles={['tenant', 'admin']}>
             <BookProperty />
           </ProtectedRoute>
         )
@@ -69,7 +69,7 @@ const MainRoutes = [
       {
         path: '/book-repair',
         element: (
-          <ProtectedRoute allowedRoles={['tenant']}>
+          <ProtectedRoute allowedRoles={['tenant', 'admin']}>
             <BookRepair />
           </ProtectedRoute>
         )
@@ -77,7 +77,7 @@ const MainRoutes = [
       {
         path: '/track-repair',
         element: (
-          <ProtectedRoute allowedRoles={['tenant']}>
+          <ProtectedRoute allowedRoles={['tenant', 'admin']}>
             <TrackRepair />
           </ProtectedRoute>
         )
@@ -87,7 +87,7 @@ const MainRoutes = [
       {
         path: '/dashboard/landlord',
         element: (
-          <ProtectedRoute allowedRoles={['landlord']}>
+          <ProtectedRoute allowedRoles={['landlord', 'admin']}>
             <LandlordDashboard />
           </ProtectedRoute>
         )
@@ -95,7 +95,7 @@ const MainRoutes = [
       {
         path: '/manage-property',
         element: (
-          <ProtectedRoute allowedRoles={['landlord']}>
+          <ProtectedRoute allowedRoles={['landlord', 'admin']}>
             <ManageProperty />
           </ProtectedRoute>
         )
@@ -103,7 +103,7 @@ const MainRoutes = [
       {
         path: '/add-property',
         element: (
-          <ProtectedRoute allowedRoles={['landlord']}>
+          <ProtectedRoute allowedRoles={['landlord', 'admin']}>
             <AddProperty />
           </ProtectedRoute>
         )
@@ -111,7 +111,7 @@ const MainRoutes = [
       {
         path: '/edit-property/:id',
         element: (
-          <ProtectedRoute allowedRoles={['landlord']}>
+          <ProtectedRoute allowedRoles={['landlord', 'admin']}>
             <EditProperty />
           </ProtectedRoute>
         )

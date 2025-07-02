@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from .managers import CustomUserManager
 
 class User(AbstractUser):
     USER_ROLES = (
@@ -14,6 +15,8 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []  # You don’t need to require username since it's not unique or primary
+
+    objects = CustomUserManager()
 
     def __str__(self):
         return f"{self.email} ({self.role})"

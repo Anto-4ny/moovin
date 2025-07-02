@@ -40,13 +40,32 @@ const AuthLogin = ({ ...rest }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState('tenant');
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const savedRole = localStorage.getItem('role');
-    if (token && savedRole) {
-      navigate(`/dashboard/${savedRole}`);
-    }
-  }, [navigate]);
+useEffect(() => {
+  const token = localStorage.getItem('token');
+  const savedRole = localStorage.getItem('role');
+
+  if (token && savedRole) {
+    // Validate token with backend
+    fetch('http://localhost:8000/api/auth/users/me/', {
+      headers: {
+        Authorization: `Token ${token}`
+      }
+    })
+    .then(res => {
+      if (!res.ok) {
+        // Token is invalid or user was deleted
+        localStorage.clear();
+        navigate('/login'); // force logout
+      } else {
+        navigate(`/dashboard/${savedRole}`);
+      }
+    })
+    .catch(() => {
+      localStorage.clear();
+      navigate('/login');
+    });
+  }
+}, [navigate]);
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event) => event.preventDefault();

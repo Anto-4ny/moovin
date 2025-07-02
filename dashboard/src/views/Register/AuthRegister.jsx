@@ -88,6 +88,7 @@ const AuthRegister = ({ ...rest }) => {
         })}
         onSubmit={async (values, { setErrors, setSubmitting }) => {
           try {
+            // Step 1: Register user
             const response = await axios.post('http://localhost:8000/api/auth/users/', {
               username: values.username,
               email: values.email,
@@ -95,18 +96,40 @@ const AuthRegister = ({ ...rest }) => {
               role: role
             });
 
-            console.log('Registered:', response.data);
-            navigate(`/dashboard/${role}`); // Redirect based on role
+            console.log('✅ Registered:', response.data);
+
+            // Step 2: Log in immediately
+            const loginRes = await axios.post('http://localhost:8000/api/auth/token/login/', {
+              email: values.email,
+              password: values.password
+            });
+
+            const token = loginRes.data?.auth_token;
+            if (token) {
+              localStorage.setItem('token', token);
+              localStorage.setItem('role', role);
+              navigate(`/dashboard/${role}`);
+            } else {
+              throw new Error('Login failed after registration');
+            }
           } catch (error) {
-            const errMsg = error?.response?.data?.email?.[0] ||
-                           error?.response?.data?.username?.[0] ||
-                           'Registration failed';
-            setErrors({ submit: errMsg });
-            console.error(error);
+            const responseData = error?.response?.data;
+
+            const errorObject = {
+              username: responseData?.username?.[0] || undefined,
+              email: responseData?.email?.[0] || undefined,
+              password: responseData?.password?.[0] || undefined,
+              submit: responseData?.non_field_errors?.[0] || error.message || 'Registration or login failed'
+            };
+
+            setErrors(errorObject);
+
+            console.error('📛 Registration error:', responseData);
           } finally {
             setSubmitting(false);
           }
         }}
+
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...rest}>

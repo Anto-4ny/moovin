@@ -29,86 +29,137 @@ const icons = {
   LogoutIcon
 };
 
-// 🔹 Helper to color icons consistently
-const styledIcon = (IconComponent, color) => <IconComponent style={{ color }} />;
+const commonPages = [
+  {
+    id: 'home',
+    title: 'Home',
+    type: 'item',
+    icon: icons.HomeOutlinedIcon,
+    url: 'https://moovin-eight.vercel.app/.html',
+    external: true,
+    iconColor: 'black'
+  },
+  {
+    id: 'about',
+    title: 'About',
+    type: 'item',
+    icon: icons.InfoOutlinedIcon,
+    url: 'https://moovin-eight.vercel.app/about.html',
+    external: true,
+    iconColor: 'blue'
+  },
+  {
+    id: 'services',
+    title: 'Services',
+    type: 'item',
+    icon: icons.AppsOutlinedIcon,
+    url: 'https://moovin-eight.vercel.app/services.html',
+    external: true,
+    iconColor: 'black'
+  },
+  {
+    id: 'contact',
+    title: 'Contact Us',
+    type: 'item',
+    icon: icons.ContactSupportOutlinedIcon,
+    url: '/contact',
+    iconColor: 'blue'
+  }
+];
+
+const tenantPages = [
+  {
+    id: 'tenant-dashboard',
+    title: 'Tenant Dashboard',
+    type: 'item',
+    icon: icons.NavigationOutlinedIcon,
+    url: '/dashboard/tenant',
+    iconColor: 'blue'
+  },
+  {
+    id: 'book-property',
+    title: 'Book Property',
+    type: 'item',
+    icon: icons.HomeWorkOutlinedIcon,
+    url: '/book-property',
+    iconColor: 'black'
+  },
+  {
+    id: 'book-repair',
+    title: 'Book Repair',
+    type: 'item',
+    icon: icons.BuildOutlinedIcon,
+    url: '/book-repair',
+    iconColor: 'blue'
+  },
+  {
+    id: 'track-repair',
+    title: 'Track Repair',
+    type: 'item',
+    icon: icons.TrackChangesOutlinedIcon,
+    url: '/track-repair',
+    iconColor: 'black'
+  }
+];
+
+const landlordPages = [
+  {
+    id: 'landlord-dashboard',
+    title: 'Landlord Dashboard',
+    type: 'item',
+    icon: icons.DashboardOutlinedIcon,
+    url: '/dashboard/landlord',
+    iconColor: 'blue'
+  },
+  {
+    id: 'add-property',
+    title: 'Add Property',
+    type: 'item',
+    icon: icons.DomainAddOutlinedIcon,
+    url: '/add-property',
+    iconColor: 'black'
+  },
+  {
+    id: 'edit-property',
+    title: 'Edit Property',
+    type: 'item',
+    icon: icons.EditOutlinedIcon,
+    url: '/edit-property',
+    iconColor: 'blue'
+  },
+  {
+    id: 'manage-repairs',
+    title: 'Manage Repairs',
+    type: 'item',
+    icon: icons.BuildOutlinedIcon,
+    url: '/manage-repairs',
+    iconColor: 'black'
+  }
+];
+
+const adminPages = [
+  {
+    id: 'dashboard',
+    title: 'Admin Dashboard',
+    type: 'item',
+    icon: icons.DashboardOutlinedIcon,
+    url: '/dashboard/admin',
+    iconColor: 'blue'
+  },
+  ...landlordPages,
+  ...tenantPages
+];
 
 const getMenuItemsByRole = (role) => {
-  // Use plain icon components, color them in NavItem via sx or style
-  const commonPages = [
-    {
-      id: 'home',
-      title: 'Home',
-      type: 'item',
-      icon: icons.HomeOutlinedIcon,
-      url: 'https://moovin-eight.vercel.app/.html',
-      external: true,
-      iconColor: 'black'
-    },
-    {
-      id: 'about',
-      title: 'About',
-      type: 'item',
-      icon: icons.InfoOutlinedIcon,
-      url: 'https://moovin-eight.vercel.app/about.html',
-      external: true,
-      iconColor: 'blue'
-    },
-    {
-      id: 'services',
-      title: 'Services',
-      type: 'item',
-      icon: icons.AppsOutlinedIcon,
-      url: 'https://moovin-eight.vercel.app/services.html',
-      external: true,
-      iconColor: 'black'
-    },
-    {
-      id: 'contact',
-      title: 'Contact Us',
-      type: 'item',
-      icon: icons.ContactSupportOutlinedIcon,
-      url: '/contact',
-      iconColor: 'blue'
-    }
-  ];
+  let pages = [];
 
-  const rolePages = {
-    tenant: [
-      {
-        id: 'dashboard',
-        title: 'Dashboard',
-        type: 'item',
-        icon: icons.NavigationOutlinedIcon,
-        url: '/dashboard/tenant',
-        iconColor: 'blue'
-      },
-      {
-        id: 'book-property',
-        title: 'Book Property',
-        type: 'item',
-        icon: icons.HomeWorkOutlinedIcon,
-        url: '/book-property',
-        iconColor: 'black'
-      },
-      {
-        id: 'book-repair',
-        title: 'Book Repair',
-        type: 'item',
-        icon: icons.BuildOutlinedIcon,
-        url: '/book-repair',
-        iconColor: 'blue'
-      },
-      {
-        id: 'track-repair',
-        title: 'Track Repair',
-        type: 'item',
-        icon: icons.TrackChangesOutlinedIcon,
-        url: '/track-repair',
-        iconColor: 'black'
-      }
-    ],
-    // Repeat for admin and landlord...
-  };
+  if (role === 'tenant') {
+    pages = tenantPages;
+  } else if (role === 'landlord') {
+    pages = landlordPages;
+  } else if (role === 'admin') {
+    pages = adminPages;
+  }
 
   return {
     items: [
@@ -117,7 +168,7 @@ const getMenuItemsByRole = (role) => {
         title: 'Dashboard',
         caption: 'Quick access',
         type: 'group',
-        children: [...(rolePages[role] || [])]
+        children: pages
       },
       {
         id: 'common-section',
@@ -129,5 +180,5 @@ const getMenuItemsByRole = (role) => {
   };
 };
 
-
 export default getMenuItemsByRole;
+
