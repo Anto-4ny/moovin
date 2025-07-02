@@ -2,6 +2,7 @@
   "name": "moovin-property-management",
   "version": "3.0.0",
   "private": true,
+  "homepage": "/dashboard",
   "dependencies": {
     "@date-io/date-fns": "^3.2.1",
     "@emotion/react": "^11.11.4",

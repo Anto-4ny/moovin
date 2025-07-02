@@ -22,7 +22,7 @@ const root = createRoot(document.getElementById('root'));
 
 root.render(
   <Provider store={store}>
-    <BrowserRouter basename="/">
+    <BrowserRouter basename="/dashboard">
       <App />
     </BrowserRouter>
   </Provider>
