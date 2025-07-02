@@ -6,8 +6,11 @@ export default defineConfig(({ mode }) => {
   return {
     base: mode === 'production' ? '/dashboard/' : '/',
     plugins: [react(), jsconfigPaths()],
+    build: {
+      outDir: 'dist' // Make sure Vercel finds this after build
+    },
     server: {
-      port: 5173, // Vite dev port (default)
+      port: 5173,
       open: true
     },
     preview: {

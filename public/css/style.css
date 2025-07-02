@@ -7,6 +7,22 @@
     --dark: #0E2E50;
 }
 
+/*styles for mobile drop-downs*/
+  @media (max-width: 991px) {
+    .offcanvas .dropdown-menu {
+      position: relative !important;
+      float: none;
+      width: 100%;
+      margin-top: 0.5rem;
+      border: none;
+      background-color: #fff;
+    }
+    .dropdown-item .small {
+      display: block;
+      margin-top: 2px;
+    }
+  }
+
 /*** Override Bootstrap-like utility classes to use custom variables ***/
 
 /* Text color overrides */

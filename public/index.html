@@ -46,7 +46,7 @@
 <div class="container-fluid nav-bar bg-white sticky-top">
   <nav class="navbar navbar-expand-lg navbar-light py-0 px-3 shadow-sm">
     <a href="index" class="navbar-brand d-flex align-items-center">
-      <img src="img/moovin-logo.png" alt="Moovin Logo" style="width: 24px; height: 24px;" class="me-2">
+      <img src="img/moovin-logo.png" alt="Moovin Logo" style="width: 54px; height: 54px;" class="me-2">
       <div class="text-start">
         <h4 class="m-0 text-secondary" style="font-size: 18px;">Moovin</h4>
         <small class="text-muted" style="font-size: 10px;">Rent · Repairs</small>
@@ -60,34 +60,108 @@
     <!-- Desktop Nav Left -->
     <div class="collapse navbar-collapse">
       <div class="navbar-nav d-none d-lg-flex align-items-center">
-        <a href="#" class="nav-link">Home</a>
-        <a href="#" class="nav-link">About</a>
+        <a href="index" class="nav-link">Home</a>
+        <a href="about" class="nav-link">About</a>
 
-        <div class="nav-item dropdown">
-          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
-          <div class="dropdown-menu">
-            <a href="#" class="dropdown-item">Browse Properties</a>
-            <a href="#" class="dropdown-item">Book a Repair</a>
-            <a href="#" class="dropdown-item">Track Repair</a>
-          </div>
-        </div>
+            <!-- Services -->
+            <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+            <div class="dropdown-menu p-2" style="min-width: 280px;">
+                <a href="property-list" class="dropdown-item">
+                Browse Properties
+                <div class="small text-muted">Explore available rentals across Australia</div>
+                </a>
+                <a href="#" class="dropdown-item">
+                Book a Repair
+                <div class="small text-muted">Report issues for quick maintenance</div>
+                </a>
+                <a href="#" class="dropdown-item">
+                Track Repair
+                <div class="small text-muted">Monitor your repair progress in real-time</div>
+                </a>
+            </div>
+            </div>
 
-        <div class="nav-item dropdown">
-          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-          <div class="dropdown-menu">
-            <a href="#" class="dropdown-item">Our Agents</a>
-            <a href="#" class="dropdown-item">Testimonials</a>
-            <a href="#" class="dropdown-item">FAQs</a>
-          </div>
-        </div>
+            <!-- Explore Moovin -->
+            <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Explore Moovin</a>
+            <div class="dropdown-menu p-2" style="min-width: 280px;">
+                <a href="#" class="dropdown-item">
+                Our Agents
+                <div class="small text-muted">Meet our trusted and vetted property agents</div>
+                </a>
+                <a href="testimonial" class="dropdown-item">
+                Testimonials
+                <div class="small text-muted">Hear what tenants and landlords say about us</div>
+                </a>
+                <a href="#" class="dropdown-item">
+                FAQs
+                <div class="small text-muted">Find answers to commonly asked questions</div>
+                </a>
+            </div>
+            </div>
 
-        <a href="#" class="nav-link">Contact</a>
+            <!-- Tenant -->
+            <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Tenant</a>
+            <div class="dropdown-menu p-2" style="min-width: 280px;">
+                <a href="property-list" class="dropdown-item">
+                Browse Property
+                <div class="small text-muted">Find properties that fit your lifestyle</div>
+                </a>
+                <a href="#" class="dropdown-item">
+                Become a Tenant
+                <div class="small text-muted">Apply to join Moovin’s trusted tenant network</div>
+                </a>
+                <a href="#" class="dropdown-item">
+                Book Repairs
+                <div class="small text-muted">Request maintenance for your rented unit</div>
+                </a>
+                <a href="#" class="dropdown-item">
+                Track Repairs
+                <div class="small text-muted">Stay updated on your repair request status</div>
+                </a>
+                <a href="/dashboard" class="dropdown-item">
+                Explore Tenant Dashboard
+                <div class="small text-muted">View your applications, repairs & lease info</div>
+                </a>
+            </div>
+            </div>
+
+            <!-- Landlord -->
+            <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Landlord</a>
+            <div class="dropdown-menu p-2" style="min-width: 280px;">
+                <a href="#" class="dropdown-item">
+                Become a Landlord
+                <div class="small text-muted">Join Moovin and rent or sell your property</div>
+                </a>
+                <a href="/dashboard" class="dropdown-item">
+                Add Property
+                <div class="small text-muted">List your property for rent or sale</div>
+                </a>
+                <a href="#" class="dropdown-item">
+                Sell Property
+                <div class="small text-muted">Connect with buyers for your listings</div>
+                </a>
+                <a href="#" class="dropdown-item">
+                Explore Repairs
+                <div class="small text-muted">Manage and track repairs on your properties</div>
+                </a>
+                <a href="#" class="dropdown-item">
+                Explore Property
+                <div class="small text-muted">Review property stats, bookings & requests</div>
+                </a>
+            </div>
+            </div>
+
+        <a href="contact" class="nav-link">Contact</a>
       </div>
 
       <!-- Desktop Nav Right -->
       <div class="ms-auto d-none d-lg-flex align-items-center">
-        <a href="/dashboard/application/register" class="nav-link small">Sign Up</a>
-        <a href="/dashboard/application/login" class="nav-link small">Sign In</a>
+        <a href="/dashboard" class="nav-link small">Sign Up</a>
+        <a href="/dashboard" class="nav-link small">Sign In</a>
         <a href="/dashboard/" class="btn btn-dark border border-white text-white btn-sm ms-2">Add Property</a>
       </div>
     </div>
@@ -95,37 +169,95 @@
     <!-- Offcanvas Menu for Mobile -->
     <div class="offcanvas offcanvas-start text-bg-light" id="moovinMenu" tabindex="-1" style="width: 50%;">
       <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Menu</h5>
+        <h5 class="offcanvas-title text-black">Menu</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
       </div>
-      <div class="offcanvas-body">
-        <a href="#" class="nav-link"><i class="fas fa-home me-2"></i> Home</a>
-        <a href="#" class="nav-link"><i class="fas fa-info-circle me-2"></i> About</a>
+      <div class="offcanvas-body bg-white">
+        <a href="index" class="nav-link text-black bg-white">
+          <i class="fas fa-home me-2"></i> Home
+        </a>
+        <a href="about" class="nav-link text-black bg-white">
+          <i class="fas fa-info-circle me-2"></i> About
+        </a>
 
         <!-- Services Dropdown -->
         <div class="dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"><i class="fas fa-cogs me-2"></i> Services</a>
-          <div class="dropdown-menu">
-            <a href="#" class="dropdown-item"><i class="fas fa-building me-2"></i> Browse Properties</a>
-            <a href="#" class="dropdown-item"><i class="fas fa-tools me-2"></i> Book a Repair</a>
-            <a href="#" class="dropdown-item"><i class="fas fa-map-marker-alt me-2"></i> Track Repair</a>
-          </div>
+        <a class="nav-link dropdown-toggle text-black" data-bs-toggle="dropdown" href="#">
+            <i class="fas fa-cogs me-2"></i> Services
+        </a>
+        <div class="dropdown-menu px-2">
+            <a href="property-list" class="dropdown-item text-black">
+            Browse Properties
+            <div class="small text-muted">Explore rentals across Australia</div>
+            </a>
+            <a href="#" class="dropdown-item text-black">
+            Book a Repair
+            <div class="small text-muted">Log an issue for quick fixing</div>
+            </a>
+            <a href="#" class="dropdown-item text-black">
+            Track Repair
+            <div class="small text-muted">Stay updated on service progress</div>
+            </a>
+        </div>
         </div>
 
-        <!-- Pages Dropdown -->
+        <!-- Tenant Dropdown -->
         <div class="dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"><i class="fas fa-file-alt me-2"></i> Why Moovin?</a>
-          <div class="dropdown-menu">
-            <a href="#" class="dropdown-item"><i class="fas fa-user-tie me-2"></i> Our Agents</a>
-            <a href="#" class="dropdown-item"><i class="fas fa-comment-dots me-2"></i> Testimonials</a>
-            <a href="#" class="dropdown-item"><i class="fas fa-question-circle me-2"></i> FAQs</a>
-          </div>
+        <a class="nav-link dropdown-toggle text-black" data-bs-toggle="dropdown" href="#">
+            <i class="fas fa-user me-2"></i> Tenant
+        </a>
+        <div class="dropdown-menu px-2">
+            <a href="property-list" class="dropdown-item text-black">Browse Property
+            <div class="small text-muted">View listings in your area</div>
+            </a>
+            <a href="#" class="dropdown-item text-black">Become a Tenant
+            <div class="small text-muted">Apply for tenancy and get matched fast</div>
+            </a>
+            <a href="#" class="dropdown-item text-black">Book Repairs
+            <div class="small text-muted">Report issues from your dashboard</div>
+            </a>
+            <a href="#" class="dropdown-item text-black">Track Repairs
+            <div class="small text-muted">See status updates in real-time</div>
+            </a>
+            <a href="/dashboard" class="dropdown-item text-black">Explore Dashboard
+            <div class="small text-muted">Manage your tenancy and support</div>
+            </a>
+        </div>
         </div>
 
-        <a href="#" class="nav-link"><i class="fas fa-envelope me-2"></i> Contact</a>
-        <a href="/dashboard/application/registerr" class="nav-link"><i class="fas fa-user-plus me-2"></i> Sign In</a>
-        <a href="/dashboard/application/loginn" class="nav-link"><i class="fas fa-user-plus me-2"></i> Sign In</a>
-        <a href="/dashboard/defaultt" class="btn btn-dark border-white text-white mt-3"><i class="fas fa-plus me-2"></i> Add Property</a>
+        <!-- Landlord Dropdown -->
+        <div class="dropdown">
+        <a class="nav-link dropdown-toggle text-black" data-bs-toggle="dropdown" href="#">
+            <i class="fas fa-user-tie me-2"></i> Landlord
+        </a>
+        <div class="dropdown-menu px-2">
+            <a href="#" class="dropdown-item text-black">Become a Landlord
+            <div class="small text-muted">Start renting or selling with Moovin</div>
+            </a>
+            <a href="/dashboard" class="dropdown-item text-black">Add Property
+            <div class="small text-muted">Post your rental/sale listings</div>
+            </a>
+            <a href="#" class="dropdown-item text-black">Sell Property
+            <div class="small text-muted">Connect with verified buyers</div>
+            </a>
+            <a href="#" class="dropdown-item text-black">Explore Repairs
+            <div class="small text-muted">See repair requests for your units</div>
+            </a>
+            <a href="#" class="dropdown-item text-black">Explore Property
+            <div class="small text-muted">View property insights and status</div>
+            </a>
+        </div>
+        </div>
+
+        <a href="contact" class="nav-link text-black bg-white">
+          <i class="fas fa-envelope me-2"></i> Contact
+        </a>
+        <a href="/dashboard" class="nav-link text-black bg-white">
+          <i class="fas fa-user-plus me-2"></i> Sign In
+        </a>
+        <a href="/dashboard" class="btn btn-primary text-white mt-3">
+          <i class="fas fa-plus me-2"></i> Add Property
+        </a>
       </div>
     </div>
   </nav>
@@ -145,8 +277,8 @@
                 Moovin makes it easy for tenants, landlords, and property agents across Australia to rent properties, request repairs, and track services — all in one smart platform.
             </p>
             <div class="d-flex flex-column flex-sm-row justify-content-center justify-content-md-start gap-3 animated fadeIn">
-                <a href="#" class="btn btn-outline-secondary bg-white text-secondary border-secondary px-4 py-3">Get Started</a>
-                <a href="#" class="btn bg-secondary text-white border border-white px-4 py-3">Book a Repair</a>
+                <a href="/dashboard" class="btn btn-outline-secondary bg-white text-secondary border-secondary px-4 py-3">Get Started</a>
+                <a href="/dashboard" class="btn bg-secondary text-white border border-white px-4 py-3">Book a Repair</a>
             </div>
         </div>
 
@@ -164,63 +296,6 @@
     </div>
 </div>
 <!-- Header End -->
-
-<!-- Category Start -->
-<div class="container-xxl py-5 bg-light">
-  <div class="container">
-    <div class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">
-      <h1 class="fw-bold text-dark mb-3">Browse by Property Type</h1>
-      <p class="text-muted">From cozy apartments to spacious villas, Moovin makes it easy to find or list a home across Australia.</p>
-    </div>
-
-    <div class="row g-4">
-      <!-- Category Card -->
-      <div class="col-lg-3 col-sm-6">
-        <div class="category-box text-center p-4 bg-white border border-secondary rounded-4 shadow-sm h-100 hover-shadow">
-          <div class="icon-circle mb-3 mx-auto bg-secondary bg-opacity-10">
-            <img src="img/icon-apartment.png" alt="Apartment" class="img-fluid" style="width: 40px; filter: brightness(0) saturate(100%) invert(14%) sepia(97%) saturate(745%) hue-rotate(185deg) brightness(93%) contrast(95%);">
-          </div>
-          <h6 class="fw-semibold text-dark">Apartment</h6>
-          <p class="small text-muted mb-0">13 Listings</p>
-        </div>
-      </div>
-
-      <!-- Villa -->
-      <div class="col-lg-3 col-sm-6">
-        <div class="category-box text-center p-4 bg-white border border-dark rounded-4 shadow-sm h-100 hover-shadow">
-          <div class="icon-circle mb-3 mx-auto bg-dark bg-opacity-10">
-            <img src="img/icon-villa.png" alt="Villa" class="img-fluid" style="width: 40px; filter: brightness(0);">
-          </div>
-          <h6 class="fw-semibold text-dark">Villa</h6>
-          <p class="small text-muted mb-0">23 Listings</p>
-        </div>
-      </div>
-
-      <!-- House -->
-      <div class="col-lg-3 col-sm-6">
-        <div class="category-box text-center p-4 bg-white border border-1 rounded-4 shadow-sm h-100 hover-shadow">
-          <div class="icon-circle mb-3 mx-auto bg-primary bg-opacity-10">
-            <img src="img/icon-house.png" alt="House" class="img-fluid" style="width: 40px; filter: brightness(0);">
-          </div>
-          <h6 class="fw-semibold text-dark">House</h6>
-          <p class="small text-muted mb-0">12 Listings</p>
-        </div>
-      </div>
-
-      <!-- Studio -->
-      <div class="col-lg-3 col-sm-6">
-        <div class="category-box text-center p-4 bg-white border border-1 rounded-4 shadow-sm h-100 hover-shadow">
-          <div class="icon-circle mb-3 mx-auto bg-secondary bg-opacity-10">
-            <img src="img/icon-condominium.png" alt="Studio" class="img-fluid" style="width: 40px; filter: brightness(0);">
-          </div>
-          <h6 class="fw-semibold text-dark">Studio</h6>
-          <p class="small text-muted mb-0">13 Listings</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Category End -->
 
 <!-- About Start -->
 <div class="container-xxl py-5">
@@ -556,8 +631,8 @@
             <!-- Quick Links -->
             <div class="col-lg-3 col-md-6">
                 <h5 class="text-white mb-4">Quick Links</h5>
-                <a class="btn btn-link text-white-50" href="#">About Moovin</a>
-                <a class="btn btn-link text-white-50" href="#">Contact Support</a>
+                <a class="btn btn-link text-white-50" href="about">About Moovin</a>
+                <a class="btn btn-link text-white-50" href="contact">Contact Support</a>
                 <a class="btn btn-link text-white-50" href="#">Our Services</a>
                 <a class="btn btn-link text-white-50" href="#">Privacy Policy</a>
                 <a class="btn btn-link text-white-50" href="#">Terms & Conditions</a>
@@ -612,9 +687,9 @@
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <div class="footer-menu">
-                        <a href="#">Home</a>
+                        <a href="index">Home</a>
                         <a href="#">Cookies</a>
-                        <a href="#">Help</a>
+                        <a href="contact">Help</a>
                         <a href="#">FAQs</a>
                     </div>
                 </div>
