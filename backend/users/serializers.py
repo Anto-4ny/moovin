@@ -24,4 +24,3 @@ class CustomTokenCreateSerializer(TokenCreateSerializer):
         # Add user's role to the response
         data['role'] = user.role
         return data
-

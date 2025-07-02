@@ -1,153 +1,437 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Box,
-  Grid,
-  Typography,
-  Card,
-  CardContent,
-  CardHeader,
-  Button,
-  Divider,
-  Chip,
-  Avatar,
-  useTheme
+  Box, Typography, Card, CardContent, Avatar, Button,
+  Grid, Stack, Paper, useTheme, Dialog, DialogTitle, DialogContent, DialogActions,
+  TextField, MenuItem, InputLabel, Select, FormControl, Divider
 } from '@mui/material';
-import { CheckCircle, Home, Payments, SupportAgent, Construction, EmojiEvents } from '@mui/icons-material';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  Payments as PaymentsIcon,
+  SupportAgent as SupportAgentIcon,
+  Update as UpdateIcon
+} from '@mui/icons-material';
+import {
+  LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip,
+  BarChart, Bar, ResponsiveContainer
+} from 'recharts';
+import axios from 'axios';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
+
+import TrackRepair from '../Tenant/TrackRepair';
+import BookProperty from '../Tenant/BookProperty';
+import BookRepair from '../Tenant/BookRepair';
 
 const TenantDashboard = () => {
   const theme = useTheme();
-  const property = {
-    name: 'Skyline Residences',
-    location: 'Utawala, Nairobi',
-    status: 'Rented',
-    monthlyRent: 'KES 35,000',
-    dueDate: '5th of every month'
-  };
+  const [user, setUser] = useState({ email: 'Tenant', username: 'Tenant' });
+  const [recentProperties, setRecentProperties] = useState([]);
+
+  useEffect(() => {
+    axios.get('/api/tenant/profile').then(res => setUser(res.data))
+      .catch(err => console.error(err));
+    axios.get('/api/properties/recent')
+      .then(res => setRecentProperties(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setRecentProperties([]));
+  }, []);
 
   const paymentData = [
-    { month: 'Mar', amount: 35000 },
-    { month: 'Apr', amount: 35000 },
-    { month: 'May', amount: 35000 },
-    { month: 'Jun', amount: 35000 },
-    { month: 'Jul', amount: 0 }
+    { month: 'Mar', rent: 35000 },
+    { month: 'Apr', rent: 35000 },
+    { month: 'May', rent: 35000 },
+    { month: 'Jun', rent: 35000 },
+    { month: 'Jul', rent: 0 }
   ];
 
+  const cardStyle = {
+    borderRadius: 4,
+    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+    background: theme.palette.background.paper
+  };
+
+  const [paymentOpen, setPaymentOpen] = useState(false);
+const [formData, setFormData] = useState({
+  date: new Date(),
+  time: new Date(),
+  amount: '',
+  months: [],
+  cardNumber: '',
+  cvv: '',
+  expiry: ''
+});
+
+const handleInputChange = (e) => {
+  setFormData({ ...formData, [e.target.name]: e.target.value });
+};
+
+const handlePaymentSubmit = () => {
+  console.log('Payment Info:', formData);
+  setPaymentOpen(false); // Close dialog after submit
+};
+
+  const billData = [
+    { name: 'Water', amount: 1200 },
+    { name: 'Electricity', amount: 3000 },
+    { name: 'Garbage', amount: 500 },
+    { name: 'Internet', amount: 2000 }
+  ];const [billOpen, setBillOpen] = useState(false);
+
+const allBills = [
+  { name: 'Water', amountDue: 1200, paid: 800 },
+  { name: 'Electricity', amountDue: 3000, paid: 2000 },
+  { name: 'Garbage', amountDue: 500, paid: 500 },
+  { name: 'Internet', amountDue: 2000, paid: 0 }
+];
+
+const [selectedActivity, setSelectedActivity] = useState(null);
+
+const activityLogs = [
+  { action: 'Paid rent on time', time: '2 days ago', type: 'success', details: 'Full rent for July paid successfully via card ending 1234.' },
+  { action: 'Contacted landlord', time: '4 days ago', type: 'success', details: 'Asked landlord about electricity outage. Response received.' },
+  { action: 'Requested maintenance', time: '1 week ago', type: 'warning', details: 'Requested plumbing fix for leaking tap in kitchen.' },
+  { action: 'Viewed property documents', time: '2 weeks ago', type: 'success', details: 'Downloaded rental agreement and invoice.' },
+];
+
+
+
   return (
-    <Box p={4} sx={{ background: theme.palette.grey[100], minHeight: '100vh' }}>
-      <Typography variant="h4" fontWeight={700} gutterBottom>
-        Welcome Back, Tenant! 🎉
+    <Box p={4} sx={{ bgcolor: theme.palette.grey[50], minHeight: '100vh' }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom color="primary">
+        Welcome back, <span style={{ color: theme.palette.secondary.main }}>{user.username}</span>!
       </Typography>
-      <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-        Here's a quick look at your rental and activity.
+      <Typography variant="subtitle1" color="textSecondary" mb={4}>
+        Your home at a glance — stay on top of everything effortlessly.
       </Typography>
 
-      <Grid container spacing={4} mt={2}>
-        {/* Property Info */}
-        <Grid item xs={12} md={6} lg={4}>
-          <Card elevation={3}>
-            <CardHeader
-              avatar={<Avatar sx={{ bgcolor: theme.palette.primary.main }}><Home /></Avatar>}
-              title="Rented Property"
-              titleTypographyProps={{ fontWeight: 'bold' }}
+      <Grid container spacing={4}>
+{/* Payment History */}
+<Grid item xs={12} md={8}>
+  <Card sx={cardStyle}>
+    <CardContent sx={{ p: 3 }}>
+      <Box display="flex" alignItems="center" mb={2}>
+        <Avatar sx={{ bgcolor: theme.palette.primary.main, mr: 2 }}>
+          <PaymentsIcon />
+        </Avatar>
+        <Typography variant="h6" fontWeight={600}>Payment History</Typography>
+      </Box>
+      <Box height={220}>
+        <ResponsiveContainer>
+          <LineChart data={paymentData}>
+            <CartesianGrid strokeDasharray="3 3" opacity={0.4} />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="rent"
+              stroke={theme.palette.primary.main}
+              strokeWidth={3}
             />
-            <Divider />
-            <CardContent>
-              <Typography variant="h6">{property.name}</Typography>
-              <Typography variant="body2" color="textSecondary">Location: {property.location}</Typography>
-              <Box display="flex" alignItems="center" gap={1} mt={1}>
-                <Typography variant="body2">Status:</Typography>
-                <Chip label={property.status} color="success" size="small" />
-              </Box>
-              <Typography variant="body2">Monthly Rent: {property.monthlyRent}</Typography>
-              <Typography variant="body2">Due: {property.dueDate}</Typography>
-            </CardContent>
-          </Card>
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
+      <Button
+        variant="contained"
+        fullWidth
+        sx={{ mt: 2, py: 1.5 }}
+        onClick={() => setPaymentOpen(true)}
+      >
+        Make a Payment
+      </Button>
+    </CardContent>
+  </Card>
+</Grid>
+
+{/* Payment Dialog */}
+<Dialog open={paymentOpen} onClose={() => setPaymentOpen(false)} fullWidth maxWidth="sm">
+  <DialogTitle fontWeight="bold" color="primary.main">Make a Payment</DialogTitle>
+  <DialogContent dividers>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <DatePicker
+            label="Payment Date"
+            value={formData.date}
+            onChange={(newValue) => setFormData({ ...formData, date: newValue })}
+            renderInput={(params) => <TextField fullWidth {...params} />}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TimePicker
+            label="Payment Time"
+            value={formData.time}
+            onChange={(newValue) => setFormData({ ...formData, time: newValue })}
+            renderInput={(params) => <TextField fullWidth {...params} />}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="Amount (USD)"
+            name="amount"
+            type="number"
+            fullWidth
+            value={formData.amount}
+            onChange={handleInputChange}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <FormControl fullWidth>
+            <InputLabel>Month(s)</InputLabel>
+            <Select
+              multiple
+              value={formData.months}
+              name="months"
+              onChange={(e) => setFormData({ ...formData, months: e.target.value })}
+              renderValue={(selected) => selected.join(', ')}
+            >
+              {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'].map((month) => (
+                <MenuItem key={month} value={month}>
+                  {month}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="Card Number"
+            name="cardNumber"
+            fullWidth
+            value={formData.cardNumber}
+            onChange={handleInputChange}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            label="CVV"
+            name="cvv"
+            type="password"
+            fullWidth
+            value={formData.cvv}
+            onChange={handleInputChange}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            label="Expiry (MM/YY)"
+            name="expiry"
+            fullWidth
+            value={formData.expiry}
+            onChange={handleInputChange}
+          />
+        </Grid>
+      </Grid>
+    </LocalizationProvider>
+  </DialogContent>
+  <DialogActions sx={{ px: 3, pb: 2 }}>
+    <Button onClick={() => setPaymentOpen(false)} color="inherit">Cancel</Button>
+    <Button variant="contained" onClick={handlePaymentSubmit}>
+      Submit Payment
+    </Button>
+  </DialogActions>
+</Dialog>
+
+
+ {/* Utility Bills */}
+<Grid item xs={12} md={4}>
+  <Card sx={cardStyle}>
+    <CardContent sx={{ p: 3 }}>
+      <Box display="flex" alignItems="center" mb={2}>
+        <Avatar sx={{ bgcolor: theme.palette.info.main, mr: 2 }}>
+          <PaymentsIcon />
+        </Avatar>
+        <Typography variant="h6" fontWeight={600}>Current Bills</Typography>
+      </Box>
+      <Box height={170}>
+        <ResponsiveContainer>
+          <BarChart data={billData}>
+            <XAxis dataKey="name" />
+            <Tooltip />
+            <Bar dataKey="amount" fill={theme.palette.info.main} barSize={30} />
+          </BarChart>
+        </ResponsiveContainer>
+      </Box>
+      <Button
+        variant="outlined"
+        size="small"
+        fullWidth
+        sx={{ mt: 2 }}
+        onClick={() => setBillOpen(true)}
+      >
+        View Details
+      </Button>
+    </CardContent>
+  </Card>
+</Grid>
+
+{/* Utility Bill Modal */}
+<Dialog open={billOpen} onClose={() => setBillOpen(false)} fullWidth maxWidth="sm">
+  <DialogTitle fontWeight="bold" color="info.main">
+    Utility Bill Details
+  </DialogTitle>
+  <DialogContent dividers>
+    <Grid container spacing={2}>
+      {allBills.map((bill, index) => {
+        const remaining = bill.amountDue - bill.paid;
+        return (
+          <Grid item xs={12} key={index}>
+            <Box p={2} borderRadius={2} border="1px solid #e0e0e0">
+              <Typography variant="subtitle1" fontWeight="bold" color="primary">
+                {bill.name}
+              </Typography>
+              <Typography variant="body2">
+                Amount Due: <b>USD {bill.amountDue.toLocaleString()}</b>
+              </Typography>
+              <Typography variant="body2">
+                Paid: <b style={{ color: 'green' }}>USD {bill.paid.toLocaleString()}</b>
+              </Typography>
+              <Typography variant="body2">
+                Remaining: <b style={{ color: remaining > 0 ? 'red' : 'green' }}>
+                  USD {remaining.toLocaleString()}
+                </b>
+              </Typography>
+            </Box>
+          </Grid>
+        );
+      })}
+    </Grid>
+  </DialogContent>
+  <DialogActions sx={{ px: 3, pb: 2 }}>
+    <Button onClick={() => setBillOpen(false)} color="inherit">Close</Button>
+  </DialogActions>
+</Dialog>
+
+
+{/* Activity Log */}
+<Grid item xs={12}>
+  <Card sx={{ ...cardStyle, p: 3 }}>
+    <CardContent>
+      <Box display="flex" alignItems="center" mb={2}>
+        <Avatar sx={{ bgcolor: theme.palette.warning.main, mr: 2 }}>
+          <UpdateIcon />
+        </Avatar>
+        <Typography variant="h6" fontWeight={600}>Recent Activity Log</Typography>
+      </Box>
+
+      <Stack spacing={2} mt={1}>
+        {activityLogs.map((item, index) => (
+          <Box
+            key={index}
+            onClick={() => setSelectedActivity(item)}
+            sx={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 2,
+              p: 2,
+              borderRadius: 2,
+              bgcolor: index % 2 === 0 ? '#fdfaf5' : '#f9f9f9',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+              cursor: 'pointer',
+              transition: '0.2s',
+              '&:hover': {
+                backgroundColor: '#fff8e1',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+              }
+            }}
+          >
+            <Avatar
+              sx={{
+                width: 30,
+                height: 30,
+                bgcolor: item.type === 'success' ? 'success.main' : 'error.main'
+              }}
+            >
+              <UpdateIcon fontSize="small" />
+            </Avatar>
+            <Box>
+              <Typography variant="body2" fontWeight="500">{item.action}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                {item.time}
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+      </Stack>
+    </CardContent>
+  </Card>
+</Grid>
+
+
+        {/* Recent Properties */}
+        <Grid item xs={12}>
+          <BookProperty properties={recentProperties} />
         </Grid>
 
-        {/* Rent Chart & Bills */}
-        <Grid item xs={12} md={6} lg={4}>
-          <Card elevation={3}>
-            <CardHeader
-              avatar={<Avatar sx={{ bgcolor: theme.palette.secondary.main }}><Payments /></Avatar>}
-              title="Rent Overview"
-              titleTypographyProps={{ fontWeight: 'bold' }}
-            />
-            <Divider />
-            <CardContent>
-              <Typography variant="body2" color="textSecondary">Last Payment: KES 35,000 (June)</Typography>
-              <Typography variant="body2">Next Due: KES 35,000 (July)</Typography>
-              <Typography variant="body2">Water: KES 1,200 | Electricity: KES 3,000</Typography>
-              <Box mt={2}>
-                <ResponsiveContainer width="100%" height={120}>
-                  <LineChart data={paymentData}>
-                    <Line type="monotone" dataKey="amount" stroke={theme.palette.primary.main} strokeWidth={2} />
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis hide />
-                    <Tooltip />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Box>
-              <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>Pay Now</Button>
-            </CardContent>
-          </Card>
+        {/* Book Repair */}
+        <Grid item xs={12}>
+          <BookRepair />
         </Grid>
 
-        {/* Contact Info */}
-        <Grid item xs={12} md={6} lg={4}>
-          <Card elevation={3}>
-            <CardHeader
-              avatar={<Avatar sx={{ bgcolor: theme.palette.warning.main }}><SupportAgent /></Avatar>}
-              title="Support Contacts"
-              titleTypographyProps={{ fontWeight: 'bold' }}
-            />
-            <Divider />
-            <CardContent>
-              <Typography variant="body2">Admin: support@moovin.co.ke</Typography>
-              <Typography variant="body2">Landlord: Mr. Kamau</Typography>
-              <Typography variant="body2">Phone: +254 712 345 678</Typography>
-              <Button variant="outlined" color="secondary" fullWidth sx={{ mt: 2 }}>Message Landlord</Button>
-            </CardContent>
-          </Card>
-        </Grid>
+        {/* Track Repair Requests */}
+          <TrackRepair />
+          {/* Help & Support Panel */}
+<Grid item xs={12}>
+  <Paper
+    elevation={4}
+    sx={{
+      ...cardStyle,
+      p: 4,
+      borderLeft: `5px solid ${theme.palette.secondary.main}`,
+      borderRadius: 3,
+      backgroundColor: '#fff',
+      position: 'relative',
+      overflow: 'hidden'
+    }}
+  >
+    <Box display="flex" alignItems="center" mb={3}>
+      <Avatar sx={{ bgcolor: theme.palette.secondary.main, mr: 2 }}>
+        <SupportAgentIcon />
+      </Avatar>
+      <Box>
+        <Typography variant="h6" fontWeight={700}>
+          Need Help?
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Reach out to our support team or landlord
+        </Typography>
+      </Box>
+    </Box>
 
-        {/* Repairs */}
-        <Grid item xs={12} md={6} lg={4}>
-          <Card elevation={3}>
-            <CardHeader
-              avatar={<Avatar sx={{ bgcolor: theme.palette.error.main }}><Construction /></Avatar>}
-              title="Repair Requests"
-              titleTypographyProps={{ fontWeight: 'bold' }}
-            />
-            <Divider />
-            <CardContent>
-              <Typography variant="body2">• Bathroom leaking - <Chip label="Pending" color="warning" size="small" /></Typography>
-              <Typography variant="body2" mt={1}>• Kitchen lights - <Chip label="Completed" color="success" size="small" /></Typography>
-              <Button variant="outlined" color="primary" fullWidth sx={{ mt: 2 }}>Book a Repair</Button>
-            </CardContent>
-          </Card>
-        </Grid>
+    <Stack spacing={1.5} mt={2}>
+      <Box display="flex" alignItems="center">
+        <SupportAgentIcon fontSize="small" color="secondary" sx={{ mr: 1 }} />
+        <Typography variant="body2">
+          Admin Email: <b>support@moovin.co.ke</b>
+        </Typography>
+      </Box>
+      <Box display="flex" alignItems="center">
+        <Typography variant="body2" sx={{ fontWeight: 500, mr: 1 }}>Landlord:</Typography>
+        <Typography variant="body2"><b>Mr. Kamau</b></Typography>
+      </Box>
+      <Box display="flex" alignItems="center">
+        <Typography variant="body2" sx={{ fontWeight: 500, mr: 1 }}>Phone:</Typography>
+        <Typography variant="body2"><b>+254 712 345 678</b></Typography>
+      </Box>
+    </Stack>
 
-        {/* Reward / Early Payment */}
-        <Grid item xs={12} md={6} lg={4}>
-          <Card elevation={3}>
-            <CardHeader
-              avatar={<Avatar sx={{ bgcolor: theme.palette.success.dark }}><EmojiEvents /></Avatar>}
-              title="Early Bird Reward"
-              titleTypographyProps={{ fontWeight: 'bold' }}
-            />
-            <Divider />
-            <CardContent>
-              <Typography variant="body2">🎉 Congratulations! You paid rent early 3 months in a row.</Typography>
-              <Typography variant="body2" mt={1}>You qualify for a 5% discount next month.</Typography>
-              <Chip icon={<CheckCircle />} label="Reward Active" color="success" size="small" sx={{ mt: 2 }} />
-            </CardContent>
-          </Card>
-        </Grid>
+    <Divider sx={{ my: 3 }} />
+
+    <Box display="flex" justifyContent="flex-end">
+      <Button
+        variant="contained"
+        color="secondary"
+        sx={{ textTransform: 'none', borderRadius: 2, px: 3 }}
+        startIcon={<SupportAgentIcon />}
+      >
+        Contact Support
+      </Button>
+    </Box>
+  </Paper>
+</Grid>
+
       </Grid>
     </Box>
   );
 };
 
 export default TenantDashboard;
+
