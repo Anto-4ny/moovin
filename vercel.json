@@ -36,8 +36,8 @@
       "dest": "/backend/backend/wsgi.py"
     },
     {
-      "src": "/([a-zA-Z0-9-_]+)",
-      "has": [{ "type": "header", "key": "accept", "value": "text/html" }],
+      "src": "^/([a-zA-Z0-9\\-_]+)$",
+      "headers": { "x-matched-path": "/public/$1.html" },
       "dest": "/public/$1.html"
     },
     {
@@ -46,4 +46,5 @@
     }
   ]
 }
+
 
