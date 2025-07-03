@@ -53,7 +53,7 @@ const Login = () => {
                   </Grid>
                   <Grid item>
                     <RouterLink to="/">
-                      <img alt="Moovin Logo" src={Logo} height="32" />
+                      <img alt="Moovin Logo" src={Logo} height="54" width="54" />
                     </RouterLink>
                   </Grid>
                 </Grid>

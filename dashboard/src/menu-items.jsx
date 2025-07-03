@@ -146,6 +146,30 @@ const adminPages = [
     url: '/dashboard/admin',
     iconColor: 'blue'
   },
+    {
+    id: 'resolve-issues',
+    title: 'Resolve Issues',
+    type: 'item',
+    icon: icons.HomeWorkOutlinedIcon,
+    url: '/resolve-issues',
+    iconColor: 'red'
+  },
+  {
+    id: 'delete-user',
+    title: 'Delete User',
+    type: 'item',
+    icon: icons.BuildOutlinedIcon,
+    url: '/delete-user',
+    iconColor: 'blue'
+  },
+  {
+    id: 'delete-property',
+    title: 'Delete Property',
+    type: 'item',
+    icon: icons.TrackChangesOutlinedIcon,
+    url: '/delete-property',
+    iconColor: 'green'
+  },
   ...landlordPages,
   ...tenantPages
 ];

@@ -15,6 +15,9 @@ import axios from 'axios';
 import {
   LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer
 } from 'recharts';
+import DeleteProperty from '../Admin/DeleteProperty';
+import ResolveIssues from '../Admin/ResolveIssues';
+import DeleteUser from '../Admin/DeleteUser';
 
 const StatCard = ({ title, icon, value, bg }) => (
   <Paper elevation={3} sx={{
@@ -50,7 +53,7 @@ export default function AdminDashboard() {
   return (
     <Box p={4}>
       <Typography variant="h4" mb={3} fontWeight={700} color={indigo[900]}>
-        Welcome, Admin 👋
+        Welcome, Admin 
       </Typography>
 
       <Grid container spacing={3}>
@@ -94,6 +97,7 @@ export default function AdminDashboard() {
         </Paper>
       </Box>
 
+  {/* Admin Controls */}
       <Box mt={4}>
         <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
           <Typography variant="h6" gutterBottom color={indigo[800]}>
@@ -103,21 +107,27 @@ export default function AdminDashboard() {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={4}>
               <Typography variant="subtitle1">➤ Manage Tenants</Typography>
+              <DeleteUser />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <Typography variant="subtitle1">➤ Manage Landlords</Typography>
+              <DeleteUser />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <Typography variant="subtitle1">➤ Approve / Remove Properties</Typography>
+              <DeleteProperty />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <Typography variant="subtitle1">➤ Resolve Reported Issues</Typography>
+              <ResolveIssues />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <Typography variant="subtitle1">➤ Track Payments</Typography>
+              <Typography variant="body2">[Payments integration pending]</Typography>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <Typography variant="subtitle1">➤ Generate Reports</Typography>
+              <Typography variant="body2">[Export / Download tools here]</Typography>
             </Grid>
           </Grid>
         </Paper>

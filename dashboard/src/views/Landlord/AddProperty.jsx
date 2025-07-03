@@ -1,27 +1,14 @@
 import React, { useState } from 'react';
 import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Grid,
-  Card,
-  CardContent,
-  Snackbar,
-  Alert,
-  InputLabel,
-  MenuItem
+  Box, Typography, TextField, Button, Grid, Card, CardContent,
+  Snackbar, Alert, InputLabel, MenuItem, Select, FormControl,
+  Switch, FormControlLabel
 } from '@mui/material';
 import axios from 'axios';
 
 const categories = [
-  'Apartment',
-  'Bedsitter',
-  'Single Room',
-  'Hostel',
-  'Bungalow',
-  'Maisonette',
-  'Studio'
+  'Apartment', 'Bedsitter', 'Single Room', 'Hostel',
+  'Bungalow', 'Maisonette', 'Studio', 'Office', 'Villa', 'Shop', 'House'
 ];
 
 const AddProperty = () => {
@@ -31,7 +18,12 @@ const AddProperty = () => {
     rent: '',
     category: '',
     description: '',
-    images: []
+    images: [],
+    size: '',
+    beds: '',
+    baths: '',
+    status: 'rent',
+    featured: false
   });
 
   const [previews, setPreviews] = useState([]);
@@ -42,38 +34,75 @@ const AddProperty = () => {
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleToggle = (e) => {
+    setForm(prev => ({ ...prev, featured: e.target.checked }));
+  };
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setForm(prev => ({ ...prev, images: files }));
     setPreviews(files.map(file => URL.createObjectURL(file)));
   };
 
-  const handleSubmit = async () => {
-    const { name, location, rent, category, description, images } = form;
-    if (!name || !location || !rent || !category || !description || images.length === 0) {
-      setSnack({ open: true, message: 'Please fill all fields and upload images.', severity: 'warning' });
-      return;
-    }
+ const handleSubmit = async () => {
+  const {
+    name, location, rent, category, description,
+    images, size, beds, baths, status, featured
+  } = form;
 
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('location', location);
-    formData.append('rent', rent);
-    formData.append('category', category);
-    formData.append('description', description);
-    images.forEach((img, i) => formData.append('images', img));
+  if (!name || !location || !rent || !category || !description || !size || !beds || !baths || images.length === 0) {
+    setSnack({ open: true, message: 'Please fill all fields and upload at least one image.', severity: 'warning' });
+    return;
+  }
 
-    try {
-      await axios.post('/api/properties/add', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setSnack({ open: true, message: 'Property posted successfully.', severity: 'success' });
-      setForm({ name: '', location: '', rent: '', category: '', description: '', images: [] });
-      setPreviews([]);
-    } catch {
-      setSnack({ open: true, message: 'Failed to add property.', severity: 'error' });
-    }
-  };
+  const token = localStorage.getItem('token');
+  if (!token) {
+    setSnack({ open: true, message: 'Login required to post property.', severity: 'error' });
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('location', location);
+  formData.append('rent', rent);
+  formData.append('category', category);
+  formData.append('description', description);
+  formData.append('size', size);
+  formData.append('beds', beds);
+  formData.append('baths', baths);
+  formData.append('status', status);
+  formData.append('featured', featured);
+
+  // ✅ Append multiple images using the key "uploaded_images"
+  images.forEach((img) => formData.append('uploaded_images', img));
+
+  try {
+    await axios.post('http://localhost:8000/api/properties/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Token ${token}`
+      }
+    });
+
+    setSnack({ open: true, message: 'Property posted successfully.', severity: 'success' });
+
+    // Reset form
+    setForm({
+      name: '', location: '', rent: '', category: '',
+      description: '', images: [], size: '', beds: '',
+      baths: '', status: 'rent', featured: false
+    });
+    setPreviews([]);
+  } catch (error) {
+    console.error('Submission error:', error.response?.data || error.message);
+    const message = error.response?.data?.detail || 
+                    (typeof error.response?.data === 'object'
+                      ? Object.values(error.response.data).flat().join(', ')
+                      : 'Failed to add property.');
+    setSnack({ open: true, message, severity: 'error' });
+  }
+};
+
 
   return (
     <Box p={4}>
@@ -83,56 +112,55 @@ const AddProperty = () => {
             Add New Property
           </Typography>
           <Typography variant="body2" color="textSecondary" mb={3}>
-            List a property with basic details and images.
+            List a property with all relevant details and an image.
           </Typography>
 
           <Grid container spacing={3}>
+            {/* Input Fields */}
+            {[
+              { label: 'Property Name', name: 'name' },
+              { label: 'Location', name: 'location' },
+              { label: 'Rent (USD)', name: 'rent', type: 'number' },
+              { label: 'Size (Sqm)', name: 'size', type: 'number' },
+              { label: 'Bedrooms', name: 'beds', type: 'number' },
+              { label: 'Bathrooms', name: 'baths', type: 'number' }
+            ].map(({ label, name, type = 'text' }) => (
+              <Grid key={name} item xs={12} sm={6}>
+                <TextField
+                  label={label}
+                  name={name}
+                  type={type}
+                  fullWidth
+                  value={form[name]}
+                  onChange={handleChange}
+                />
+              </Grid>
+            ))}
+
+            {/* Category Select */}
             <Grid item xs={12} sm={6}>
-              <TextField
-                label="Property Name"
-                name="name"
-                fullWidth
-                value={form.name}
-                onChange={handleChange}
-              />
+              <FormControl fullWidth>
+                <InputLabel>Category</InputLabel>
+                <Select name="category" value={form.category} onChange={handleChange}>
+                  {categories.map((option, index) => (
+                    <MenuItem key={index} value={option}>{option}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
 
+            {/* Status Select */}
             <Grid item xs={12} sm={6}>
-              <TextField
-                label="Location"
-                name="location"
-                fullWidth
-                value={form.location}
-                onChange={handleChange}
-              />
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select name="status" value={form.status} onChange={handleChange}>
+                  <MenuItem value="rent">For Rent</MenuItem>
+                  <MenuItem value="sale">For Sale</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Rent (KES)"
-                name="rent"
-                type="number"
-                fullWidth
-                value={form.rent}
-                onChange={handleChange}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Category"
-                name="category"
-                select
-                fullWidth
-                value={form.category}
-                onChange={handleChange}
-              >
-                {categories.map((option, index) => (
-                  <MenuItem key={index} value={option}>{option}</MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-
+            {/* Description */}
             <Grid item xs={12}>
               <TextField
                 label="Description"
@@ -145,11 +173,18 @@ const AddProperty = () => {
               />
             </Grid>
 
+            {/* Image Upload */}
             <Grid item xs={12}>
-              <InputLabel>Upload Property Images</InputLabel>
+              <InputLabel>Upload Property Image</InputLabel><br />
               <Button variant="contained" component="label">
-                Select Images
-                <input type="file" hidden multiple accept="image/*" onChange={handleFileChange} />
+                Select Image(s)
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileChange}
+                />
               </Button>
               <Box display="flex" gap={2} mt={2} flexWrap="wrap">
                 {previews.map((src, index) => (
@@ -158,6 +193,15 @@ const AddProperty = () => {
               </Box>
             </Grid>
 
+            {/* Featured Switch */}
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={<Switch checked={form.featured} onChange={handleToggle} color="primary" />}
+                label="Mark as Featured"
+              />
+            </Grid>
+
+            {/* Submit */}
             <Grid item xs={12}>
               <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>
                 Submit Property
@@ -167,6 +211,7 @@ const AddProperty = () => {
         </CardContent>
       </Card>
 
+      {/* Snackbar */}
       <Snackbar
         open={snack.open}
         autoHideDuration={6000}

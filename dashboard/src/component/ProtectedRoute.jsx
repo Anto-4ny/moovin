@@ -17,7 +17,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     }
 
     // Validate token with backend
-    fetch('http://localhost:8000/api/auth/users/me/', {
+    fetch('http://localhost:8000/api/users/me/', {
       headers: {
         Authorization: `Token ${token}`
       }

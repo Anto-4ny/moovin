@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite dev server
+    "http://localhost:3000",
 ]
 
 
@@ -142,6 +143,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 DJOSER = {
     'USER_ID_FIELD': 'id',

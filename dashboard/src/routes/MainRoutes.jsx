@@ -15,6 +15,11 @@ const AdminDashboard = Loadable(lazy(() => import('views/Dashboard/AdminDashboar
 const TenantDashboard = Loadable(lazy(() => import('views/Dashboard/TenantDashboard')));
 const LandlordDashboard = Loadable(lazy(() => import('views/Dashboard/LandlordDashboard')));
 
+//Admin specific pages
+const DeleteProperty = Loadable(lazy(() => import('views/Admin/DeleteProperty')));
+const DeleteUser = Loadable(lazy(() => import('views/Admin/DeleteUser')));
+const ResolveIssues = Loadable(lazy(() => import('views/Admin/ResolveIssues')));
+
 // Tenant-specific
 const BookProperty = Loadable(lazy(() => import('views/Tenant/BookProperty')));
 const BookRepair = Loadable(lazy(() => import('views/Tenant/BookRepair')));
@@ -45,6 +50,30 @@ const MainRoutes = [
         element: (
           <ProtectedRoute allowedRoles={['admin']}>
             <AdminDashboard />
+          </ProtectedRoute>
+        )
+      },
+            {
+        path: '/resolve-issues',
+        element: (
+          <ProtectedRoute allowedRoles={['admin']}>
+            <ResolveIssues />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/delete-user',
+        element: (
+          <ProtectedRoute allowedRoles={['admin']}>
+            <DeleteUser />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/delete-property',
+        element: (
+          <ProtectedRoute allowedRoles={['admin']}>
+            <DeleteProperty />
           </ProtectedRoute>
         )
       },
@@ -109,7 +138,7 @@ const MainRoutes = [
         )
       },
       {
-        path: '/edit-property/:id',
+        path: '/edit-property/',
         element: (
           <ProtectedRoute allowedRoles={['landlord', 'admin']}>
             <EditProperty />

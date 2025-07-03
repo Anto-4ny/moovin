@@ -47,7 +47,7 @@ const Register = () => {
                   </Grid>
                   <Grid item>
                     <RouterLink to="/">
-                      <img alt="Auth method" src={Logo} style={{ maxHeight: 40 }} />
+                      <img alt="Auth method" src={Logo} style={{ maxHeight: 54 }} />
                     </RouterLink>
                   </Grid>
                 </Grid>

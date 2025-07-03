@@ -89,7 +89,7 @@ const AuthRegister = ({ ...rest }) => {
         onSubmit={async (values, { setErrors, setSubmitting }) => {
           try {
             // Step 1: Register user
-            const response = await axios.post('http://localhost:8000/api/auth/users/', {
+            const response = await axios.post('http://localhost:8000/api/users/', {
               username: values.username,
               email: values.email,
               password: values.password,
@@ -99,7 +99,7 @@ const AuthRegister = ({ ...rest }) => {
             console.log('✅ Registered:', response.data);
 
             // Step 2: Log in immediately
-            const loginRes = await axios.post('http://localhost:8000/api/auth/token/login/', {
+            const loginRes = await axios.post('http://localhost:8000/api/token/login/', {
               email: values.email,
               password: values.password
             });

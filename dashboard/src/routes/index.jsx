@@ -15,11 +15,11 @@ export default function ThemeRoutes() {
     console.log('🧾 Logged in as:', role || 'None', '| token:', token || 'None');
 
     if (!token || !role) {
-      setAuthChecked(true); // Allow routing (for public pages)
+      setAuthChecked(true); 
       return;
     }
 
-    fetch('http://localhost:8000/api/auth/users/me/', {
+    fetch('http://localhost:8000/api/users/me/', {
       headers: {
         Authorization: `Token ${token}`
       }
@@ -28,7 +28,7 @@ export default function ThemeRoutes() {
         if (!res.ok) {
           console.warn('⛔ Invalid or expired token — clearing localStorage and redirecting');
           localStorage.clear();
-          navigate('/login', { replace: true });
+          navigate('/', { replace: true });
         }
         setAuthChecked(true);
       })

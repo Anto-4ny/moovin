@@ -31,7 +31,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Google from 'assets/images/social-google.svg';
 
-const BACKEND_URL = 'http://localhost:8000/api/auth/token/login/';
+const BACKEND_URL = 'http://localhost:8000/api/token/login/';
 
 const AuthLogin = ({ ...rest }) => {
   const theme = useTheme();
@@ -46,7 +46,7 @@ useEffect(() => {
 
   if (token && savedRole) {
     // Validate token with backend
-    fetch('http://localhost:8000/api/auth/users/me/', {
+    fetch('http://localhost:8000/api/users/me/', {
       headers: {
         Authorization: `Token ${token}`
       }
