@@ -5,6 +5,7 @@ import ProtectedRoute from '../component/ProtectedRoute';
 import MainLayout from 'layout/MainLayout';
 import MinimalLayout from 'layout/MinimalLayout';
 import Loadable from 'component/Loadable';
+import PaymentPage from 'component/PaymentPage';
 
 // Auth pages
 const AuthLogin = Loadable(lazy(() => import('../views/Login')));
@@ -111,6 +112,14 @@ const MainRoutes = [
           </ProtectedRoute>
         )
       },
+      {
+        path: '/payment/:id',
+        element: (
+          <ProtectedRoute allowedRoles={['tenant', 'admin']}>
+            <PaymentPage />
+          </ProtectedRoute>
+        )
+      },
 
       // Landlord Dashboard + Features
       {
@@ -138,7 +147,7 @@ const MainRoutes = [
         )
       },
       {
-        path: '/edit-property/',
+        path: '/edit-property/:id',
         element: (
           <ProtectedRoute allowedRoles={['landlord', 'admin']}>
             <EditProperty />

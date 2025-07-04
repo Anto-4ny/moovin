@@ -13,12 +13,12 @@ class User(AbstractUser):
         ('landlord', 'Landlord'),
     )
 
-    username = models.CharField(max_length=150, blank=True, null=True)  # Allow null in DB too
+    username = models.CharField(max_length=150, blank=True, null=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=USER_ROLES)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []  # No username needed in create_superuser
+    REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
@@ -60,6 +60,7 @@ class Property(models.Model):
     baths = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='rent')
     featured = models.BooleanField(default=False)
+    is_booked = models.BooleanField(default=False)  # ✅ New field
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -75,3 +76,22 @@ class PropertyImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.property.name}"
+
+
+# -------------------------
+# Booking Model (Links Tenant with Property and Landlord)
+# -------------------------
+class Booking(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('paid', 'Paid')
+    ]
+
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='bookings')
+    buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bookings')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_bookings')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Booking by {self.buyer.email} for {self.property.name}"

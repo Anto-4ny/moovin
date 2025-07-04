@@ -62,7 +62,7 @@ useEffect(() => {
     })
     .catch(() => {
       localStorage.clear();
-      navigate('/login');
+      navigate('/');
     });
   }
 }, [navigate]);

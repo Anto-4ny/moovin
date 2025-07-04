@@ -1,6 +1,6 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer, TokenCreateSerializer
 from rest_framework import serializers
-from .models import User, Property, PropertyImage
+from .models import User, Property, PropertyImage, Booking
 
 # -------------------------
 # User Serializers
@@ -51,3 +51,21 @@ class PropertySerializer(serializers.ModelSerializer):
         for image in uploaded_images:
             PropertyImage.objects.create(property=property_instance, image=image)
         return property_instance
+
+
+# -------------------------
+# Booking Serializer
+# -------------------------
+
+class BookingSerializer(serializers.ModelSerializer):
+    property_name = serializers.CharField(source='property.name', read_only=True)
+    landlord_email = serializers.EmailField(source='owner.email', read_only=True)
+    tenant_email = serializers.EmailField(source='buyer.email', read_only=True)
+
+    class Meta:
+        model = Booking
+        fields = [
+            'id', 'property', 'property_name', 'buyer', 'tenant_email',
+            'owner', 'landlord_email', 'status', 'created_at'
+        ]
+        read_only_fields = ['buyer', 'owner', 'created_at', 'tenant_email', 'landlord_email']
