@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .managers import CustomUserManager
 from django.conf import settings
+from django.utils import timezone
 
 # -------------------------
 # Custom User Model
@@ -60,7 +61,7 @@ class Property(models.Model):
     baths = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='rent')
     featured = models.BooleanField(default=False)
-    is_booked = models.BooleanField(default=False)  # ✅ New field
+    is_booked = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -68,7 +69,7 @@ class Property(models.Model):
 
 
 # -------------------------
-# Property Image Model (Multiple images per property)
+# Property Image Model
 # -------------------------
 class PropertyImage(models.Model):
     property = models.ForeignKey(Property, related_name='images', on_delete=models.CASCADE)
@@ -79,7 +80,7 @@ class PropertyImage(models.Model):
 
 
 # -------------------------
-# Booking Model (Links Tenant with Property and Landlord)
+# Booking Model
 # -------------------------
 class Booking(models.Model):
     STATUS_CHOICES = [
@@ -87,11 +88,71 @@ class Booking(models.Model):
         ('paid', 'Paid')
     ]
 
+    BOOKING_TYPE_CHOICES = [
+        ('rent', 'Rent'),
+        ('buy', 'Buy')
+    ]
+
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='bookings')
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bookings')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_bookings')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    booking_type = models.CharField(max_length=10, choices=BOOKING_TYPE_CHOICES, default='rent')
+    payment_method = models.CharField(max_length=50, default='Card')
     created_at = models.DateTimeField(auto_now_add=True)
+    is_sold = models.BooleanField(default=False)
+    is_rented = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Booking by {self.buyer.email} for {self.property.name}"
+        return f"{self.booking_type.title()} by {self.buyer.email} for {self.property.name}"
+
+
+# -------------------------
+# Notification Model
+# -------------------------
+class Notification(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+    message = models.TextField()
+    link = models.URLField(blank=True, null=True)
+    notification_type = models.CharField(
+        max_length=50,
+        choices=[
+            ('booking', 'Booking'),
+            ('payment', 'Payment'),
+            ('alert', 'Alert'),
+            ('info', 'Information'),
+            ('system', 'System'),
+        ],
+        default='info'
+    )
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"To {self.user.email}: {self.message[:50]}"
+
+
+# -------------------------
+# ✅ Payment Model (Now Fixed and Ready)
+# -------------------------
+class Payment(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    property = models.ForeignKey('Property', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField(default=timezone.now)
+    time = models.TimeField(default=timezone.now)
+    months = models.JSONField()  # expects list like ["July", "August"]
+    cardNumber = models.CharField(max_length=20)
+    cvv = models.CharField(max_length=5)
+    expiry = models.CharField(max_length=7)
+
+    def __str__(self):
+        return f"Payment of ${self.amount} by {self.user.email}"
+

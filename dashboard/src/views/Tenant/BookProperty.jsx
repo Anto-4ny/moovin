@@ -14,14 +14,16 @@ const BookProperty = () => {
   const [favorites, setFavorites] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const navigate = useNavigate(); // ✅ for redirection to payment
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/properties/')
       .then(res => {
         setProperties(res.data || []);
       })
-      .catch(() => setSnack({ open: true, message: 'Failed to load properties.', severity: 'error' }));
+      .catch(() =>
+        setSnack({ open: true, message: 'Failed to load properties.', severity: 'error' })
+      );
   }, []);
 
   const toggleFavorite = (propertyId) => {
@@ -40,7 +42,6 @@ const BookProperty = () => {
     setSelectedProperty(null);
   };
 
-  // ✅ Redirect to payment page
   const goToPayment = (propertyId) => {
     navigate(`/payment/${propertyId}`);
   };
@@ -94,18 +95,28 @@ const BookProperty = () => {
                   💰 {prop.status === 'sale' ? 'Price' : 'Rent'}: <strong>KES {prop.rent}</strong>
                 </Typography>
                 <Divider sx={{ my: 1 }} />
-                <Chip
-                  label={prop.status === 'sale' ? 'For Sale' : 'For Rent'}
-                  color={prop.status === 'sale' ? 'info' : 'success'}
-                  size="small"
-                />
+
+                <Box display="flex" gap={1} flexWrap="wrap">
+                  <Chip
+                    label={prop.status === 'sale' ? 'For Sale' : 'For Rent'}
+                    color={prop.status === 'sale' ? 'info' : 'success'}
+                    size="small"
+                  />
+                  {prop.is_booked && (
+                    <Chip
+                      label={prop.status === 'sale' ? 'Sold' : 'Rented'}
+                      color={prop.status === 'sale' ? 'error' : 'warning'}
+                      size="small"
+                    />
+                  )}
+                </Box>
 
                 <Button
                   variant="contained"
                   color="primary"
                   fullWidth
                   sx={{ mt: 2 }}
-                  onClick={() => goToPayment(prop.id)} // ✅ Go to payment page
+                  onClick={() => goToPayment(prop.id)}
                 >
                   {prop.status === 'sale' ? 'Buy Now' : 'Rent Now'}
                 </Button>
@@ -129,6 +140,21 @@ const BookProperty = () => {
             alt="Full"
             style={{ width: '100%', height: 250, objectFit: 'cover', borderRadius: 6, marginBottom: 16 }}
           />
+          <Box mb={2}>
+            <Chip
+              label={selectedProperty?.status === 'sale' ? 'For Sale' : 'For Rent'}
+              color={selectedProperty?.status === 'sale' ? 'info' : 'success'}
+              size="small"
+              sx={{ mr: 1 }}
+            />
+            {selectedProperty?.is_booked && (
+              <Chip
+                label={selectedProperty.status === 'sale' ? 'Sold' : 'Rented'}
+                color={selectedProperty.status === 'sale' ? 'error' : 'warning'}
+                size="small"
+              />
+            )}
+          </Box>
           <List dense>
             <ListItem>
               <ListItemText primary="Location" secondary={selectedProperty?.location} />

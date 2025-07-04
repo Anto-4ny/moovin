@@ -1,6 +1,6 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer, TokenCreateSerializer
 from rest_framework import serializers
-from .models import User, Property, PropertyImage, Booking
+from .models import User, Property, PropertyImage, Booking, Notification, Payment  # ✅ Include Payment
 
 # -------------------------
 # User Serializers
@@ -11,10 +11,12 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         model = User
         fields = ('id', 'username', 'email', 'password', 'role')
 
+
 class CustomUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         model = User
         fields = ('id', 'email', 'role')
+
 
 class CustomTokenCreateSerializer(TokenCreateSerializer):
     def validate(self, attrs):
@@ -22,6 +24,7 @@ class CustomTokenCreateSerializer(TokenCreateSerializer):
         user = self.user
         data['role'] = user.role
         return data
+
 
 # -------------------------
 # Property Serializers
@@ -31,6 +34,7 @@ class PropertyImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PropertyImage
         fields = ['id', 'image']
+
 
 class PropertySerializer(serializers.ModelSerializer):
     images = PropertyImageSerializer(many=True, read_only=True)
@@ -65,7 +69,38 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = [
-            'id', 'property', 'property_name', 'buyer', 'tenant_email',
-            'owner', 'landlord_email', 'status', 'created_at'
+            'id', 'property', 'property_name',
+            'buyer', 'tenant_email',
+            'owner', 'landlord_email',
+            'status', 'booking_type', 'payment_method',
+            'is_rented', 'is_sold', 'created_at',
         ]
-        read_only_fields = ['buyer', 'owner', 'created_at', 'tenant_email', 'landlord_email']
+        read_only_fields = [
+            'buyer', 'owner', 'created_at',
+            'tenant_email', 'landlord_email',
+            'is_rented', 'is_sold'
+        ]
+
+
+# -------------------------
+# Notification Serializer
+# -------------------------
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'
+        read_only_fields = ['created_at']
+
+
+# -------------------------
+# ✅ Payment Serializer
+# -------------------------
+
+class PaymentSerializer(serializers.ModelSerializer):
+    property_name = serializers.CharField(source='property.name', read_only=True)
+
+    class Meta:
+        model = Payment
+        fields = '__all__'
+        read_only_fields = ['user']

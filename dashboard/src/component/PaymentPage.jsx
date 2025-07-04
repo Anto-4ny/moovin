@@ -15,9 +15,10 @@ const PaymentPage = () => {
   useEffect(() => {
     axios.get(`http://localhost:8000/api/properties/${id}/`)
       .then(res => setProperty(res.data))
-      .catch(() =>
-        setSnack({ open: true, message: 'Failed to load property.', severity: 'error' })
-      );
+      .catch(err => {
+        console.error('Error loading property:', err);
+        setSnack({ open: true, message: 'Failed to load property.', severity: 'error' });
+      });
   }, [id]);
 
   const handleInput = (e) => {
@@ -32,11 +33,13 @@ const PaymentPage = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`http://localhost:8000/api/bookings/`, {
+      const payload = {
         property: id,
         payment_method: 'Card',
-        payment_status: 'Paid'
-      }, {
+        booking_type: property?.status === 'sale' ? 'buy' : 'rent'
+      };
+
+      const response = await axios.post(`http://localhost:8000/api/bookings/`, payload, {
         headers: {
           Authorization: `Token ${token}`
         }
@@ -44,9 +47,11 @@ const PaymentPage = () => {
 
       setSnack({ open: true, message: 'Payment successful. Booking confirmed!', severity: 'success' });
       setTimeout(() => navigate('/dashboard/tenant'), 3000);
+
     } catch (err) {
-      console.error(err);
-      setSnack({ open: true, message: 'Payment failed.', severity: 'error' });
+      console.error('Axios Error:', err);
+      console.error('Server Response:', err.response?.data);
+      setSnack({ open: true, message: 'Payment failed. See console for details.', severity: 'error' });
     }
   };
 
