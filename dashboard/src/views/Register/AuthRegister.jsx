@@ -5,22 +5,8 @@ import axios from 'axios';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
-  Box,
-  Button,
-  Divider,
-  FormHelperText,
-  Grid,
-  TextField,
-  Typography,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  IconButton,
-  FormControlLabel,
-  Checkbox,
-  RadioGroup,
-  Radio
+  Box, Button, Divider, FormHelperText, Grid, TextField, Typography, FormControl, InputLabel,
+  OutlinedInput, InputAdornment, IconButton, FormControlLabel, Checkbox, RadioGroup, Radio
 } from '@mui/material';
 
 // third party
@@ -76,15 +62,19 @@ const AuthRegister = ({ ...rest }) => {
 
       <Formik
         initialValues={{
-          email: '',
           username: '',
+          email: '',
           password: '',
+          full_name: '',
+          phone_number: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
           username: Yup.string().max(150).required('Username is required'),
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().min(6, 'Password must be at least 6 characters').max(255).required('Password is required')
+          password: Yup.string().min(6, 'Password must be at least 6 characters').max(255).required('Password is required'),
+          full_name: Yup.string().max(255).required('Full name is required'),
+          phone_number: Yup.string().matches(/^\+?\d{9,15}$/, 'Enter a valid phone number').required('Phone number is required')
         })}
         onSubmit={async (values, { setErrors, setSubmitting }) => {
           try {
@@ -93,7 +83,9 @@ const AuthRegister = ({ ...rest }) => {
               username: values.username,
               email: values.email,
               password: values.password,
-              role: role
+              role: role,
+              full_name: values.full_name,
+              phone_number: values.phone_number
             });
 
             console.log('✅ Registered:', response.data);
@@ -114,71 +106,86 @@ const AuthRegister = ({ ...rest }) => {
             }
           } catch (error) {
             const responseData = error?.response?.data;
-
             const errorObject = {
-              username: responseData?.username?.[0] || undefined,
-              email: responseData?.email?.[0] || undefined,
-              password: responseData?.password?.[0] || undefined,
-              submit: responseData?.non_field_errors?.[0] || error.message || 'Registration or login failed'
+              username: responseData?.username?.[0],
+              email: responseData?.email?.[0],
+              password: responseData?.password?.[0],
+              full_name: responseData?.full_name?.[0],
+              phone_number: responseData?.phone_number?.[0],
+              submit: responseData?.non_field_errors?.[0] || error.message
             };
 
             setErrors(errorObject);
-
             console.error('📛 Registration error:', responseData);
           } finally {
             setSubmitting(false);
           }
         }}
-
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...rest}>
             <TextField
-              error={Boolean(touched.username && errors.username)}
               fullWidth
-              helperText={touched.username && errors.username}
+              label="Full Name"
+              margin="normal"
+              name="full_name"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.full_name}
+              error={Boolean(touched.full_name && errors.full_name)}
+              helperText={touched.full_name && errors.full_name}
+            />
+
+            <TextField
+              fullWidth
+              label="Phone Number"
+              margin="normal"
+              name="phone_number"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.phone_number}
+              error={Boolean(touched.phone_number && errors.phone_number)}
+              helperText={touched.phone_number && errors.phone_number}
+            />
+
+            <TextField
+              fullWidth
               label="Username"
               margin="normal"
               name="username"
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.username}
-              variant="outlined"
+              error={Boolean(touched.username && errors.username)}
+              helperText={touched.username && errors.username}
             />
 
             <TextField
-              error={Boolean(touched.email && errors.email)}
               fullWidth
-              helperText={touched.email && errors.email}
               label="Email Address"
               margin="normal"
               name="email"
+              type="email"
               onBlur={handleBlur}
               onChange={handleChange}
-              type="email"
               value={values.email}
-              variant="outlined"
+              error={Boolean(touched.email && errors.email)}
+              helperText={touched.email && errors.email}
             />
 
-            <FormControl
-              fullWidth
-              error={Boolean(touched.password && errors.password)}
-              sx={{ mt: theme.spacing(3), mb: theme.spacing(1) }}
-              variant="outlined"
-            >
+            <FormControl fullWidth variant="outlined" sx={{ mt: theme.spacing(3), mb: theme.spacing(1) }}>
               <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password"
                 type={showPassword ? 'text' : 'password'}
-                value={values.password}
                 name="password"
+                value={values.password}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 label="Password"
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle password visibility"
                       onClick={handleClickShowPassword}
                       onMouseDown={handleMouseDownPassword}
                       edge="end"
@@ -188,6 +195,7 @@ const AuthRegister = ({ ...rest }) => {
                     </IconButton>
                   </InputAdornment>
                 }
+                error={Boolean(touched.password && errors.password)}
               />
               {touched.password && errors.password && (
                 <FormHelperText error>{errors.password}</FormHelperText>
@@ -197,12 +205,7 @@ const AuthRegister = ({ ...rest }) => {
             {/* Role Selection */}
             <Box mt={2}>
               <Typography variant="subtitle1">Register as:</Typography>
-              <RadioGroup
-                row
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                name="role"
-              >
+              <RadioGroup row value={role} onChange={(e) => setRole(e.target.value)} name="role">
                 <FormControlLabel value="tenant" control={<Radio />} label="Tenant" />
                 <FormControlLabel value="landlord" control={<Radio />} label="Landlord" />
                 <FormControlLabel value="admin" control={<Radio />} label="Admin" />
@@ -248,4 +251,3 @@ const AuthRegister = ({ ...rest }) => {
 };
 
 export default AuthRegister;
-

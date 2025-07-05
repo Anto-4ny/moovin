@@ -14,6 +14,8 @@ const categories = [
 const AddProperty = () => {
   const [form, setForm] = useState({
     name: '',
+    full_name: '',
+    phone_number: '',
     location: '',
     rent: '',
     category: '',
@@ -44,65 +46,71 @@ const AddProperty = () => {
     setPreviews(files.map(file => URL.createObjectURL(file)));
   };
 
- const handleSubmit = async () => {
-  const {
-    name, location, rent, category, description,
-    images, size, beds, baths, status, featured
-  } = form;
+  const handleSubmit = async () => {
+    const {
+      name, full_name, phone_number, location, rent,
+      category, description, images, size, beds,
+      baths, status, featured
+    } = form;
 
-  if (!name || !location || !rent || !category || !description || !size || !beds || !baths || images.length === 0) {
-    setSnack({ open: true, message: 'Please fill all fields and upload at least one image.', severity: 'warning' });
-    return;
-  }
+    if (!name || !full_name || !phone_number || !location || !rent || !category || !description || !size || !beds || !baths || images.length === 0) {
+      setSnack({ open: true, message: 'Please fill all fields and upload at least one image.', severity: 'warning' });
+      return;
+    }
 
-  const token = localStorage.getItem('token');
-  if (!token) {
-    setSnack({ open: true, message: 'Login required to post property.', severity: 'error' });
-    return;
-  }
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setSnack({ open: true, message: 'Login required to post property.', severity: 'error' });
+      return;
+    }
 
-  const formData = new FormData();
-  formData.append('name', name);
-  formData.append('location', location);
-  formData.append('rent', rent);
-  formData.append('category', category);
-  formData.append('description', description);
-  formData.append('size', size);
-  formData.append('beds', beds);
-  formData.append('baths', baths);
-  formData.append('status', status);
-  formData.append('featured', featured);
+    try {
+      // ✅ 1. Update landlord profile with name and phone
+      await axios.patch('http://localhost:8000/api/users/me/', {
+        full_name,
+        phone_number
+      }, {
+        headers: { Authorization: `Token ${token}` }
+      });
 
-  // ✅ Append multiple images using the key "uploaded_images"
-  images.forEach((img) => formData.append('uploaded_images', img));
+      // ✅ 2. Submit property
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('location', location);
+      formData.append('rent', rent);
+      formData.append('category', category);
+      formData.append('description', description);
+      formData.append('size', size);
+      formData.append('beds', beds);
+      formData.append('baths', baths);
+      formData.append('status', status);
+      formData.append('featured', featured);
+      images.forEach((img) => formData.append('uploaded_images', img));
 
-  try {
-    await axios.post('http://localhost:8000/api/properties/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Token ${token}`
-      }
-    });
+      await axios.post('http://localhost:8000/api/properties/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Token ${token}`
+        }
+      });
 
-    setSnack({ open: true, message: 'Property posted successfully.', severity: 'success' });
+      setSnack({ open: true, message: 'Property posted successfully.', severity: 'success' });
 
-    // Reset form
-    setForm({
-      name: '', location: '', rent: '', category: '',
-      description: '', images: [], size: '', beds: '',
-      baths: '', status: 'rent', featured: false
-    });
-    setPreviews([]);
-  } catch (error) {
-    console.error('Submission error:', error.response?.data || error.message);
-    const message = error.response?.data?.detail || 
-                    (typeof error.response?.data === 'object'
-                      ? Object.values(error.response.data).flat().join(', ')
-                      : 'Failed to add property.');
-    setSnack({ open: true, message, severity: 'error' });
-  }
-};
-
+      // ✅ Reset form
+      setForm({
+        name: '', full_name: '', phone_number: '', location: '', rent: '', category: '',
+        description: '', images: [], size: '', beds: '', baths: '', status: 'rent', featured: false
+      });
+      setPreviews([]);
+    } catch (error) {
+      console.error('Submission error:', error.response?.data || error.message);
+      const message = error.response?.data?.detail ||
+        (typeof error.response?.data === 'object'
+          ? Object.values(error.response.data).flat().join(', ')
+          : 'Failed to add property.');
+      setSnack({ open: true, message, severity: 'error' });
+    }
+  };
 
   return (
     <Box p={4}>
@@ -112,15 +120,34 @@ const AddProperty = () => {
             Add New Property
           </Typography>
           <Typography variant="body2" color="textSecondary" mb={3}>
-            List a property with all relevant details and an image.
+            List a property with all relevant details and images.
           </Typography>
 
           <Grid container spacing={3}>
-            {/* Input Fields */}
-            {[
-              { label: 'Property Name', name: 'name' },
+            {/* Landlord Info */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Your Full Name"
+                name="full_name"
+                fullWidth
+                value={form.full_name}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Phone Number"
+                name="phone_number"
+                fullWidth
+                value={form.phone_number}
+                onChange={handleChange}
+              />
+            </Grid>
+
+            {/* Property Info */}
+            {[{ label: 'Property Name', name: 'name' },
               { label: 'Location', name: 'location' },
-              { label: 'Rent (USD)', name: 'rent', type: 'number' },
+              { label: 'Rent (KES)', name: 'rent', type: 'number' },
               { label: 'Size (Sqm)', name: 'size', type: 'number' },
               { label: 'Bedrooms', name: 'beds', type: 'number' },
               { label: 'Bathrooms', name: 'baths', type: 'number' }
@@ -137,7 +164,7 @@ const AddProperty = () => {
               </Grid>
             ))}
 
-            {/* Category Select */}
+            {/* Category & Status */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
@@ -148,8 +175,6 @@ const AddProperty = () => {
                 </Select>
               </FormControl>
             </Grid>
-
-            {/* Status Select */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Status</InputLabel>
@@ -193,7 +218,7 @@ const AddProperty = () => {
               </Box>
             </Grid>
 
-            {/* Featured Switch */}
+            {/* Featured */}
             <Grid item xs={12}>
               <FormControlLabel
                 control={<Switch checked={form.featured} onChange={handleToggle} color="primary" />}

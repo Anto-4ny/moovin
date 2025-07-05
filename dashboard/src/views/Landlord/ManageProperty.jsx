@@ -7,7 +7,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 const ManageProperty = () => {
+  const [userId, setUserId] = useState(null);
   const [properties, setProperties] = useState([]);
   const [snack, setSnack] = useState({ open: false, message: '', severity: 'success' });
   const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
@@ -16,10 +18,19 @@ const ManageProperty = () => {
   const fetchProperties = async () => {
     try {
       const token = localStorage.getItem('token');
+
+      // 1. Get the current user
+      const userRes = await axios.get('http://localhost:8000/api/users/me/', {
+        headers: { Authorization: `Token ${token}` }
+      });
+      setUserId(userRes.data.id);
+
+      // 2. Get all properties and filter for only this user's
       const res = await axios.get('http://localhost:8000/api/properties/', {
         headers: { Authorization: `Token ${token}` }
       });
-      setProperties(res.data);
+      const userProperties = res.data.filter(p => p.owner === userRes.data.id);
+      setProperties(userProperties);
     } catch (err) {
       setSnack({ open: true, message: 'Failed to load your properties.', severity: 'error' });
     }
@@ -37,7 +48,7 @@ const ManageProperty = () => {
       });
       setSnack({ open: true, message: 'Property deleted successfully.', severity: 'success' });
       setDeleteDialog({ open: false, id: null });
-      fetchProperties(); // Refresh
+      fetchProperties(); // Refresh list
     } catch (err) {
       setSnack({ open: true, message: 'Delete failed.', severity: 'error' });
     }

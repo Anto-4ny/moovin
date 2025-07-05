@@ -65,7 +65,7 @@ const PaymentPage = () => {
             <>
               <Typography variant="h6">{property.name}</Typography>
               <Typography variant="body1" color="textSecondary">{property.location}</Typography>
-              <Typography variant="body1" my={2}>Amount: <strong>KES {property.rent}</strong></Typography>
+              <Typography variant="body1" my={2}>Amount: <strong>AUD {property.rent}</strong></Typography>
 
               <TextField
                 fullWidth label="Card Number" name="number" onChange={handleInput}

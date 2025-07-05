@@ -1,17 +1,18 @@
+import AddProperty from '../Landlord/AddProperty';
+import EditProperty from '../Landlord/EditProperty';
+import ManageProperty from '../Landlord/ManageProperty';
+
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Typography, Grid, Paper, Avatar, Divider, Button
+  Box, Typography, Grid, Paper, Avatar, Divider, Button, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow
 } from '@mui/material';
 import {
-  MonetizationOn, Home, Build, ReportProblem, ListAlt, AddHomeWork, Edit
+  MonetizationOn, Home, Build, ReportProblem, ListAlt, AddHomeWork
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { green, teal, orange, red, indigo } from '@mui/material/colors';
-
-import AddProperty from '../Landlord/AddProperty';
-import EditProperty from '../Landlord/EditProperty';
-import ManageProperty from '../Landlord/ManageProperty';
 
 const StatCard = ({ title, value, icon, bg, onClick }) => (
   <Paper
@@ -49,47 +50,50 @@ const StatCard = ({ title, value, icon, bg, onClick }) => (
 
 export default function LandlordDashboard() {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({
-    earnings: 0,
-    totalProperties: 0,
-    maintenanceRequests: 0,
-    unresolvedComplaints: 0,
-  });
+  const [userId, setUserId] = useState(null);
+  const [properties, setProperties] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [payments, setPayments] = useState([]);
 
-useEffect(() => {
-  const fetchData = async () => {
+  useEffect(() => {
     const token = localStorage.getItem('token');
-
     if (!token) return;
 
-    try {
-      // Step 1: Get the current user
-      const userRes = await axios.get('http://localhost:8000/api/users/me/', {
-        headers: { Authorization: `Token ${token}` }
-      });
+    const fetchData = async () => {
+      try {
+        const userRes = await axios.get('http://localhost:8000/api/users/me/', {
+          headers: { Authorization: `Token ${token}` }
+        });
+        setUserId(userRes.data.id);
 
-      const userId = userRes.data.id; // now you have the user ID
+        const [propRes, bookRes, payRes] = await Promise.all([
+          axios.get('http://localhost:8000/api/properties/', {
+            headers: { Authorization: `Token ${token}` }
+          }),
+          axios.get('http://localhost:8000/api/bookings/', {
+            headers: { Authorization: `Token ${token}` }
+          }),
+          axios.get('http://localhost:8000/api/payments/', {
+            headers: { Authorization: `Token ${token}` }
+          })
+        ]);
 
-      // Step 2: Get all properties
-      const res = await axios.get('http://localhost:8000/api/properties/', {
-        headers: { Authorization: `Token ${token}` }
-      });
+        const myProps = propRes.data.filter(p => p.owner === userRes.data.id);
+        const myBookings = bookRes.data.filter(b => myProps.some(p => p.id === b.property));
+        const myPayments = payRes.data.filter(p => myProps.some(prop => prop.id === p.property));
 
-      // Step 3: Filter only properties by this user
-      const userProperties = res.data.filter(p => p.owner === userId);
+        setProperties(myProps);
+        setBookings(myBookings);
+        setPayments(myPayments);
+      } catch (err) {
+        console.error("Landlord dashboard error:", err);
+      }
+    };
 
-      setStats(prev => ({
-        ...prev,
-        totalProperties: userProperties.length
-      }));
-    } catch (err) {
-      console.error('Error fetching property stats:', err);
-    }
-  };
+    fetchData();
+  }, []);
 
-  fetchData();
-}, []);
-
+  const totalEarnings = payments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
 
   return (
     <Box p={4}>
@@ -97,48 +101,85 @@ useEffect(() => {
         Welcome, Landlord
       </Typography>
       <Typography variant="body1" mb={3}>
-        Manage your properties, respond to tenant needs, and track your earnings.
+        Monitor your properties, tenant activity and payment history.
       </Typography>
 
-      {/* STATISTICS */}
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Total Earnings"
-            value={`USD ${stats.earnings}`}
-            icon={<MonetizationOn />}
-            bg={green[600]}
-          />
+          <StatCard title="Total Earnings" value={`USD ${totalEarnings}`} icon={<MonetizationOn />} bg={green[600]} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Properties Listed"
-            value={stats.totalProperties}
-            icon={<Home />}
-            bg={teal[500]}
-            onClick={() => navigate('/manage-property')}
-          />
+          <StatCard title="Properties Listed" value={properties.length} icon={<Home />} bg={teal[500]} onClick={() => navigate('/manage-property')} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Repairs Requested"
-            value={stats.maintenanceRequests}
-            icon={<Build />}
-            bg={orange[600]}
-          />
+          <StatCard title="Bookings" value={bookings.length} icon={<ListAlt />} bg={orange[600]} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Unresolved Complaints"
-            value={stats.unresolvedComplaints}
-            icon={<ReportProblem />}
-            bg={red[500]}
-          />
+          <StatCard title="Payments" value={payments.length} icon={<ReportProblem />} bg={red[500]} />
         </Grid>
       </Grid>
 
-      {/* Add more sections here if needed */}
-            {/* ACTION SECTIONS */}
+      <Box mt={5}>
+        <Typography variant="h6" gutterBottom color={indigo[800]}>Bookings on Your Properties</Typography>
+        <TableContainer component={Paper} sx={{ mb: 4 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Property</TableCell>
+                <TableCell>Tenant</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Date</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {bookings.map((booking, index) => (
+                <TableRow key={index}>
+                  <TableCell>{booking.property_details?.name}</TableCell>
+                  <TableCell>
+                    {booking.buyer_details?.full_name || booking.buyer_details?.username} <br />
+                    ({booking.buyer_details?.phone_number || 'N/A'})
+                  </TableCell>
+                  <TableCell>{booking.booking_type}</TableCell>
+                  <TableCell>{booking.status}</TableCell>
+                  <TableCell>{new Date(booking.created_at).toLocaleDateString()}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Typography variant="h6" gutterBottom color={indigo[800]}>Tenant Payments</Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Property</TableCell>
+                <TableCell>Tenant</TableCell>
+                <TableCell>Months</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Date Paid</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {payments.map((p, index) => (
+                <TableRow key={index}>
+                  <TableCell>{p.property_name}</TableCell>
+                  
+                  <TableCell>
+                    {p.user_details?.full_name || p.user_details?.username} <br />
+                    ({p.user_details?.phone_number || 'N/A'})
+                  </TableCell>
+                  <TableCell>{(p.months || []).join(', ')}</TableCell>
+                  <TableCell>{p.amount}</TableCell>
+                  <TableCell>{new Date(p.date).toLocaleDateString()}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+
       <Box mt={5}>
         <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
           <Typography variant="h6" gutterBottom color={indigo[800]}>
@@ -147,11 +188,11 @@ useEffect(() => {
           <Divider sx={{ mb: 2 }} />
 
           <Grid item xs={12}>
-              <Button href="/manage-property" fullWidth variant="outlined" color="success" startIcon={<ListAlt />}>
-                Manage Properties
-              </Button>
-              <Box mt={2}><ManageProperty /></Box>
-            </Grid>
+            <Button href="/manage-property" fullWidth variant="outlined" color="success" startIcon={<ListAlt />}>
+              Manage Properties
+            </Button>
+            <Box mt={2}><ManageProperty /></Box>
+          </Grid>
 
           <Grid container spacing={3}>
             <Grid item xs={12}>
@@ -160,12 +201,10 @@ useEffect(() => {
               </Button>
               <Box mt={2}><AddProperty /></Box>
             </Grid>
-
-
           </Grid>
         </Paper>
       </Box>
-            {/* COMPLAINT & PAYMENT SECTIONS */}
+
       <Box mt={5}>
         <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
           <Typography variant="h6" color={indigo[800]} gutterBottom>
@@ -181,7 +220,6 @@ useEffect(() => {
               <Typography variant="body2" color="text.secondary">
                 View and resolve pending tenant complaints quickly to ensure satisfaction.
               </Typography>
-              {/* Placeholder for complaint resolution UI */}
               <Box mt={2}>
                 <Button variant="outlined" color="error">View Complaints</Button>
               </Box>
@@ -194,7 +232,6 @@ useEffect(() => {
               <Typography variant="body2" color="text.secondary">
                 Monitor rent received from tenants, monthly breakdowns and pending dues.
               </Typography>
-              {/* Placeholder for payments list/chart */}
               <Box mt={2}>
                 <Button variant="outlined" color="primary">View Payment History</Button>
               </Box>

@@ -17,6 +17,9 @@ class User(AbstractUser):
     username = models.CharField(max_length=150, blank=True, null=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=USER_ROLES)
+        # ✅ New Fields
+    full_name = models.CharField(max_length=255, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -142,12 +145,15 @@ class Notification(models.Model):
 # -------------------------
 # ✅ Payment Model (Now Fixed and Ready)
 # -------------------------
+
 class Payment(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     property = models.ForeignKey('Property', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField(default=timezone.now)
-    time = models.TimeField(default=timezone.now)
+    
+    date = models.DateField(default=timezone.now().date)  # Correctly extract only date
+    time = models.TimeField(default=timezone.now().time)  # Correctly extract only time
+
     months = models.JSONField()  # expects list like ["July", "August"]
     cardNumber = models.CharField(max_length=20)
     cvv = models.CharField(max_length=5)

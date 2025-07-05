@@ -2,34 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// MUI
 import { useTheme } from '@mui/material/styles';
 import {
-  Box,
-  Button,
-  Divider,
-  FormHelperText,
-  Grid,
-  TextField,
-  Typography,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  IconButton,
-  RadioGroup,
-  FormControlLabel,
-  Radio
+  Box, Button, Divider, FormHelperText, Grid, TextField, Typography,
+  FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton,
+  RadioGroup, FormControlLabel, Radio
 } from '@mui/material';
 
-// Formik and Yup
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 
-// Assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Google from 'assets/images/social-google.svg';
+
+// Replace with import.meta.env if using Vite
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
 const BACKEND_URL = 'http://localhost:8000/api/token/login/';
 
@@ -40,32 +29,30 @@ const AuthLogin = ({ ...rest }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState('tenant');
 
-useEffect(() => {
-  const token = localStorage.getItem('token');
-  const savedRole = localStorage.getItem('role');
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const savedRole = localStorage.getItem('role');
 
-  if (token && savedRole) {
-    // Validate token with backend
-    fetch('http://localhost:8000/api/users/me/', {
-      headers: {
-        Authorization: `Token ${token}`
-      }
-    })
-    .then(res => {
-      if (!res.ok) {
-        // Token is invalid or user was deleted
-        localStorage.clear();
-        navigate('/login'); // force logout
-      } else {
-        navigate(`/dashboard/${savedRole}`);
-      }
-    })
-    .catch(() => {
-      localStorage.clear();
-      navigate('/');
-    });
-  }
-}, [navigate]);
+    if (token && savedRole) {
+      fetch('http://localhost:8000/api/users/me/', {
+        headers: {
+          Authorization: `Token ${token}`
+        }
+      })
+        .then(res => {
+          if (!res.ok) {
+            localStorage.clear();
+            navigate('/login');
+          } else {
+            navigate(`/dashboard/${savedRole}`);
+          }
+        })
+        .catch(() => {
+          localStorage.clear();
+          navigate('/');
+        });
+    }
+  }, [navigate]);
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event) => event.preventDefault();
@@ -89,12 +76,7 @@ useEffect(() => {
             size="large"
             variant="contained"
           >
-            <img
-              src={Google}
-              alt="google"
-              width="20px"
-              style={{ marginRight: '16px' }}
-            />
+            <img src={Google} alt="google" width="20px" style={{ marginRight: '16px' }} />
             Sign in with Google
           </Button>
         </Grid>
@@ -109,33 +91,38 @@ useEffect(() => {
       </Box>
 
       <Formik
-        initialValues={{
-          email: '',
-          password: '',
-          submit: null
-        }}
+        initialValues={{ email: '', password: '', submit: null }}
         validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          email: Yup.string().email('Must be a valid email').required('Email is required'),
+          password: Yup.string().required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setSubmitting }) => {
           try {
+            // Prevent invalid admin login
+            if (role === 'admin') {
+              if (
+                values.email !== ADMIN_EMAIL ||
+                values.password !== ADMIN_PASSWORD
+              ) {
+                setErrors({ submit: 'Access denied. Invalid admin credentials.' });
+                setSubmitting(false);
+                return;
+              }
+            }
+
             const response = await axios.post(BACKEND_URL, {
               email: values.email,
               password: values.password
             });
 
             const { auth_token } = response.data;
-            const savedRole = role;
 
-            if (auth_token && savedRole) {
+            if (auth_token) {
               localStorage.setItem('token', auth_token);
-              localStorage.setItem('role', savedRole);
-              setTimeout(() => {
-                navigate(`/dashboard/${savedRole}`);
-              }, 200);
+              localStorage.setItem('role', role);
+              navigate(`/dashboard/${role}`);
             } else {
-              setErrors({ submit: 'Token or role not received from server.' });
+              setErrors({ submit: 'No token returned from server.' });
             }
           } catch (err) {
             console.error('❌ Login error:', err);
@@ -154,9 +141,9 @@ useEffect(() => {
               label="Email Address"
               margin="normal"
               name="email"
+              type="email"
               onBlur={handleBlur}
               onChange={handleChange}
-              type="email"
               value={values.email}
               variant="outlined"
             />
@@ -171,8 +158,8 @@ useEffect(() => {
               <OutlinedInput
                 id="outlined-adornment-password"
                 type={showPassword ? 'text' : 'password'}
-                value={values.password}
                 name="password"
+                value={values.password}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 label="Password"

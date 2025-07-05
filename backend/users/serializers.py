@@ -1,21 +1,25 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer, TokenCreateSerializer
 from rest_framework import serializers
-from .models import User, Property, PropertyImage, Booking, Notification, Payment  # ✅ Include Payment
+from .models import User, Property, PropertyImage, Booking, Notification, Payment
+
 
 # -------------------------
-# User Serializers
+# ✅ User Serializers
 # -------------------------
 
 class CustomUserCreateSerializer(UserCreateSerializer):
+    phone_number = serializers.CharField(required=False)
+    full_name = serializers.CharField(required=False)
+
     class Meta(UserCreateSerializer.Meta):
         model = User
-        fields = ('id', 'username', 'email', 'password', 'role')
+        fields = ('id', 'username', 'email', 'password', 'role', 'phone_number', 'full_name')
 
 
 class CustomUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         model = User
-        fields = ('id', 'email', 'role')
+        fields = ('id', 'username', 'email', 'role', 'phone_number', 'full_name')
 
 
 class CustomTokenCreateSerializer(TokenCreateSerializer):
@@ -27,7 +31,7 @@ class CustomTokenCreateSerializer(TokenCreateSerializer):
 
 
 # -------------------------
-# Property Serializers
+# ✅ Property Serializers
 # -------------------------
 
 class PropertyImageSerializer(serializers.ModelSerializer):
@@ -44,10 +48,18 @@ class PropertySerializer(serializers.ModelSerializer):
         required=False
     )
 
+    # Owner info
+    owner_name = serializers.CharField(source='owner.username', read_only=True)
+    owner_phone = serializers.CharField(source='owner.phone_number', read_only=True)
+
     class Meta:
         model = Property
-        fields = '__all__'
-        read_only_fields = ['owner']
+        fields = [
+            'id', 'name', 'location', 'rent', 'category', 'description', 'size',
+            'beds', 'baths', 'status', 'featured', 'owner', 'images', 'uploaded_images',
+            'owner_name', 'owner_phone'
+        ]
+        read_only_fields = ['owner', 'owner_name', 'owner_phone']
 
     def create(self, validated_data):
         uploaded_images = validated_data.pop('uploaded_images', [])
@@ -58,32 +70,48 @@ class PropertySerializer(serializers.ModelSerializer):
 
 
 # -------------------------
-# Booking Serializer
+# ✅ Booking Serializer
 # -------------------------
 
 class BookingSerializer(serializers.ModelSerializer):
-    property_name = serializers.CharField(source='property.name', read_only=True)
-    landlord_email = serializers.EmailField(source='owner.email', read_only=True)
-    tenant_email = serializers.EmailField(source='buyer.email', read_only=True)
+    property = serializers.PrimaryKeyRelatedField(queryset=Property.objects.all())
+
+    payment_history = serializers.SerializerMethodField()
+    due_months = serializers.SerializerMethodField()
+
+    property_details = PropertySerializer(source='property', read_only=True)
+    buyer_details = CustomUserSerializer(source='buyer', read_only=True)
 
     class Meta:
         model = Booking
         fields = [
-            'id', 'property', 'property_name',
-            'buyer', 'tenant_email',
-            'owner', 'landlord_email',
-            'status', 'booking_type', 'payment_method',
-            'is_rented', 'is_sold', 'created_at',
+            'id', 'property', 'property_details', 'buyer', 'owner', 'status',
+            'booking_type', 'payment_method', 'is_rented', 'is_sold', 'created_at',
+            'payment_history', 'due_months', 'buyer_details'
         ]
-        read_only_fields = [
-            'buyer', 'owner', 'created_at',
-            'tenant_email', 'landlord_email',
-            'is_rented', 'is_sold'
+        read_only_fields = ['buyer', 'owner', 'created_at', 'is_rented', 'is_sold']
+
+    def get_payment_history(self, obj):
+        payments = Payment.objects.filter(property=obj.property, user=obj.buyer).order_by('-date')
+        return PaymentSerializer(payments, many=True).data
+
+    def get_due_months(self, obj):
+        all_months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
         ]
+        payments = Payment.objects.filter(property=obj.property, user=obj.buyer)
+        paid_months = set()
+
+        for payment in payments:
+            if isinstance(payment.months, list):
+                paid_months.update(payment.months)
+
+        return [m for m in all_months if m not in paid_months]
 
 
 # -------------------------
-# Notification Serializer
+# ✅ Notification Serializer
 # -------------------------
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -98,7 +126,9 @@ class NotificationSerializer(serializers.ModelSerializer):
 # -------------------------
 
 class PaymentSerializer(serializers.ModelSerializer):
+    property = serializers.PrimaryKeyRelatedField(queryset=Property.objects.all())
     property_name = serializers.CharField(source='property.name', read_only=True)
+    user_details = CustomUserSerializer(source='user', read_only=True)
 
     class Meta:
         model = Payment

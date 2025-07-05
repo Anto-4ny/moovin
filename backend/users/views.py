@@ -6,8 +6,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from .models import Property, Booking, Notification, Payment  # ✅ Add Payment
-from .serializers import PropertySerializer, BookingSerializer, NotificationSerializer, PaymentSerializer  # ✅ Add PaymentSerializer
+from .models import Property, Booking, Notification, Payment
+from .serializers import PropertySerializer, BookingSerializer, NotificationSerializer, PaymentSerializer
 
 User = get_user_model()
 
@@ -31,19 +31,24 @@ class PropertyViewSet(viewsets.ModelViewSet):
 
 # ✅ ViewSet: Bookings
 class BookingViewSet(viewsets.ModelViewSet):
-    queryset = Booking.objects.all().order_by('-created_at')
     serializer_class = BookingSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Booking.objects.filter(buyer=self.request.user).order_by('-created_at')
+        user = self.request.user
+        if user.role == 'landlord':
+            return Booking.objects.filter(owner=user).select_related('buyer', 'property', 'owner').order_by('-created_at')
+        return Booking.objects.filter(buyer=user).select_related('buyer', 'property', 'owner').order_by('-created_at')
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        property_obj = serializer.validated_data['property']
-        booking_type = serializer.validated_data['booking_type']
+        property_obj = serializer.validated_data.get('property')
+        booking_type = serializer.validated_data.get('booking_type')
+
+        if not property_obj:
+            return Response({'detail': 'Property ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Update property status
         if booking_type == 'rent':
@@ -52,14 +57,14 @@ class BookingViewSet(viewsets.ModelViewSet):
             property_obj.is_sold = True
         property_obj.save()
 
-        # Save booking
+        # Save booking instance
         booking = serializer.save(
             buyer=request.user,
             owner=property_obj.owner,
             status='paid'
         )
 
-        # Create notifications
+        # Create notifications for landlord and tenant
         Notification.objects.bulk_create([
             Notification(
                 user=property_obj.owner,
@@ -72,8 +77,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         ])
 
         # Notify internal admins
-        admin_emails = ['sara@moovin.com', 'joseph@moovin.com']
-        for email in admin_emails:
+        for email in ['toni4pius@gmail.com', 'joseph@moovin.com']:
             try:
                 admin_user = User.objects.get(email=email)
                 Notification.objects.create(
@@ -81,15 +85,15 @@ class BookingViewSet(viewsets.ModelViewSet):
                     message=f"New booking: '{property_obj.name}' was booked by {booking.buyer.email}."
                 )
             except User.DoesNotExist:
-                pass
+                continue
 
-        # Email notifications
+        # Send email confirmations
         send_mail(
             subject='Property Booked Notification',
             message=f"Your property '{property_obj.name}' has been booked by {booking.buyer.email}.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[property_obj.owner.email],
-            fail_silently=False,
+            fail_silently=True,
         )
 
         send_mail(
@@ -97,10 +101,11 @@ class BookingViewSet(viewsets.ModelViewSet):
             message=f"You have successfully booked '{property_obj.name}' from {property_obj.owner.email}.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[booking.buyer.email],
-            fail_silently=False,
+            fail_silently=True,
         )
 
-        return Response(BookingSerializer(booking).data, status=status.HTTP_201_CREATED)
+        return Response(BookingSerializer(booking, context=self.get_serializer_context()).data,
+                        status=status.HTTP_201_CREATED)
 
 
 # ✅ ViewSet: Notifications
@@ -112,13 +117,16 @@ class NotificationViewSet(viewsets.ModelViewSet):
         return Notification.objects.filter(user=self.request.user).order_by('-created_at')
 
 
-# ✅ NEW ViewSet: Payments
+# ✅ ViewSet: Payments
 class PaymentViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Payment.objects.filter(user=self.request.user).order_by('-date')
+        user = self.request.user
+        if user.role == 'landlord':
+            return Payment.objects.filter(property__owner=user).select_related('user', 'property').order_by('-date')
+        return Payment.objects.filter(user=user).select_related('user', 'property').order_by('-date')
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

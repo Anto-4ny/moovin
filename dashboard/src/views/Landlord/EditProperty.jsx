@@ -15,6 +15,7 @@ const categories = [
 const EditProperty = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   const [form, setForm] = useState({
     name: '', location: '', rent: '', category: '', description: '',
@@ -22,38 +23,67 @@ const EditProperty = () => {
   });
 
   const [userProperties, setUserProperties] = useState([]);
+  const [userId, setUserId] = useState(null);
   const [snack, setSnack] = useState({ open: false, message: '', severity: 'success' });
 
-  const token = localStorage.getItem('token');
-
   useEffect(() => {
-    const fetchProperty = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/properties/${id}/`, {
-          headers: { Authorization: `Token ${token}` }
-        });
-        setForm(res.data);
-      } catch (error) {
-        console.error(error);
-        setSnack({ open: true, message: 'Failed to load property details.', severity: 'error' });
-      }
-    };
+        if (!token) {
+          navigate('/login');
+          return;
+        }
 
-    const fetchUserProperties = async () => {
-      try {
-        const res = await axios.get('http://localhost:8000/api/properties/', {
+        // Get current user info
+        const userRes = await axios.get('http://localhost:8000/api/users/me/', {
           headers: { Authorization: `Token ${token}` }
         });
-        setUserProperties(res.data);
+        const uid = userRes.data.id;
+        setUserId(uid);
+
+        // Get the property
+        const propRes = await axios.get(`http://localhost:8000/api/properties/${id}/`, {
+          headers: { Authorization: `Token ${token}` }
+        });
+
+        const prop = propRes.data;
+
+        // Confirm ownership
+        if (prop.owner !== uid) {
+          setSnack({ open: true, message: "Unauthorized: You can't edit this property.", severity: 'error' });
+          navigate('/manage-property');
+          return;
+        }
+
+        // Set form with current data
+        setForm({
+          name: prop.name || '',
+          location: prop.location || '',
+          rent: prop.rent || '',
+          category: prop.category || '',
+          description: prop.description || '',
+          size: prop.size || '',
+          beds: prop.beds || '',
+          baths: prop.baths || '',
+          status: prop.status || 'rent',
+          featured: prop.featured || false
+        });
+
+        // Fetch user's own properties
+        const allProps = await axios.get('http://localhost:8000/api/properties/', {
+          headers: { Authorization: `Token ${token}` }
+        });
+        const userProps = allProps.data.filter(p => p.owner === uid && p.id !== parseInt(id));
+        setUserProperties(userProps);
+
       } catch (err) {
         console.error(err);
-        setSnack({ open: true, message: 'Failed to fetch your properties.', severity: 'error' });
+        setSnack({ open: true, message: 'Failed to load property or user data.', severity: 'error' });
       }
     };
 
-    fetchProperty();
-    fetchUserProperties();
-  }, [id]);
+    fetchData();
+  }, [id, token, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,18 +99,16 @@ const EditProperty = () => {
       await axios.put(`http://localhost:8000/api/properties/${id}/`, form, {
         headers: { Authorization: `Token ${token}` }
       });
-
       setSnack({ open: true, message: 'Property updated successfully.', severity: 'success' });
-      navigate('/manage-property'); // or your main listing route
-    } catch (error) {
-      console.error(error);
+      navigate('/manage-property');
+    } catch (err) {
+      console.error(err);
       setSnack({ open: true, message: 'Update failed.', severity: 'error' });
     }
   };
 
   return (
     <Box p={4}>
-      {/* Edit Form */}
       <Card sx={{ mb: 5 }}>
         <CardContent>
           <Typography variant="h5" gutterBottom>Edit Property #{id}</Typography>
@@ -93,17 +121,24 @@ const EditProperty = () => {
               { label: 'Bedrooms', name: 'beds', type: 'number' },
               { label: 'Bathrooms', name: 'baths', type: 'number' }]
               .map(({ label, name, type = 'text' }) => (
-              <Grid key={name} item xs={12} sm={6}>
-                <TextField label={label} name={name} type={type} fullWidth value={form[name]} onChange={handleChange} />
-              </Grid>
-            ))}
+                <Grid key={name} item xs={12} sm={6}>
+                  <TextField
+                    label={label}
+                    name={name}
+                    type={type}
+                    fullWidth
+                    value={form[name]}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              ))}
 
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select name="category" value={form.category} onChange={handleChange}>
-                  {categories.map((option, index) => (
-                    <MenuItem key={index} value={option}>{option}</MenuItem>
+                  {categories.map((cat, idx) => (
+                    <MenuItem key={idx} value={cat}>{cat}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -181,9 +216,9 @@ const EditProperty = () => {
       <Snackbar
         open={snack.open}
         autoHideDuration={6000}
-        onClose={() => setSnack({ ...snack, open: false })}
+        onClose={() => setSnack(prev => ({ ...prev, open: false }))}
       >
-        <Alert severity={snack.severity} onClose={() => setSnack({ ...snack, open: false })}>
+        <Alert severity={snack.severity} onClose={() => setSnack(prev => ({ ...prev, open: false }))}>
           {snack.message}
         </Alert>
       </Snackbar>
@@ -192,3 +227,4 @@ const EditProperty = () => {
 };
 
 export default EditProperty;
+
