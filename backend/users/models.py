@@ -151,8 +151,9 @@ class Payment(models.Model):
     property = models.ForeignKey('Property', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     
-    date = models.DateField(default=timezone.now().date)  # Correctly extract only date
-    time = models.TimeField(default=timezone.now().time)  # Correctly extract only time
+
+    date = models.DateField(default=timezone.now)  # ✅ fixed
+    time = models.TimeField(default=timezone.now)  # ✅ fixed  
 
     months = models.JSONField()  # expects list like ["July", "August"]
     cardNumber = models.CharField(max_length=20)
@@ -162,3 +163,17 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment of ${self.amount} by {self.user.email}"
 
+
+# -------------------------
+# ✅ Professionals model
+# -------------------------
+class Professional(models.Model):
+    full_name = models.CharField(max_length=100)
+    profession = models.CharField(max_length=100)
+    description = models.TextField()
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.profession}"

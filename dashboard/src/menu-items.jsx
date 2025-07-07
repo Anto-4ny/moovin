@@ -64,6 +64,22 @@ const commonPages = [
     icon: icons.ContactSupportOutlinedIcon,
     url: '/contact',
     iconColor: 'blue'
+  },
+    {
+    id: 'book-repair',
+    title: 'Book Repair(s)',
+    type: 'item',
+    icon: icons.BuildOutlinedIcon,
+    url: '/professionals-directory',
+    iconColor: 'blue'
+  },
+      {
+    id: 'Apply-as-Repairer',
+    title: 'Apply as Repairer',
+    type: 'item',
+    icon: icons.BuildOutlinedIcon,
+    url: '/professionals-application',
+    iconColor: 'brown'
   }
 ];
 
@@ -78,26 +94,10 @@ const tenantPages = [
   },
   {
     id: 'book-property',
-    title: 'Book Property',
+    title: 'Purchase or Rent Property',
     type: 'item',
     icon: icons.HomeWorkOutlinedIcon,
     url: '/book-property',
-    iconColor: 'black'
-  },
-  {
-    id: 'book-repair',
-    title: 'Book Repair',
-    type: 'item',
-    icon: icons.BuildOutlinedIcon,
-    url: '/book-repair',
-    iconColor: 'blue'
-  },
-  {
-    id: 'track-repair',
-    title: 'Track Repair',
-    type: 'item',
-    icon: icons.TrackChangesOutlinedIcon,
-    url: '/track-repair',
     iconColor: 'black'
   }
 ];
@@ -109,7 +109,7 @@ const landlordPages = [
     type: 'item',
     icon: icons.DashboardOutlinedIcon,
     url: '/dashboard/landlord',
-    iconColor: 'blue'
+    iconColor: 'green'
   },
   {
     id: 'add-property',
@@ -125,11 +125,11 @@ const landlordPages = [
     type: 'item',
     icon: icons.EditOutlinedIcon,
     url: '/edit-property/${property.id}',
-    iconColor: 'blue'
+    iconColor: 'red'
   },
   {
     id: 'manage-property',
-    title: 'Manage Properties',
+    title: 'Manage Propertie(s)',
     type: 'item',
     icon: icons.BuildOutlinedIcon,
     url: '/manage-property',
@@ -172,7 +172,7 @@ const getMenuItemsByRole = (role) => {
       },
       {
         id: 'common-section',
-        title: 'Explore',
+        title: 'Explore the web',
         type: 'group',
         children: commonPages
       }

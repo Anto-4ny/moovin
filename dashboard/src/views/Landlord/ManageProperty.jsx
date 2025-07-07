@@ -7,6 +7,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import ProfessionalDirectory from '../../component/ProfessionalDirectory';
 
 const ManageProperty = () => {
   const [userId, setUserId] = useState(null);
@@ -77,7 +78,7 @@ const ManageProperty = () => {
               <CardContent>
                 <Typography variant="h6">{property.name}</Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {property.location} • KES {property.rent}{property.status === 'rent' ? '/mo' : ''}
+                  {property.location} • USD {property.rent}{property.status === 'rent' ? '/mo' : ''}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   {property.category} • {property.size} Sqm • {property.beds} Bed • {property.baths} Bath
@@ -103,6 +104,8 @@ const ManageProperty = () => {
           </Grid>
         ))}
       </Grid>
+
+      <ProfessionalDirectory />
 
       {/* Delete Dialog */}
       <Dialog

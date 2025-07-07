@@ -204,41 +204,6 @@ export default function LandlordDashboard() {
           </Grid>
         </Paper>
       </Box>
-
-      <Box mt={5}>
-        <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
-          <Typography variant="h6" color={indigo[800]} gutterBottom>
-            Tenant Complaints & Payments
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle1" gutterBottom>
-                Complaints from Tenants
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                View and resolve pending tenant complaints quickly to ensure satisfaction.
-              </Typography>
-              <Box mt={2}>
-                <Button variant="outlined" color="error">View Complaints</Button>
-              </Box>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle1" gutterBottom>
-                Payment Transactions
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Monitor rent received from tenants, monthly breakdowns and pending dues.
-              </Typography>
-              <Box mt={2}>
-                <Button variant="outlined" color="primary">View Payment History</Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Box>
     </Box>
   );
 }

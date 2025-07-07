@@ -1,137 +1,206 @@
+// src/views/AdminDashboard.jsx
 import React, { useEffect, useState } from 'react';
-import {
-  Box, Grid, Paper, Typography, Avatar, Divider
-} from '@mui/material';
-import {
-  deepPurple, teal, orange, indigo, amber,
-  deepOrange, purple, cyan
-} from '@mui/material/colors';
-import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
-import ApartmentIcon from '@mui/icons-material/Apartment';
-import DomainIcon from '@mui/icons-material/Domain';
 import axios from 'axios';
 import {
-  LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer
-} from 'recharts';
-import DeleteProperty from '../Admin/DeleteProperty';
-import ResolveIssues from '../Admin/ResolveIssues';
-import DeleteUser from '../Admin/DeleteUser';
+  Box, Grid, Paper, Typography, Avatar, Divider, Button,
+  Table, TableHead, TableRow, TableCell, TableBody,
+  Snackbar, Alert, TextField, InputAdornment, IconButton,
+  TablePagination
+} from '@mui/material';
+import {
+  PeopleAltOutlined, HomeWork, Payment, Domain, Delete, Search, Edit
+} from '@mui/icons-material';
+import { indigo, teal, deepPurple, amber } from '@mui/material/colors';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+
+import PropertyGrid from '../Admin/PropertyGrid';
+import DashboardTables from '../Admin/DashboardTables';
 
 const StatCard = ({ title, icon, value, bg }) => (
-  <Paper elevation={3} sx={{
-    p: 2, borderRadius: 2, display: 'flex', alignItems: 'center',
-    bgcolor: bg, color: '#fff'
-  }}>
+  <Paper elevation={3} sx={{ p: 2, borderRadius: 2, display: 'flex', alignItems: 'center', bgcolor: bg, color: '#fff' }}>
     <Avatar sx={{ bgcolor: '#fff', color: bg, mr: 2 }}>{icon}</Avatar>
     <Box>
       <Typography variant="subtitle2">{title}</Typography>
-      <Typography variant="h5" fontWeight={700}>{Number(value).toLocaleString()}</Typography>
+      <Typography variant="h5" fontWeight={700}>{value}</Typography>
     </Box>
   </Paper>
 );
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    tenants: 0,
-    landlords: 0,
-    properties: 0,
-    apartmentsRented: 0,
-    vacantUnits: 0,
-    issuesRaised: 0,
-    earnings: []
-  });
+  const token = localStorage.getItem('token');
+  const headers = { Authorization: `Token ${token}` };
+
+  const [users, setUsers] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [snack, setSnack] = useState({ open: false, message: '', severity: 'success' });
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    axios.get('/api/admin/dashboard-stats/')
-      .then(res => setStats(res.data))
-      .catch(err => console.error('Dashboard fetch error:', err));
+    fetchData();
   }, []);
 
-  return (
-    <Box p={4}>
-      <Typography variant="h4" mb={3} fontWeight={700} color={indigo[900]}>
-        Welcome, Admin 
-      </Typography>
+  const fetchData = async () => {
+    try {
+      const [usersRes, propsRes, bookingsRes, payRes] = await Promise.all([
+        axios.get('http://localhost:8000/api/users/', { headers }),
+        axios.get('http://localhost:8000/api/properties/', { headers }),
+        axios.get('http://localhost:8000/api/bookings/', { headers }),
+        axios.get('http://localhost:8000/api/payments/', { headers })
+      ]);
+      setUsers(usersRes.data);
+      setProperties(propsRes.data);
+      setBookings(bookingsRes.data);
+      setPayments(payRes.data);
+    } catch (err) {
+      console.error(err);
+      setSnack({ open: true, message: 'Failed to fetch admin data.', severity: 'error' });
+    }
+  };
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard title="Total Users" value={stats.totalUsers} icon={<PeopleAltOutlinedIcon />} bg={purple[500]} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard title="Tenants" value={stats.tenants} icon={<DomainIcon />} bg={teal[500]} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard title="Landlords" value={stats.landlords} icon={<DomainIcon />} bg={amber[600]} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard title="Issues Raised" value={stats.issuesRaised} icon={<ReportProblemOutlinedIcon />} bg={deepOrange[500]} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard title="Properties" value={stats.properties} icon={<HomeWorkOutlinedIcon />} bg={cyan[700]} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard title="Rented Apartments" value={stats.apartmentsRented} icon={<ApartmentIcon />} bg={purple[700]} />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard title="Vacant Units" value={stats.vacantUnits} icon={<DomainIcon />} bg={teal[300]} />
-        </Grid>
+  const handleDeleteUser = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/users/${id}/`, { headers });
+      setUsers(prev => prev.filter(u => u.id !== id));
+      setSnack({ open: true, message: 'User deleted.', severity: 'success' });
+    } catch {
+      setSnack({ open: true, message: 'Failed to delete user.', severity: 'error' });
+    }
+  };
+
+  const handleDeleteProperty = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/properties/${id}/`, { headers });
+      setProperties(prev => prev.filter(p => p.id !== id));
+      setSnack({ open: true, message: 'Property deleted.', severity: 'success' });
+    } catch {
+      setSnack({ open: true, message: 'Failed to delete property.', severity: 'error' });
+    }
+  };
+
+  const handleExportCSV = (data, name) => {
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, name);
+    XLSX.writeFile(workbook, `${name}.xlsx`);
+  };
+
+  const handleExportPDF = (columns, data, title) => {
+    const doc = new jsPDF();
+    autoTable(doc, { head: [columns], body: data });
+    doc.save(`${title}.pdf`);
+  };
+
+  const filteredUsers = users.filter(user =>
+    user?.full_name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+    user?.email?.toLowerCase()?.includes(searchTerm.toLowerCase())
+  );
+
+  const paginatedUsers = filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    const value = parseInt(event.target.value, 10);
+    setRowsPerPage(value);
+    setPage(0);
+  };
+
+  return (
+    <Box p={2}>
+      <Typography variant="h4" mb={3} fontWeight={600}>Admin Dashboard</Typography>
+
+      <Grid container spacing={2} mb={3}>
+        <Grid item xs={12} sm={6} md={3}><StatCard title="Users" value={users.length} icon={<PeopleAltOutlined />} bg={indigo[500]} /></Grid>
+        <Grid item xs={12} sm={6} md={3}><StatCard title="Properties" value={properties.length} icon={<HomeWork />} bg={deepPurple[500]} /></Grid>
+        <Grid item xs={12} sm={6} md={3}><StatCard title="Bookings" value={bookings.length} icon={<Domain />} bg={amber[500]} /></Grid>
+        <Grid item xs={12} sm={6} md={3}><StatCard title="Payments" value={payments.length} icon={<Payment />} bg={teal[500]} /></Grid>
       </Grid>
 
-      <Box mt={4}>
-        <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
-          <Typography variant="h6" gutterBottom color={indigo[800]}>
-            Monthly Earnings Overview
-          </Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={stats.earnings} margin={{ top: 10, right: 20, bottom: 0, left: -10 }}>
-              <Line type="monotone" dataKey="earnings" stroke={indigo[500]} strokeWidth={3} />
-              <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-            </LineChart>
-          </ResponsiveContainer>
-        </Paper>
+      <Divider sx={{ my: 3 }} />
+
+      {/* USERS SECTION */}
+      <Box mb={3} display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap">
+        <Typography variant="h6">Users</Typography>
+        <Box display="flex" gap={1} flexWrap="wrap">
+          <TextField
+            size="small"
+            placeholder="Search user..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              )
+            }}
+          />
+          <Button variant="outlined" onClick={() => handleExportCSV(filteredUsers, 'Users')}>Export CSV</Button>
+          <Button variant="outlined" onClick={() => handleExportPDF(['Name', 'Email', 'Role'], filteredUsers.map(u => [u.full_name || 'N/A', u.email, u.role]), 'Users')}>Export PDF</Button>
+        </Box>
       </Box>
 
-  {/* Admin Controls */}
-      <Box mt={4}>
-        <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
-          <Typography variant="h6" gutterBottom color={indigo[800]}>
-            Admin Controls
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={4}>
-              <Typography variant="subtitle1">➤ Manage Tenants</Typography>
-              <DeleteUser />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Typography variant="subtitle1">➤ Manage Landlords</Typography>
-              <DeleteUser />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Typography variant="subtitle1">➤ Approve / Remove Properties</Typography>
-              <DeleteProperty />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Typography variant="subtitle1">➤ Resolve Reported Issues</Typography>
-              <ResolveIssues />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Typography variant="subtitle1">➤ Track Payments</Typography>
-              <Typography variant="body2">[Payments integration pending]</Typography>
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Typography variant="subtitle1">➤ Generate Reports</Typography>
-              <Typography variant="body2">[Export / Download tools here]</Typography>
-            </Grid>
-          </Grid>
-        </Paper>
+      <Box sx={{ overflowX: 'auto' }}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Full Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Role</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedUsers.map(user => (
+              <TableRow key={user.id}>
+                <TableCell>{user.full_name || 'N/A'}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.role}</TableCell>
+                <TableCell>{user.phone_number || 'N/A'}</TableCell>
+                <TableCell>
+                  <IconButton color="error" onClick={() => handleDeleteUser(user.id)}><Delete /></IconButton>
+                  <IconButton color="primary"><Edit /></IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Box>
+
+      <TablePagination
+        component="div"
+        count={filteredUsers.length}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 25, 50, 100]}
+      />
+
+      {/* PROPERTY SECTION */}
+      <PropertyGrid
+        properties={properties}
+        handleDeleteProperty={handleDeleteProperty}
+        handleEditProperty={(property) => console.log('Edit', property)}
+      />
+
+      {/* BOOKINGS & PAYMENTS */}
+      <DashboardTables bookings={bookings} payments={payments} />
+
+      {/* NOTIFICATION */}
+      <Snackbar open={snack.open} autoHideDuration={4000} onClose={() => setSnack({ ...snack, open: false })}>
+        <Alert severity={snack.severity}>{snack.message}</Alert>
+      </Snackbar>
     </Box>
   );
 }

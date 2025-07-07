@@ -1,32 +1,35 @@
 import React, { lazy } from 'react';
 import ProtectedRoute from '../component/ProtectedRoute';
 
-// project import
+// Layouts
 import MainLayout from 'layout/MainLayout';
 import MinimalLayout from 'layout/MinimalLayout';
+
+// Utilities
 import Loadable from 'component/Loadable';
 import PaymentPage from 'component/PaymentPage';
+import ProfessionalDirectory from 'component/ProfessionalDirectory';
+import ProfessionalApplication from 'component/ProfessionalApplication';
 
-// Auth pages
+// Auth Pages
 const AuthLogin = Loadable(lazy(() => import('../views/Login')));
 const AuthRegister = Loadable(lazy(() => import('../views/Register')));
 
-// Dashboards by role
+// Dashboard Pages
 const AdminDashboard = Loadable(lazy(() => import('views/Dashboard/AdminDashboard')));
 const TenantDashboard = Loadable(lazy(() => import('views/Dashboard/TenantDashboard')));
 const LandlordDashboard = Loadable(lazy(() => import('views/Dashboard/LandlordDashboard')));
 
-//Admin specific pages
-const DeleteProperty = Loadable(lazy(() => import('views/Admin/DeleteProperty')));
-const DeleteUser = Loadable(lazy(() => import('views/Admin/DeleteUser')));
-const ResolveIssues = Loadable(lazy(() => import('views/Admin/ResolveIssues')));
+// Admin Pages
+const PropertyGrid = Loadable(lazy(() => import('views/Admin/PropertyGrid')));
+const DashboardTables = Loadable(lazy(() => import('views/Admin/DashboardTables')));
 
-// Tenant-specific
+// Tenant Pages
 const BookProperty = Loadable(lazy(() => import('views/Tenant/BookProperty')));
 const BookRepair = Loadable(lazy(() => import('views/Tenant/BookRepair')));
 const TrackRepair = Loadable(lazy(() => import('views/Tenant/TrackRepair')));
 
-// Landlord-specific
+// Landlord Pages
 const ManageProperty = Loadable(lazy(() => import('views/Landlord/ManageProperty')));
 const AddProperty = Loadable(lazy(() => import('views/Landlord/AddProperty')));
 const EditProperty = Loadable(lazy(() => import('views/Landlord/EditProperty')));
@@ -45,7 +48,7 @@ const MainRoutes = [
     path: '/',
     element: <MainLayout />,
     children: [
-      // Admin Dashboard
+      // ------------------------ Admin Routes ------------------------
       {
         path: '/dashboard/admin',
         element: (
@@ -54,32 +57,24 @@ const MainRoutes = [
           </ProtectedRoute>
         )
       },
+      {
+        path: '/property-grid',
+        element: (
+          <ProtectedRoute allowedRoles={['admin']}>
+            <PropertyGrid />
+          </ProtectedRoute>
+        )
+      },
             {
-        path: '/resolve-issues',
+        path: '/dashboard-tables',
         element: (
           <ProtectedRoute allowedRoles={['admin']}>
-            <ResolveIssues />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/delete-user',
-        element: (
-          <ProtectedRoute allowedRoles={['admin']}>
-            <DeleteUser />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/delete-property',
-        element: (
-          <ProtectedRoute allowedRoles={['admin']}>
-            <DeleteProperty />
+            <DashboardTables />
           </ProtectedRoute>
         )
       },
 
-      // Tenant Dashboard + Features
+      // ------------------------ Tenant Routes ------------------------
       {
         path: '/dashboard/tenant',
         element: (
@@ -121,7 +116,7 @@ const MainRoutes = [
         )
       },
 
-      // Landlord Dashboard + Features
+      // ------------------------ Landlord Routes ------------------------
       {
         path: '/dashboard/landlord',
         element: (
@@ -153,7 +148,23 @@ const MainRoutes = [
             <EditProperty />
           </ProtectedRoute>
         )
-      }
+      },
+            {
+        path: '/professionals-directory',
+        element: (
+          <ProtectedRoute allowedRoles={['tenant', 'admin', 'landlord']}>
+            <ProfessionalDirectory />
+          </ProtectedRoute>
+        )
+      },
+                  {
+        path: '/professionals-application',
+        element: (
+          <ProtectedRoute allowedRoles={['tenant', 'admin', 'landlord']}>
+            <ProfessionalApplication />
+          </ProtectedRoute>
+        )
+      },
     ]
   }
 ];

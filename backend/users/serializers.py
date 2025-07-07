@@ -1,7 +1,6 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer, TokenCreateSerializer
 from rest_framework import serializers
-from .models import User, Property, PropertyImage, Booking, Notification, Payment
-
+from .models import User, Property, PropertyImage, Booking, Notification, Payment, Professional
 
 # -------------------------
 # ✅ User Serializers
@@ -134,3 +133,11 @@ class PaymentSerializer(serializers.ModelSerializer):
         model = Payment
         fields = '__all__'
         read_only_fields = ['user']
+
+# -------------------------
+# ✅ Professionals Serializer
+# -------------------------
+class ProfessionalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Professional
+        fields = '__all__'

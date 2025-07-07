@@ -1,22 +1,39 @@
-from django.shortcuts import render
-from rest_framework import viewsets, permissions, status
-from rest_framework.permissions import BasePermission, SAFE_METHODS
-from rest_framework.response import Response
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from rest_framework import viewsets, permissions, status, generics
+from rest_framework.permissions import BasePermission, SAFE_METHODS, IsAuthenticated
+from rest_framework.response import Response
 
-from .models import Property, Booking, Notification, Payment
-from .serializers import PropertySerializer, BookingSerializer, NotificationSerializer, PaymentSerializer
+from .models import Property, Booking, Notification, Payment, Professional
+from .serializers import (
+    PropertySerializer,
+    BookingSerializer,
+    NotificationSerializer,
+    PaymentSerializer,
+    CustomUserSerializer,
+    ProfessionalSerializer
+)
 
 User = get_user_model()
 
-# ✅ Custom permission: Only owners can edit/delete, others can only view
+# ✅ Permission: Only the owner can edit/delete
 class IsOwnerOrReadOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
         return obj.owner == request.user
+
+
+# ✅ ViewSet: Users - Only admin can see all users
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all().order_by('-id')
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return User.objects.all().order_by('-id') if user.role == 'admin' else User.objects.none()
 
 
 # ✅ ViewSet: Properties
@@ -32,7 +49,7 @@ class PropertyViewSet(viewsets.ModelViewSet):
 # ✅ ViewSet: Bookings
 class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -57,23 +74,18 @@ class BookingViewSet(viewsets.ModelViewSet):
             property_obj.is_sold = True
         property_obj.save()
 
-        # Save booking instance
         booking = serializer.save(
             buyer=request.user,
             owner=property_obj.owner,
             status='paid'
         )
 
-        # Create notifications for landlord and tenant
+        # Create Notifications
         Notification.objects.bulk_create([
-            Notification(
-                user=property_obj.owner,
-                message=f"Your property '{property_obj.name}' has been booked by {booking.buyer.email}."
-            ),
-            Notification(
-                user=booking.buyer,
-                message=f"You have successfully booked '{property_obj.name}'."
-            )
+            Notification(user=property_obj.owner,
+                         message=f"Your property '{property_obj.name}' has been booked by {booking.buyer.email}."),
+            Notification(user=booking.buyer,
+                         message=f"You have successfully booked '{property_obj.name}'.")
         ])
 
         # Notify internal admins
@@ -87,7 +99,7 @@ class BookingViewSet(viewsets.ModelViewSet):
             except User.DoesNotExist:
                 continue
 
-        # Send email confirmations
+        # Send confirmation emails
         send_mail(
             subject='Property Booked Notification',
             message=f"Your property '{property_obj.name}' has been booked by {booking.buyer.email}.",
@@ -95,7 +107,6 @@ class BookingViewSet(viewsets.ModelViewSet):
             recipient_list=[property_obj.owner.email],
             fail_silently=True,
         )
-
         send_mail(
             subject='Booking Confirmation',
             message=f"You have successfully booked '{property_obj.name}' from {property_obj.owner.email}.",
@@ -104,14 +115,16 @@ class BookingViewSet(viewsets.ModelViewSet):
             fail_silently=True,
         )
 
-        return Response(BookingSerializer(booking, context=self.get_serializer_context()).data,
-                        status=status.HTTP_201_CREATED)
+        return Response(
+            BookingSerializer(booking, context=self.get_serializer_context()).data,
+            status=status.HTTP_201_CREATED
+        )
 
 
 # ✅ ViewSet: Notifications
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user).order_by('-created_at')
@@ -120,7 +133,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 # ✅ ViewSet: Payments
 class PaymentViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -130,3 +143,14 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+# ✅ ViewSet: Professionals
+class ProfessionalListCreateView(generics.ListCreateAPIView):
+    queryset = Professional.objects.all().order_by('-created_at')
+    serializer_class = ProfessionalSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]

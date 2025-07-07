@@ -11,9 +11,8 @@ import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import axios from 'axios';
 
-import TrackRepair from '../Tenant/TrackRepair';
 import BookProperty from '../Tenant/BookProperty';
-import BookRepair from '../Tenant/BookRepair';
+import ProfessionalDirectory from '../../component/ProfessionalDirectory';
 
 const TenantDashboard = () => {
   const theme = useTheme();
@@ -207,8 +206,7 @@ const handlePaymentSubmit = () => {
         })}
 
         <Grid item xs={12}><BookProperty /></Grid>
-        <Grid item xs={12}><BookRepair /></Grid>
-        <Grid item xs={12}><TrackRepair /></Grid>
+        <Grid item xs={12}><ProfessionalDirectory /></Grid>
       </Grid>
 
       <Dialog open={paymentOpen} onClose={() => setPaymentOpen(false)} fullWidth maxWidth="sm">
