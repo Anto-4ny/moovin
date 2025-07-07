@@ -14,6 +14,8 @@ import ProfessionalApplication from 'component/ProfessionalApplication';
 // Auth Pages
 const AuthLogin = Loadable(lazy(() => import('../views/Login')));
 const AuthRegister = Loadable(lazy(() => import('../views/Register')));
+import ForgotPassword from '../views/ForgotPassword';
+import ResetPasswordConfirm from '../views/ResetPasswordConfirm';
 
 // Dashboard Pages
 const AdminDashboard = Loadable(lazy(() => import('views/Dashboard/AdminDashboard')));
@@ -39,7 +41,9 @@ const MainRoutes = [
     children: [
       { path: '/', element: <AuthLogin /> },
       { path: '/application/login', element: <AuthLogin /> },
-      { path: '/application/register', element: <AuthRegister /> }
+      { path: '/application/register', element: <AuthRegister /> },
+      { path: '/forgot-password', element: <ForgotPassword /> },
+      { path: '/password/reset/confirm/:uid/:token', element: <ResetPasswordConfirm /> }
     ]
   },
   {
@@ -86,22 +90,6 @@ const MainRoutes = [
         element: (
           <ProtectedRoute allowedRoles={['tenant', 'admin']}>
             <BookProperty />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/book-repair',
-        element: (
-          <ProtectedRoute allowedRoles={['tenant', 'admin']}>
-            <BookRepair />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/track-repair',
-        element: (
-          <ProtectedRoute allowedRoles={['tenant', 'admin']}>
-            <TrackRepair />
           </ProtectedRoute>
         )
       },

@@ -321,136 +321,151 @@
 </div>
 <!-- About End -->
 
-<!-- Property List Start -->
-<div class="container-xxl py-5">
-  <div class="container">
-    <!-- Heading and Tabs -->
-    <div class="row g-0 gx-5 align-items-end">
-      <div class="col-lg-6">
-        <div class="text-start mx-auto mb-5 wow slideInLeft" data-wow-delay="0.1s">
-          <h1 class="mb-3">Latest Property Listings</h1>
-          <p>
-            Explore available rental homes, villas, offices, and commercial spaces across Western Australia — all verified and managed through the Moovin platform.
-          </p>
-        </div>
-      </div>
-      <div class="col-lg-6 text-start text-lg-end wow slideInRight" data-wow-delay="0.1s">
-        <ul class="nav nav-pills d-inline-flex justify-content-end mb-5" id="property-tabs">
-          <li class="nav-item me-2">
-            <a class="btn btn-outline-primary active" data-bs-toggle="pill" href="#tab-all">All</a>
-          </li>
-          <li class="nav-item me-2">
-            <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-1">Featured</a>
-          </li>
-          <li class="nav-item me-2">
-            <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-2">For Sale</a>
-          </li>
-          <li class="nav-item me-0">
-            <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-3">For Rent</a>
-          </li>
-        </ul>
-      </div>
+<!-- Filters -->
+<div class="container my-4">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <input type="text" id="locationFilter" class="form-control" placeholder="Filter by Location">
     </div>
-
-    <!-- Tab Content -->
-    <div class="tab-content">
-      <div id="tab-all" class="tab-pane fade show active p-0">
-        <div class="row g-4" id="tabAllRow"></div>
-      </div>
-      <div id="tab-1" class="tab-pane fade p-0">
-        <div class="row g-4" id="tab1Row"></div>
-      </div>
-      <div id="tab-2" class="tab-pane fade p-0">
-        <div class="row g-4" id="tab2Row"></div>
-      </div>
-      <div id="tab-3" class="tab-pane fade p-0">
-        <div class="row g-4" id="tab3Row"></div>
-      </div>
+    <div class="col-md-4">
+      <select id="priceFilter" class="form-select">
+        <option value="">All Prices</option>
+        <option value="5000">Below 5,000</option>
+        <option value="10000">Below 10,000</option>
+        <option value="20000">Below 20,000</option>
+        <option value="50000">Below 50,000</option>
+      </select>
+    </div>
+    <div class="col-md-4 text-end">
+      <button onclick="loadProperties(1)" class="btn btn-primary">Apply Filters</button>
     </div>
   </div>
 </div>
-<!-- Property List End -->
 
-<!-- JavaScript -->
+<!-- Property Grid -->
+<div class="container-xxl py-5">
+  <div class="container">
+    <div id="propertyGrid" class="row g-4"></div>
+
+    <!-- Pagination Controls -->
+    <div class="text-center mt-4" id="paginationControls"></div>
+  </div>
+</div>
+
 <script>
-  const tabAll = document.querySelector('#tabAllRow');
-  const tab1 = document.querySelector('#tab1Row');
-  const tab2 = document.querySelector('#tab2Row');
-  const tab3 = document.querySelector('#tab3Row');
+  const grid = document.getElementById('propertyGrid');
+  const pagination = document.getElementById('paginationControls');
 
   const getBadge = (status) => status === 'sale' ? 'bg-sale' : 'bg-primary';
 
-  fetch('http://localhost:8000/api/properties/')
-    .then(res => {
-      if (!res.ok) throw new Error('Network response was not ok');
-      return res.json();
-    })
-    .then(data => {
-      data.forEach((property, index) => {
-        const imageUrl = property.images?.[0]?.image || 'img/default.jpg';
+  function loadProperties(page = 1) {
+    const location = document.getElementById('locationFilter').value.trim().toLowerCase();
+    const price = document.getElementById('priceFilter').value;
 
-        const card = document.createElement('div');
-        card.className = 'col-lg-4 col-md-6 wow fadeInUp';
-        card.setAttribute('data-wow-delay', `${0.1 + index * 0.1}s`);
-        card.innerHTML = `
-          <div class="property-item rounded overflow-hidden">
-            <div class="position-relative overflow-hidden">
-              <a href="#"><img class="img-fluid" src="${imageUrl}" alt="${property.name}"></a>
-              <div class="${getBadge(property.status)} rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
-                ${property.status === 'sale' ? 'For Sale' : 'For Rent'}
-              </div>
-              <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
-                ${property.category}
-              </div>
-            </div>
-            <div class="p-4 pb-0">
-              <h5 class="text-primary mb-3">KES ${property.rent}${property.status === 'rent' ? '/mo' : ''}</h5>
-              <a class="d-block h5 mb-2" href="#">${property.name}</a>
-              <p><i class="fa fa-map-marker-alt text-primary me-2"></i>${property.location}</p>
-            </div>
-            <div class="d-flex border-top">
-              <small class="flex-fill text-center border-end py-2">
-                <i class="fa fa-ruler-combined text-primary me-2"></i>${property.size || '-'} Sqm
-              </small>
-              <small class="flex-fill text-center border-end py-2">
-                <i class="fa fa-bed text-primary me-2"></i>${property.beds || '-'} Bed
-              </small>
-              <small class="flex-fill text-center py-2">
-                <i class="fa fa-bath text-primary me-2"></i>${property.baths || '-'} Bath
-              </small>
-            </div>
-          </div>
-        `;
+    const url = new URL('http://localhost:8000/api/properties/');
+    url.searchParams.append('page', page);
 
-        // Append to all categories
-        tabAll.appendChild(card.cloneNode(true));
-        if (property.featured) tab1.appendChild(card.cloneNode(true));
-        if (property.status === 'sale') tab2.appendChild(card.cloneNode(true));
-        if (property.status === 'rent') tab3.appendChild(card.cloneNode(true));
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        grid.innerHTML = '';
+
+        let results = data.results;
+
+        if (location) {
+          results = results.filter(p => p.location.toLowerCase().includes(location));
+        }
+
+        if (price) {
+          results = results.filter(p => p.rent <= parseFloat(price));
+        }
+
+        results.forEach((property, index) => {
+          const imageUrl = property.images?.[0]?.image || 'img/default.jpg';
+          const actionLabel = property.status === 'sale' ? 'Buy Now' : 'Rent Now';
+
+          const card = document.createElement('div');
+          card.className = 'col-lg-4 col-md-6 wow fadeInUp';
+          card.setAttribute('data-wow-delay', `${0.1 + index * 0.1}s`);
+          card.innerHTML = `
+            <div class="property-item rounded overflow-hidden">
+              <div class="position-relative overflow-hidden">
+                <a href="#"><img class="img-fluid" src="${imageUrl}" alt="${property.name}"></a>
+                <div class="${getBadge(property.status)} rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
+                  ${property.status === 'sale' ? 'For Sale' : 'For Rent'}
+                </div>
+                <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">
+                  ${property.category}
+                </div>
+              </div>
+              <div class="p-4 pb-0">
+                <h5 class="text-primary mb-3">KES ${property.rent}${property.status === 'rent' ? '/mo' : ''}</h5>
+                <a class="d-block h5 mb-2" href="#">${property.name}</a>
+                <p><i class="fa fa-map-marker-alt text-primary me-2"></i>${property.location}</p>
+              </div>
+              <div class="d-flex border-top">
+                <small class="flex-fill text-center border-end py-2">
+                  <i class="fa fa-ruler-combined text-primary me-2"></i>${property.size || '-'} Sqm
+                </small>
+                <small class="flex-fill text-center border-end py-2">
+                  <i class="fa fa-bed text-primary me-2"></i>${property.beds || '-'} Bed
+                </small>
+                <small class="flex-fill text-center py-2">
+                  <i class="fa fa-bath text-primary me-2"></i>${property.baths || '-'} Bath
+                </small>
+              </div>
+              <div class="p-3 text-center border-top">
+                <a href="/dashboard/book-property?id=${property.id}" class="btn btn-outline-primary w-100">${actionLabel}</a>
+              </div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        // Pagination with Prev/Next
+        pagination.innerHTML = '';
+        const totalPages = Math.ceil(data.count / 6);
+        const paginationWrapper = document.createElement('div');
+        paginationWrapper.className = 'btn-group';
+
+        // Prev Button
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'btn btn-sm btn-outline-primary';
+        prevBtn.textContent = '« Prev';
+        prevBtn.disabled = !data.previous;
+        prevBtn.onclick = () => loadProperties(page - 1);
+        paginationWrapper.appendChild(prevBtn);
+
+        // Page Numbers
+        for (let i = 1; i <= totalPages; i++) {
+          const pageBtn = document.createElement('button');
+          pageBtn.className = 'btn btn-sm btn-outline-primary';
+          pageBtn.textContent = i;
+          if (i === page) pageBtn.classList.add('active');
+          pageBtn.onclick = () => loadProperties(i);
+          paginationWrapper.appendChild(pageBtn);
+        }
+
+        // Next Button
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn btn-sm btn-outline-primary';
+        nextBtn.textContent = 'Next »';
+        nextBtn.disabled = !data.next;
+        nextBtn.onclick = () => loadProperties(page + 1);
+        paginationWrapper.appendChild(nextBtn);
+
+        pagination.appendChild(paginationWrapper);
+      })
+      .catch(err => {
+        console.error('Failed to fetch properties:', err);
+        grid.innerHTML = `<div class="alert alert-danger">Failed to load properties.</div>`;
       });
-    })
-    .catch(err => console.error('Failed to load properties:', err));
+  }
+
+  // Initial load
+  loadProperties();
 </script>
 
-<!-- CSS -->
-<style>
-  .property-item {
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    min-height: 420px;
-  }
-
-  .property-item img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .property-item .p-4 {
-    background: #fff;
-  }
-</style>
 
 
 <!-- Call to Action Start -->
@@ -485,6 +500,120 @@
 </div>
 <!-- Call to Action End -->
 
+<!-- Professionals Section Start -->
+<div class="container-xxl py-5">
+  <div class="container">
+    <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s">
+      <h1 class="mb-3">Trusted Professionals</h1>
+      <p>Find plumbers, electricians, cleaners, and more — ready to serve you via Moovin.</p>
+    </div>
+    <div class="row g-4" id="professionals-list"></div>
+
+    <!-- Pagination -->
+    <nav aria-label="Professional pagination">
+      <ul class="pagination justify-content-center mt-4" id="professionalsPagination"></ul>
+    </nav>
+  </div>
+</div>
+<!-- Professionals Section End -->
+
+<script>
+  const professionalsList = document.getElementById("professionals-list");
+  const professionalsPagination = document.getElementById("professionalsPagination");
+  let currentPage = 1;
+
+  const fetchProfessionals = (page = 1) => {
+    fetch(`http://localhost:8000/api/professionals/?page=${page}`)
+      .then(res => res.json())
+      .then(data => {
+        professionalsList.innerHTML = "";
+        professionalsPagination.innerHTML = "";
+
+        data.results.forEach((pro, index) => {
+          const card = document.createElement("div");
+          card.className = "col-md-6 col-lg-4 wow fadeInUp";
+          card.setAttribute("data-wow-delay", `${0.1 + index * 0.1}s`);
+          card.innerHTML = `
+            <div class="border rounded p-4 h-100 bg-light">
+              <h5 class="text-primary">${pro.full_name}</h5>
+              <p class="mb-1"><strong>Profession:</strong> ${pro.profession}</p>
+              <p class="mb-1"><strong>Email:</strong> <a href="mailto:${pro.email}">${pro.email}</a></p>
+              <p class="mb-1"><strong>Phone:</strong> <a href="tel:${pro.phone}">${pro.phone}</a></p>
+              <p class="mt-3 text-muted">${pro.description}</p>
+            </div>
+          `;
+          professionalsList.appendChild(card);
+        });
+
+        // Total pages
+        const totalPages = Math.ceil(data.count / data.results.length);
+
+        // Prev Button
+        const prevLi = document.createElement("li");
+        prevLi.className = `page-item ${page === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#">« Prev</a>`;
+        prevLi.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (page > 1) fetchProfessionals(page - 1);
+        });
+        professionalsPagination.appendChild(prevLi);
+
+        // Numbered Buttons
+        for (let i = 1; i <= totalPages; i++) {
+          const li = document.createElement("li");
+          li.className = `page-item ${i === page ? 'active' : ''}`;
+          li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+          li.addEventListener("click", (e) => {
+            e.preventDefault();
+            fetchProfessionals(i);
+          });
+          professionalsPagination.appendChild(li);
+        }
+
+        // Next Button
+        const nextLi = document.createElement("li");
+        nextLi.className = `page-item ${page === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#">Next »</a>`;
+        nextLi.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (page < totalPages) fetchProfessionals(page + 1);
+        });
+        professionalsPagination.appendChild(nextLi);
+      })
+      .catch(err => {
+        professionalsList.innerHTML = `<div class="text-danger">Failed to load professionals.</div>`;
+        console.error(err);
+      });
+  };
+
+  // Initial Load
+  fetchProfessionals();
+</script>
+
+<style>
+  #professionals-list .border {
+    transition: box-shadow 0.3s;
+  }
+
+  #professionals-list .border:hover {
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .pagination .page-link {
+    color: #0d6efd;
+  }
+
+  .pagination .active .page-link {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+  }
+
+  .pagination .disabled .page-link {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+</style>
 
 <!-- Testimonial Start -->
 <div class="container-xxl py-5">
@@ -550,7 +679,7 @@
             <div class="col-lg-3 col-md-6">
                 <h5 class="text-white mb-4">Get In Touch</h5>
                 <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Level 2, 456 King Street, Perth, WA</p>
-                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+61 8 9123 4567</p>
+                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+61 0 0000 0000</p>
                 <p class="mb-2"><i class="fa fa-envelope me-3"></i>support@moovin.au</p>
                 <div class="d-flex pt-2">
                     <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
@@ -570,30 +699,6 @@
                 <a class="btn btn-link text-white-50" href="#">Terms & Conditions</a>
             </div>
 
-            <!-- Gallery -->
-            <div class="col-lg-3 col-md-6">
-                <h5 class="text-white mb-4">Photo Gallery</h5>
-                <div class="row g-2 pt-2">
-                    <div class="col-4">
-                        <img class="img-fluid rounded bg-light p-1" src="img/property-1.jpg" alt="">
-                    </div>
-                    <div class="col-4">
-                        <img class="img-fluid rounded bg-light p-1" src="img/property-2.jpg" alt="">
-                    </div>
-                    <div class="col-4">
-                        <img class="img-fluid rounded bg-light p-1" src="img/property-3.jpg" alt="">
-                    </div>
-                    <div class="col-4">
-                        <img class="img-fluid rounded bg-light p-1" src="img/property-4.jpg" alt="">
-                    </div>
-                    <div class="col-4">
-                        <img class="img-fluid rounded bg-light p-1" src="img/property-5.jpg" alt="">
-                    </div>
-                    <div class="col-4">
-                        <img class="img-fluid rounded bg-light p-1" src="img/property-6.jpg" alt="">
-                    </div>
-                </div>
-            </div>
 
             <!-- Newsletter -->
             <div class="col-lg-3 col-md-6">
@@ -607,34 +712,211 @@
         </div>
     </div>
 
-    <!-- Copyright -->
-    <div class="container">
-        <div class="copyright">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    &copy; <a class="border-bottom" href="#">Moovin</a>, All Rights Reserved.<br>
-                    Designed by 
-                    <a class="border-bottom fw-bold" href="https://antocapteknologies.com" style="font-size: 16px;">Antocap Teknologies</a> 
-                    <span style="font-size: 6px;">&nbsp;And <a class="border-bottom" href="https://htmlcodex.com" style="font-size: 4px;">HTML Codex</a></span>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <div class="footer-menu">
-                        <a href="index">Home</a>
-                        <a href="#">Cookies</a>
-                        <a href="contact">Help</a>
-                        <a href="#">FAQs</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Footer -->
+<div class="container">
+  <div class="copyright py-3 text-center">
+    &copy; <a class="fw-bold text-decoration-none" href="#">Moovin</a>, All Rights Reserved — Designed by 
+    <a class="fw-bold text-decoration-none" href="https://antocapteknologies.com" target="_blank">Antocap Teknologies</a>
+  </div>
 </div>
+<style>
+  .copyright {
+    font-size: 14px;
+    color: #666;
+  }
+
+  .copyright a {
+    color: #0d6efd;
+  }
+
+  .copyright a:hover {
+    text-decoration: underline;
+  }
+</style>
+
 <!-- Footer End -->
 
 
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-secondary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
+
+<!-- AI Assistant Button -->
+<a id="aiToggle" class="btn btn-success btn-lg-square ai-assistant">
+  <i class="fas fa-robot text-white"></i>
+</a>
+
+<!-- AI Chat Panel -->
+<div id="aiChatBox" class="ai-chat-box shadow-lg">
+  <div class="chat-header">
+    <strong>Moovin AI Assistant</strong>
+    <button id="closeChat" class="btn-close btn-sm"></button>
+  </div>
+  <div class="chat-body" id="chatBody">
+    <div class="text-muted small text-center py-2">Ask me about properties or professionals</div>
+  </div>
+  <div class="chat-input">
+    <input type="text" id="userMessage" placeholder="Type your message..." class="form-control" />
+    <button id="sendBtn" class="btn btn-primary">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+
+<style>
+/* AI Button */
+.ai-assistant {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  border-radius: 50%;
+  z-index: 1001;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: dance 1s infinite;
+}
+
+/* Chat Box */
+.ai-chat-box {
+  position: fixed;
+  bottom: 90px;
+  right: 80px;
+  width: 320px;
+  max-width: 90%;
+  background: #fff;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.chat-header {
+  background: #198754;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.chat-body {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.chat-input {
+  display: flex;
+  gap: 5px;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+/* Message Bubbles */
+.message {
+  max-width: 75%;
+  padding: 8px 12px;
+  margin: 6px 0;
+  border-radius: 18px;
+  line-height: 1.4;
+  clear: both;
+}
+
+.user-msg {
+  background-color: #d1e7dd;
+  align-self: flex-end;
+  margin-left: auto;
+  text-align: right;
+}
+
+.bot-msg {
+  background-color: #f1f1f1;
+  align-self: flex-start;
+  margin-right: auto;
+  text-align: left;
+}
+
+/* Animation */
+@keyframes dance {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+</style>
+<script>
+const aiToggle = document.getElementById('aiToggle');
+const aiChatBox = document.getElementById('aiChatBox');
+const closeChat = document.getElementById('closeChat');
+const sendBtn = document.getElementById('sendBtn');
+const chatBody = document.getElementById('chatBody');
+
+aiToggle.onclick = () => {
+  aiChatBox.style.display = 'flex';
+};
+
+closeChat.onclick = () => {
+  aiChatBox.style.display = 'none';
+};
+
+sendBtn.onclick = async () => {
+  const input = document.getElementById('userMessage');
+  const userInput = input.value.trim();
+  if (!userInput) return;
+
+  // Display user bubble
+  chatBody.innerHTML += `<div class="message user-msg">${userInput}</div>`;
+  input.value = '';
+  chatBody.scrollTop = chatBody.scrollHeight;
+
+  // Bot "typing..."
+  const typing = document.createElement('div');
+  typing.className = 'message bot-msg text-muted';
+  typing.innerHTML = '<em>Moovin AI is typing...</em>';
+  chatBody.appendChild(typing);
+  chatBody.scrollTop = chatBody.scrollHeight;
+
+  try {
+    const [propsRes, prosRes] = await Promise.all([
+      fetch('http://localhost:8000/api/properties/'),
+      fetch('http://localhost:8000/api/professionals/')
+    ]);
+    const propsData = await propsRes.json();
+    const prosData = await prosRes.json();
+
+    let reply = 'Sorry, I couldn’t find anything relevant.';
+
+    const foundProp = propsData.results.find(p =>
+      p.name.toLowerCase().includes(userInput.toLowerCase()) ||
+      p.location.toLowerCase().includes(userInput.toLowerCase())
+    );
+
+    if (foundProp) {
+      reply = `🏡 Found: <strong>${foundProp.name}</strong> in ${foundProp.location}<br>Price: KES ${foundProp.rent}${foundProp.status === 'rent' ? '/mo' : ''}`;
+    } else {
+      const foundPro = prosData.results.find(p =>
+        p.full_name.toLowerCase().includes(userInput.toLowerCase()) ||
+        p.profession.toLowerCase().includes(userInput.toLowerCase())
+      );
+      if (foundPro) {
+        reply = `👷 Contact: <strong>${foundPro.full_name}</strong><br>Profession: ${foundPro.profession}<br>Phone: <a href="tel:${foundPro.phone}">${foundPro.phone}</a>`;
+      }
+    }
+
+    typing.remove();
+    chatBody.innerHTML += `<div class="message bot-msg">${reply}</div>`;
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+  } catch (err) {
+    typing.remove();
+    chatBody.innerHTML += `<div class="message bot-msg text-danger">Failed to fetch data.</div>`;
+  }
+};
+</script>
+
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

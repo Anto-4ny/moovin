@@ -3,18 +3,24 @@ import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Grid, Button } from '@mui/material';
 
 // project import
 import AuthLogin from './AuthLogin';
 
 // assets
 import Logo from 'assets/images/moovin-logo.png';
-
-// ==============================|| LOGIN PAGE ||============================== //
+import GoogleIcon from 'assets/images/social-google.svg'; // your Google SVG
 
 const Login = () => {
   const theme = useTheme();
+
+  // Update this to match your backend Google login URL
+  const GOOGLE_LOGIN_URL = 'http://localhost:8000/accounts/google/login/';
+
+  const handleGoogleLogin = () => {
+    window.location.href = GOOGLE_LOGIN_URL;
+  };
 
   return (
     <Grid
@@ -59,22 +65,76 @@ const Login = () => {
                 </Grid>
               </Grid>
 
-              {/* Login Form Component */}
+              {/* Google Login Button */}
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={handleGoogleLogin}
+                  sx={{
+                    backgroundColor: theme.palette.grey[50],
+                    color: theme.palette.grey[800],
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    '&:hover': { backgroundColor: theme.palette.grey[100] }
+                  }}
+                >
+                  <img src={GoogleIcon} alt="Google" style={{ width: 20, marginRight: 12 }} />
+                  Sign in with Google
+                </Button>
+              </Grid>
+
+              {/* Divider */}
+              <Grid item xs={12}>
+                <Typography variant="subtitle2" textAlign="center" color="textSecondary">
+                  OR
+                </Typography>
+              </Grid>
+
+              {/* Login Form */}
               <Grid item xs={12}>
                 <AuthLogin />
+              </Grid>
+
+              {/* Forgot Password */}
+              <Grid item xs={12} sx={{ mt: -2 }}>
+                <Typography
+                  variant="body2"
+                  color="primary"
+                  component={RouterLink}
+                  to="/forgot-password"
+                  sx={{
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    '&:hover': {
+                      textDecoration: 'underline'
+                    }
+                  }}
+                >
+                  Forgot your password?
+                </Typography>
               </Grid>
 
               {/* Register Link */}
               <Grid container justifyContent="flex-start" sx={{ mt: theme.spacing(2), mb: theme.spacing(1) }}>
                 <Grid item>
-                  <Typography
-                    variant="subtitle2"
-                    color="secondary"
-                    component={RouterLink}
-                    to="/application/register"
-                    sx={{ textDecoration: 'none', pl: 2 }}
-                  >
-                    Don&apos;t have an account? Create one
+                  <Typography variant="subtitle2" color="textSecondary">
+                    Don’t have an account?{' '}
+                    <Typography
+                      component={RouterLink}
+                      to="/application/register"
+                      sx={{
+                        display: 'inline',
+                        fontWeight: 700,
+                        color: theme.palette.primary.main,
+                        textDecoration: 'none',
+                        '&:hover': {
+                          textDecoration: 'underline'
+                        }
+                      }}
+                    >
+                      Create one
+                    </Typography>
                   </Typography>
                 </Grid>
               </Grid>
@@ -87,4 +147,3 @@ const Login = () => {
 };
 
 export default Login;
-
