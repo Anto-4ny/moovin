@@ -26,8 +26,6 @@ const DashboardTables = Loadable(lazy(() => import('views/Admin/DashboardTables'
 
 // Tenant Pages
 const BookProperty = Loadable(lazy(() => import('views/Tenant/BookProperty')));
-const BookRepair = Loadable(lazy(() => import('views/Tenant/BookRepair')));
-const TrackRepair = Loadable(lazy(() => import('views/Tenant/TrackRepair')));
 
 // Landlord Pages
 const ManageProperty = Loadable(lazy(() => import('views/Landlord/ManageProperty')));
