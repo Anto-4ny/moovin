@@ -1,48 +1,51 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Fade, Button, ClickAwayListener, Paper, Popper, List, ListItemText, ListItemIcon, ListItemButton } from '@mui/material';
 
 // assets
-import PersonTwoToneIcon from '@mui/icons-material/PersonTwoTone';
-import DraftsTwoToneIcon from '@mui/icons-material/DraftsTwoTone';
-import LockOpenTwoTone from '@mui/icons-material/LockOpenTwoTone';
-import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
+// import PersonTwoToneIcon from '@mui/icons-material/PersonTwoTone';
+// import DraftsTwoToneIcon from '@mui/icons-material/DraftsTwoTone';
+// import LockOpenTwoTone from '@mui/icons-material/LockOpenTwoTone';
+// import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
 import MeetingRoomTwoToneIcon from '@mui/icons-material/MeetingRoomTwoTone';
 
-// ==============================|| PROFILE SECTION ||============================== //
-
 const ProfileSection = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  // const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
-  };
+  // const handleListItemClick = (event, index) => {
+  //   setSelectedIndex(index);
+  // };
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
   const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-
+    if (anchorRef.current && anchorRef.current.contains(event.target)) return;
     setOpen(false);
+  };
+
+  // ✅ LOGOUT HANDLER
+  const handleLogout = () => {
+    localStorage.removeItem('token');  // or 'authToken', based on what you're storing
+    localStorage.removeItem('role');
+    navigate('/application/login'); // redirect to login page or homepage
   };
 
   const prevOpen = React.useRef(open);
   React.useEffect(() => {
     if (prevOpen.current === true && open === false) {
-      anchorRef.current.focus();
+      anchorRef.current?.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
 
@@ -95,6 +98,7 @@ const ProfileSection = () => {
                     borderRadius: '10px'
                   }}
                 >
+                  {/* 
                   <ListItemButton selected={selectedIndex === 0} onClick={(event) => handleListItemClick(event, 0)}>
                     <ListItemIcon>
                       <SettingsTwoToneIcon />
@@ -119,7 +123,10 @@ const ProfileSection = () => {
                     </ListItemIcon>
                     <ListItemText primary="Lock Screen" />
                   </ListItemButton>
-                  <ListItemButton selected={selectedIndex === 4}>
+                  */}
+
+                  {/* ✅ LOGOUT */}
+                  <ListItemButton onClick={handleLogout}>
                     <ListItemIcon>
                       <MeetingRoomTwoToneIcon />
                     </ListItemIcon>
@@ -136,3 +143,4 @@ const ProfileSection = () => {
 };
 
 export default ProfileSection;
+

@@ -16,7 +16,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Google from 'assets/images/social-google.svg';
 
-// Replace with import.meta.env if using Vite
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
@@ -98,12 +97,8 @@ const AuthLogin = ({ ...rest }) => {
         })}
         onSubmit={async (values, { setErrors, setSubmitting }) => {
           try {
-            // Prevent invalid admin login
             if (role === 'admin') {
-              if (
-                values.email !== ADMIN_EMAIL ||
-                values.password !== ADMIN_PASSWORD
-              ) {
+              if (values.email !== ADMIN_EMAIL || values.password !== ADMIN_PASSWORD) {
                 setErrors({ submit: 'Access denied. Invalid admin credentials.' });
                 setSubmitting(false);
                 return;
@@ -117,13 +112,29 @@ const AuthLogin = ({ ...rest }) => {
 
             const { auth_token } = response.data;
 
-            if (auth_token) {
-              localStorage.setItem('token', auth_token);
-              localStorage.setItem('role', role);
-              navigate(`/dashboard/${role}`);
-            } else {
+            if (!auth_token) {
               setErrors({ submit: 'No token returned from server.' });
+              setSubmitting(false);
+              return;
             }
+
+            // Fetch actual user role from backend
+            const userRes = await axios.get('http://localhost:8000/api/users/me/', {
+              headers: { Authorization: `Token ${auth_token}` }
+            });
+
+            const userRole = userRes.data.role;
+
+            if (userRole !== role) {
+              setErrors({ submit: `You registered as a '${userRole}'. Please select that role.` });
+              setSubmitting(false);
+              return;
+            }
+
+            // Save and redirect
+            localStorage.setItem('token', auth_token);
+            localStorage.setItem('role', userRole);
+            navigate(`/dashboard/${userRole}`);
           } catch (err) {
             console.error('❌ Login error:', err);
             setErrors({ submit: 'Invalid credentials or server error.' });
@@ -222,4 +233,3 @@ const AuthLogin = ({ ...rest }) => {
 };
 
 export default AuthLogin;
-

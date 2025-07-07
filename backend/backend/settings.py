@@ -160,6 +160,7 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'users.serializers.CustomUserCreateSerializer',
         'user': 'users.serializers.CustomUserSerializer',
+        'current_user': 'users.serializers.CustomUserSerializer',  # this one affects /users/me/
         'token_create': 'users.serializers.CustomTokenCreateSerializer',  # <-- ADD THIS
     },
 }

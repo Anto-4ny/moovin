@@ -119,7 +119,7 @@ export default function AdminDashboard() {
       <Typography variant="h4" mb={3} fontWeight={600}>Admin Dashboard</Typography>
 
       <Grid container spacing={2} mb={3}>
-        <Grid item xs={12} sm={6} md={3}><StatCard title="Users" value={users.length} icon={<PeopleAltOutlined />} bg={indigo[500]} /></Grid>
+        <Grid item xs={12} sm={6} md={3}><StatCard title="Administrators" value={users.length} icon={<PeopleAltOutlined />} bg={indigo[500]} /></Grid>
         <Grid item xs={12} sm={6} md={3}><StatCard title="Properties" value={properties.length} icon={<HomeWork />} bg={deepPurple[500]} /></Grid>
         <Grid item xs={12} sm={6} md={3}><StatCard title="Bookings" value={bookings.length} icon={<Domain />} bg={amber[500]} /></Grid>
         <Grid item xs={12} sm={6} md={3}><StatCard title="Payments" value={payments.length} icon={<Payment />} bg={teal[500]} /></Grid>
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
 
       {/* USERS SECTION */}
       <Box mb={3} display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap">
-        <Typography variant="h6">Users</Typography>
+        <Typography variant="h6">Administrators</Typography>
         <Box display="flex" gap={1} flexWrap="wrap">
           <TextField
             size="small"
