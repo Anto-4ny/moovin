@@ -4,22 +4,9 @@ import axios from 'axios';
 // MUI
 import { useTheme } from '@mui/material/styles';
 import {
-  Badge,
-  Button,
-  Chip,
-  ClickAwayListener,
-  Fade,
-  Grid,
-  Paper,
-  Popper,
-  Avatar,
-  List,
-  ListItemAvatar,
-  ListItemText,
-  ListSubheader,
-  ListItemSecondaryAction,
-  Typography,
-  ListItemButton
+  Badge, Button, Chip, ClickAwayListener, Fade, Grid, Paper, Popper,
+  Avatar, List, ListItemAvatar, ListItemText, ListSubheader, ListItemSecondaryAction,
+  Typography, ListItemButton
 } from '@mui/material';
 
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -34,26 +21,32 @@ const NotificationSection = () => {
   const anchorRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
 
-  // Fetch notifications
-  const fetchNotifications = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
+  // Fetch notifications from backend
+const fetchNotifications = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
 
-    try {
-      const res = await axios.get('http://localhost:8000/api/notifications/', {
-        headers: { Authorization: `Token ${token}` }
-      });
-      setNotifications(res.data);
-    } catch (err) {
-      console.error('Failed to load notifications', err);
-    }
-  };
+  try {
+    const res = await axios.get('http://localhost:8000/api/notifications/', {
+      headers: { Authorization: `Token ${token}` }
+    });
+
+    const data = res.data;
+
+    // Handle paginated response correctly
+    setNotifications(Array.isArray(data.results) ? data.results : []);
+  } catch (err) {
+    console.error('Failed to load notifications:', err);
+    setNotifications([]);
+  }
+};
 
   useEffect(() => {
     fetchNotifications();
   }, []);
 
   const handleToggle = () => setOpen((prevOpen) => !prevOpen);
+
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) return;
     setOpen(false);
@@ -61,15 +54,18 @@ const NotificationSection = () => {
 
   const prevOpen = useRef(open);
   useEffect(() => {
-    if (prevOpen.current === true && open === false) {
+    if (prevOpen.current && !open) {
       anchorRef.current?.focus();
     }
     prevOpen.current = open;
   }, [open]);
 
   // Count of unread notifications
-  const unreadCount = notifications.filter((n) => !n.is_read).length;
+  const unreadCount = Array.isArray(notifications)
+    ? notifications.filter((n) => !n.is_read).length
+    : 0;
 
+  // Handle clicking on a notification
   const handleNotificationClick = async (id) => {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -86,16 +82,18 @@ const NotificationSection = () => {
         }
       );
 
-      // Optimistically update UI
+      // Optimistic update
       setNotifications((prev) =>
-        prev.map((n) =>
-          n.id === id ? { ...n, is_read: true } : n
-        )
+        Array.isArray(prev)
+          ? prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+          : []
       );
     } catch (err) {
       console.error('Error marking notification as read:', err);
     }
   };
+
+  const safeNotifications = Array.isArray(notifications) ? notifications : [];
 
   return (
     <>
@@ -144,17 +142,19 @@ const NotificationSection = () => {
                       <Chip size="small" color="primary" label="Notifications" />
                     </ListSubheader>
 
-                    {notifications.length === 0 ? (
+                    {safeNotifications.length === 0 ? (
                       <Typography sx={{ p: 2 }} color="textSecondary" align="center">
                         No notifications yet.
                       </Typography>
                     ) : (
-                      notifications.map((note) => (
+                      safeNotifications.map((note) => (
                         <ListItemButton
                           key={note.id}
                           onClick={() => handleNotificationClick(note.id)}
                           sx={{
-                            backgroundColor: note.is_read ? 'inherit' : theme.palette.action.hover
+                            backgroundColor: note.is_read
+                              ? 'inherit'
+                              : theme.palette.action.hover
                           }}
                         >
                           <ListItemAvatar>
@@ -166,7 +166,7 @@ const NotificationSection = () => {
                                 variant="subtitle1"
                                 sx={{ fontWeight: note.is_read ? 'normal' : 'bold' }}
                               >
-                                {note.message}
+                                {note.message || 'No message'}
                               </Typography>
                             }
                             secondary={
@@ -213,5 +213,3 @@ const NotificationSection = () => {
 };
 
 export default NotificationSection;
-
-

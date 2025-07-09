@@ -14,24 +14,37 @@ export default function DashboardTables({ bookings = [], payments = [] }) {
   const [bookingSearch, setBookingSearch] = useState('');
   const [paymentSearch, setPaymentSearch] = useState('');
 
+  // Ensure arrays
+  const safeBookings = Array.isArray(bookings) ? bookings : [];
+  const safePayments = Array.isArray(payments) ? payments : [];
+
   // Filter bookings
-  const filteredBookings = bookings.filter(b =>
-    b?.buyer_details?.email?.toLowerCase().includes(bookingSearch.toLowerCase()) ||
-    b?.buyer_details?.username?.toLowerCase().includes(bookingSearch.toLowerCase()) ||
-    b?.property_details?.name?.toLowerCase().includes(bookingSearch.toLowerCase())
-  );
+  const filteredBookings = safeBookings.filter(b => {
+    const email = b?.buyer_details?.email || '';
+    const username = b?.buyer_details?.username || '';
+    const property = b?.property_details?.name || '';
+    return (
+      email.toLowerCase().includes(bookingSearch.toLowerCase()) ||
+      username.toLowerCase().includes(bookingSearch.toLowerCase()) ||
+      property.toLowerCase().includes(bookingSearch.toLowerCase())
+    );
+  });
 
   // Filter payments
-  const filteredPayments = payments.filter(p =>
-    p?.user_details?.email?.toLowerCase().includes(paymentSearch.toLowerCase()) ||
-    p?.property_name?.toLowerCase().includes(paymentSearch.toLowerCase())
-  );
+  const filteredPayments = safePayments.filter(p => {
+    const email = p?.user_details?.email || '';
+    const property = p?.property_name || '';
+    return (
+      email.toLowerCase().includes(paymentSearch.toLowerCase()) ||
+      property.toLowerCase().includes(paymentSearch.toLowerCase())
+    );
+  });
 
   return (
     <Box sx={{ p: 2 }}>
-      {/* Bookings Section */}
+      {/* ================= Bookings Section ================= */}
       <Typography variant="h6" gutterBottom mt={5} fontWeight="bold">
-         All Bookings
+         All Properties Bought
       </Typography>
 
       <TextField
@@ -55,16 +68,16 @@ export default function DashboardTables({ bookings = [], payments = [] }) {
           <Table size="small">
             <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
               <TableRow>
-                <TableCell><Person /> Tenant</TableCell>
-                <TableCell><Person /> Landlord</TableCell>
-                <TableCell><Home /> Property</TableCell>
-                <TableCell><Category /> Type</TableCell>
-                <TableCell><Assignment /> Status</TableCell>
+                <TableCell><Person fontSize="small" /> Tenant</TableCell>
+                <TableCell><Person fontSize="small" /> Landlord</TableCell>
+                <TableCell><Home fontSize="small" /> Property</TableCell>
+                <TableCell><Category fontSize="small" /> Type</TableCell>
+                <TableCell><Assignment fontSize="small" /> Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredBookings.slice(bookingPage * rowsPerPage, bookingPage * rowsPerPage + rowsPerPage)
-                .map(b => (
+                .map((b) => (
                   <TableRow key={b.id} hover>
                     <TableCell>{b?.buyer_details?.email || 'N/A'}</TableCell>
                     <TableCell>{b?.owner_details?.email || 'N/A'}</TableCell>
@@ -91,9 +104,9 @@ export default function DashboardTables({ bookings = [], payments = [] }) {
         </TableContainer>
       </Box>
 
-      {/* Payments Section */}
+      {/* ================= Payments Section ================= */}
       <Typography variant="h6" gutterBottom mt={7} fontWeight="bold">
-        💳 All Payments
+         All Rent Payments
       </Typography>
 
       <TextField
@@ -117,26 +130,26 @@ export default function DashboardTables({ bookings = [], payments = [] }) {
           <Table size="small">
             <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
               <TableRow>
-                <TableCell><Person /> User</TableCell>
-                <TableCell><Home /> Property</TableCell>
-                <TableCell><AttachMoney /> Amount</TableCell>
-                <TableCell><CalendarToday /> Date</TableCell>
-                <TableCell><CreditCard /> Card</TableCell>
+                <TableCell><Person fontSize="small" /> User</TableCell>
+                <TableCell><Home fontSize="small" /> Property</TableCell>
+                <TableCell><AttachMoney fontSize="small" /> Amount</TableCell>
+                <TableCell><CalendarToday fontSize="small" /> Date</TableCell>
+                <TableCell><CreditCard fontSize="small" /> Card</TableCell>
                 <TableCell>Months</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredPayments.slice(paymentPage * rowsPerPage, paymentPage * rowsPerPage + rowsPerPage)
-                .map(p => (
+                .map((p) => (
                   <TableRow key={p.id} hover>
                     <TableCell>{p?.user_details?.email || 'N/A'}</TableCell>
                     <TableCell>{p?.property_name || 'N/A'}</TableCell>
                     <TableCell sx={{ fontWeight: 600, color: '#1e88e5' }}>
-                      KES {p.amount}
+                      KES {p?.amount?.toLocaleString() || '0'}
                     </TableCell>
                     <TableCell>{p?.date || 'N/A'}</TableCell>
                     <TableCell>{p?.cardNumber || 'N/A'}</TableCell>
-                    <TableCell>{p?.months?.filter(Boolean).join(', ') || 'N/A'}</TableCell>
+                    <TableCell>{Array.isArray(p?.months) ? p.months.filter(Boolean).join(', ') : 'N/A'}</TableCell>
                   </TableRow>
                 ))}
             </TableBody>

@@ -1,11 +1,9 @@
-// Updated TenantDashboard with validations, UI messages, and rent breakdown
-
 import React, { useEffect, useState } from 'react';
 import {
   Box, Typography, Card, CardContent, Avatar, Button,
   Grid, useTheme, Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Divider, FormControl, InputLabel, Select, MenuItem,
-  Snackbar, Alert, Chip
+  Snackbar, Alert
 } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -40,7 +38,13 @@ const TenantDashboard = () => {
 
       axios.get('http://localhost:8000/api/bookings/', {
         headers: { Authorization: `Token ${token}` }
-      }).then((res) => setBookings(res.data));
+      }).then((res) => {
+        const data = Array.isArray(res.data) ? res.data : res.data.results || [];
+        setBookings(data);
+      }).catch((err) => {
+        console.error("Error fetching bookings:", err);
+        setBookings([]);
+      });
     }
   }, []);
 
@@ -49,45 +53,43 @@ const TenantDashboard = () => {
     setPaymentOpen(true);
   };
 
-  console.log("selectedBooking:", selectedBooking);
+  const handlePaymentSubmit = () => {
+    const token = localStorage.getItem('token');
+    const property = selectedBooking?.property_details || {};
+    const rentPerMonth = parseFloat(property.rent || 0);
+    const totalDue = formData.months.length * rentPerMonth;
+    const paidAmount = parseFloat(formData.amount);
 
-const handlePaymentSubmit = () => {
-  const token = localStorage.getItem('token');
-  const property = selectedBooking?.property_details || {};
-  const rentPerMonth = parseFloat(property.rent || 0);
-  const totalDue = formData.months.length * rentPerMonth;
-  const paidAmount = parseFloat(formData.amount);
+    if (paidAmount < totalDue) {
+      setSnackbar({ open: true, message: `You must pay at least AUD ${totalDue.toLocaleString()} for the selected months.`, severity: 'error' });
+      return;
+    }
 
-  if (paidAmount < totalDue) {
-    setSnackbar({ open: true, message: `You must pay at least AUD ${totalDue.toLocaleString()} for the selected months.`, severity: 'error' });
-    return;
-  }
+    const payload = {
+      ...formData,
+      months: formData.months,
+      date: formData.date.toISOString().split('T')[0],
+      property: selectedBooking?.property || property.id || null
+    };
 
-  const payload = {
-    ...formData,
-    months: formData.months,
-    date: formData.date.toISOString().split('T')[0],
-    property: selectedBooking?.property || property.id || null
-  };
-
-  console.log("✅ Final Payload:", payload);
-
-  axios.post('http://localhost:8000/api/payments/', payload, {
-    headers: { Authorization: `Token ${token}` }
-  }).then(() => {
-    setSnackbar({ open: true, message: 'Payment submitted successfully.', severity: 'success' });
-    setPaymentOpen(false);
-    setFormData({ amount: '', months: [], cardNumber: '', cvv: '', expiry: '', date: new Date() });
-
-    axios.get('http://localhost:8000/api/bookings/', {
+    axios.post('http://localhost:8000/api/payments/', payload, {
       headers: { Authorization: `Token ${token}` }
-    }).then((res) => setBookings(res.data));
-  }).catch((err) => {
-    console.error("Payment error:", err.response?.data || err.message);
-    setSnackbar({ open: true, message: 'Payment failed. Please check the details and try again.', severity: 'error' });
-  });
-};
+    }).then(() => {
+      setSnackbar({ open: true, message: 'Payment submitted successfully.', severity: 'success' });
+      setPaymentOpen(false);
+      setFormData({ amount: '', months: [], cardNumber: '', cvv: '', expiry: '', date: new Date() });
 
+      axios.get('http://localhost:8000/api/bookings/', {
+        headers: { Authorization: `Token ${token}` }
+      }).then((res) => {
+        const data = Array.isArray(res.data) ? res.data : res.data.results || [];
+        setBookings(data);
+      });
+    }).catch((err) => {
+      console.error("Payment error:", err.response?.data || err.message);
+      setSnackbar({ open: true, message: 'Payment failed. Please check the details and try again.', severity: 'error' });
+    });
+  };
 
   const handleQuitHouse = async (bookingId) => {
     const confirm = window.confirm("Are you sure you want to quit this house?");
@@ -99,7 +101,7 @@ const handlePaymentSubmit = () => {
         headers: { Authorization: `Token ${token}` }
       });
       setSnackbar({ open: true, message: 'You have successfully quit the house.', severity: 'success' });
-      setBookings(bookings.filter((b) => b.id !== bookingId));
+      setBookings(prev => prev.filter((b) => b.id !== bookingId));
     } catch (err) {
       console.error("Quit house error:", err.response?.data || err.message);
       setSnackbar({ open: true, message: 'Failed to quit the house. Please try again.', severity: 'error' });
@@ -116,99 +118,107 @@ const handlePaymentSubmit = () => {
       </Typography>
 
       <Grid container spacing={4}>
-        {bookings.map((booking, index) => {
-          const unpaidMonths = booking.due_months || [];
-          const rentPerMonth = parseFloat(booking.property_details.rent);
-          const paid = (booking.payment_history || []).reduce((sum, p) => sum + parseFloat(p.amount), 0);
-          const expectedTotal = (booking.total_months || 0) * rentPerMonth;
-          const balance = expectedTotal - paid;
+        {Array.isArray(bookings) && bookings.length > 0 ? (
+          bookings.map((booking, index) => {
+            const unpaidMonths = booking.due_months || [];
+            const rentPerMonth = parseFloat(booking.property_details.rent || 0);
+            const paid = (booking.payment_history || []).reduce((sum, p) => sum + parseFloat(p.amount), 0);
+            const expectedTotal = (booking.total_months || 0) * rentPerMonth;
+            const balance = expectedTotal - paid;
 
-          return (
-            <Grid item xs={12} key={index}>
-              <Card sx={{ p: 3 }}>
-                <CardContent>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={4}>
-                      <Avatar
-                        variant="rounded"
-                        src={booking.property_details?.images?.[0]?.image || ''}
-                        sx={{ width: '100%', height: 200, borderRadius: 2 }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={8}>
-                      <Typography variant="h6">{booking.property_details.name}</Typography>
-                      <Typography variant="body2" color="text.secondary">{booking.property_details.description}</Typography>
-                      <Typography variant="body2">Location: <b>{booking.property_details.location}</b></Typography>
-                      <Typography variant="body1" mt={1}>Rent: <b>AUD {rentPerMonth.toLocaleString()}</b> / Month</Typography>
+            const paidMonths = new Set();
+            (booking.payment_history || []).forEach(p => {
+              if (Array.isArray(p.months)) {
+                p.months.forEach(m => paidMonths.add(m));
+              } else if (p.month) {
+                paidMonths.add(p.month);
+              }
+            });
 
-                      <Divider sx={{ my: 2 }} />
+            const allMonths = [
+              'January', 'February', 'March', 'April', 'May', 'June',
+              'July', 'August', 'September', 'October', 'November', 'December'
+            ];
 
-                      <Typography variant="h6">Payment History</Typography>
-                    <Typography variant="h6" mt={2}>Monthly Payment Status</Typography>
-                      {(() => {
-                        const allMonths = [
-                          'January', 'February', 'March', 'April', 'May', 'June',
-                          'July', 'August', 'September', 'October', 'November', 'December'
-                        ];
+            return (
+              <Grid item xs={12} key={index}>
+                <Card sx={{ p: 3 }}>
+                  <CardContent>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={4}>
+                        <Avatar
+                          variant="rounded"
+                          src={booking.property_details?.images?.[0]?.image || ''}
+                          sx={{ width: '100%', height: 200, borderRadius: 2 }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={8}>
+                        <Typography variant="h6">{booking.property_details.name}</Typography>
+                        <Typography variant="body2" color="text.secondary">{booking.property_details.description}</Typography>
+                        <Typography variant="body2">Location: <b>{booking.property_details.location}</b></Typography>
+                        <Typography variant="body1" mt={1}>Rent: <b>AUD {rentPerMonth.toLocaleString()}</b> / Month</Typography>
 
-                        const paidMonths = new Set();
-                        (booking.payment_history || []).forEach(p => {
-                          if (Array.isArray(p.months)) {
-                            p.months.forEach(m => paidMonths.add(m));
-                          } else if (p.month) {
-                            paidMonths.add(p.month);
-                          }
-                        });
+                        <Divider sx={{ my: 2 }} />
+                        <Typography variant="h6" mt={2}>Monthly Payment Status</Typography>
 
-                        return allMonths.map((month, idx) => (
+                        {allMonths.map((month, idx) => (
                           <Typography key={idx} variant="body2" sx={{ color: paidMonths.has(month) ? 'green' : 'error' }}>
                             {paidMonths.has(month) ? `✅ ${month} paid` : `❌ ${month} due`}
                           </Typography>
-                        ));
-                      })()}
+                        ))}
 
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          <b>Paid:</b> AUD {paid.toLocaleString()}<br />
+                          <b>Remaining:</b> AUD {balance > 0 ? balance.toLocaleString() : '0'}
+                        </Typography>
 
-                      <Typography variant="body2" sx={{ mt: 1 }}>
-                        <b>Paid:</b> AUD {paid.toLocaleString()}<br />
-                        <b>Remaining:</b> AUD {balance > 0 ? balance.toLocaleString() : '0'}
-                      </Typography>
+                        <Button
+                          variant="contained"
+                          sx={{ mt: 2, width: '100%' }}
+                          onClick={() => handleOpenPayment(booking)}
+                          disabled={unpaidMonths.length === 0}
+                        >
+                          Pay Rent
+                        </Button>
 
-                      <Button
-                        variant="contained"
-                        sx={{ mt: 2, width: '100%' }}
-                        onClick={() => handleOpenPayment(booking)}
-                        disabled={unpaidMonths.length === 0}
-                      >
-                        Pay Rent
-                      </Button>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          sx={{ mt: 1, width: '100%' }}
+                          onClick={() => handleQuitHouse(booking.id)}
+                        >
+                          Quit House
+                        </Button>
 
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        sx={{ mt: 1, width: '100%' }}
-                        onClick={() => handleQuitHouse(booking.id)}
-                      >
-                        Quit House
-                      </Button>
+                        <Divider sx={{ my: 2 }} />
 
-                      <Divider sx={{ my: 2 }} />
-
-                      <Typography variant="body2">
-                        Landlord: <b>{booking.property_details.owner_name || 'N/A'}</b><br />
-                        Contact: <b>{booking.property_details.owner_phone || '+610 000 000 000'}</b>
-                      </Typography>
+                        <Typography variant="body2">
+                          Landlord: <b>{booking.property_details.owner_name || 'N/A'}</b><br />
+                          Contact: <b>{booking.property_details.owner_phone || '+610 000 000 000'}</b>
+                        </Typography>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })
+        ) : (
+          <Grid item xs={12}>
+            <Card sx={{ p: 3, textAlign: 'center' }}>
+              <Typography variant="h6">You have no current bookings.</Typography>
+              <Typography variant="body2" color="textSecondary" mt={1}>
+                Browse available properties and book your next home.
+              </Typography>
+            </Card>
+          </Grid>
+        )}
 
         <Grid item xs={12}><BookProperty /></Grid>
         <Grid item xs={12}><ProfessionalDirectory /></Grid>
       </Grid>
 
+      {/* Rent Payment Dialog */}
       <Dialog open={paymentOpen} onClose={() => setPaymentOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle>Pay Rent</DialogTitle>
         <DialogContent dividers>
@@ -298,3 +308,4 @@ const handlePaymentSubmit = () => {
 };
 
 export default TenantDashboard;
+

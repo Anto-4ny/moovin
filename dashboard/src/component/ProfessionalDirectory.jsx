@@ -18,17 +18,23 @@ export default function ProfessionalDirectory() {
   const fetchProfessionals = async () => {
     try {
       const res = await axios.get('http://localhost:8000/api/professionals/');
-      setProfessionals(res.data);
+      // ✅ Extract only the array of results
+      const professionalList = Array.isArray(res.data.results) ? res.data.results : [];
+      setProfessionals(professionalList);
     } catch (err) {
       console.error('Error fetching professionals:', err);
+      setProfessionals([]); // fallback to empty array
     }
   };
 
-  const filtered = professionals.filter(p =>
-    p.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.profession?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // ✅ Safe filtering even if professionals is not an array
+  const filtered = Array.isArray(professionals)
+    ? professionals.filter(p =>
+        p.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.profession?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   return (
     <Box p={3}>
@@ -56,9 +62,11 @@ export default function ProfessionalDirectory() {
 
       <Grid container spacing={3} mt={1}>
         {filtered.length === 0 ? (
-          <Typography variant="body1" mt={3} color="text.secondary" mx={2}>
-            No professionals found.
-          </Typography>
+          <Grid item xs={12}>
+            <Typography variant="body1" mt={3} color="text.secondary" textAlign="center">
+              No professionals found.
+            </Typography>
+          </Grid>
         ) : (
           filtered.map(pro => (
             <Grid item xs={12} sm={6} md={4} key={pro.id}>
@@ -81,7 +89,7 @@ export default function ProfessionalDirectory() {
                   </Box>
 
                   <Chip
-                    label={pro.profession}
+                    label={pro.profession || 'Unspecified'}
                     color="success"
                     size="small"
                     sx={{ mb: 1, textTransform: 'capitalize' }}
@@ -101,7 +109,7 @@ export default function ProfessionalDirectory() {
                         overflow: 'hidden',
                       }}
                     >
-                      {pro.description}
+                      {pro.description || 'No description provided.'}
                     </Typography>
                   </Box>
 
@@ -112,7 +120,7 @@ export default function ProfessionalDirectory() {
                       <Phone fontSize="small" color="primary" /> {pro.phone || 'N/A'}
                     </Typography>
                     <Typography variant="body2" display="flex" alignItems="center" gap={0.5}>
-                      <Email fontSize="small" color="primary" /> {pro.email}
+                      <Email fontSize="small" color="primary" /> {pro.email || 'N/A'}
                     </Typography>
                   </Box>
                 </CardContent>

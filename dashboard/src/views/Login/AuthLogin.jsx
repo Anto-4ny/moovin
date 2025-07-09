@@ -41,7 +41,7 @@ const AuthLogin = ({ ...rest }) => {
         .then(res => {
           if (!res.ok) {
             localStorage.clear();
-            navigate('/login');
+            navigate('/application/login');
           } else {
             navigate(`/dashboard/${savedRole}`);
           }
@@ -58,36 +58,6 @@ const AuthLogin = ({ ...rest }) => {
 
   return (
     <>
-      <Grid container justifyContent="center">
-        <Grid item xs={12}>
-          <Button
-            fullWidth
-            sx={{
-              fontSize: { md: '1rem', xs: '0.875rem' },
-              fontWeight: 500,
-              backgroundColor: theme.palette.grey[50],
-              color: theme.palette.grey[600],
-              textTransform: 'capitalize',
-              '&:hover': {
-                backgroundColor: theme.palette.grey[100]
-              }
-            }}
-            size="large"
-            variant="contained"
-          >
-            <img src={Google} alt="google" width="20px" style={{ marginRight: '16px' }} />
-            Sign in with Google
-          </Button>
-        </Grid>
-      </Grid>
-
-      <Box alignItems="center" display="flex" mt={2}>
-        <Divider sx={{ flexGrow: 1 }} />
-        <Typography color="textSecondary" variant="h5" sx={{ m: theme.spacing(2) }}>
-          OR
-        </Typography>
-        <Divider sx={{ flexGrow: 1 }} />
-      </Box>
 
       <Formik
         initialValues={{ email: '', password: '', submit: null }}

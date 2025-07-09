@@ -61,26 +61,26 @@ export default function LandlordDashboard() {
 
     const fetchData = async () => {
       try {
-        const userRes = await axios.get('http://localhost:8000/api/users/me/', {
-          headers: { Authorization: `Token ${token}` }
-        });
-        setUserId(userRes.data.id);
+        const headers = { Authorization: `Token ${token}` };
+
+        const userRes = await axios.get('http://localhost:8000/api/users/me/', { headers });
+        const user = userRes.data;
+        setUserId(user.id);
 
         const [propRes, bookRes, payRes] = await Promise.all([
-          axios.get('http://localhost:8000/api/properties/', {
-            headers: { Authorization: `Token ${token}` }
-          }),
-          axios.get('http://localhost:8000/api/bookings/', {
-            headers: { Authorization: `Token ${token}` }
-          }),
-          axios.get('http://localhost:8000/api/payments/', {
-            headers: { Authorization: `Token ${token}` }
-          })
+          axios.get('http://localhost:8000/api/properties/', { headers }),
+          axios.get('http://localhost:8000/api/bookings/', { headers }),
+          axios.get('http://localhost:8000/api/payments/', { headers })
         ]);
 
-        const myProps = propRes.data.filter(p => p.owner === userRes.data.id);
-        const myBookings = bookRes.data.filter(b => myProps.some(p => p.id === b.property));
-        const myPayments = payRes.data.filter(p => myProps.some(prop => prop.id === p.property));
+        const propList = Array.isArray(propRes.data?.results) ? propRes.data.results : [];
+        const myProps = propList.filter(p => p.owner === user.id);
+
+        const bookingList = Array.isArray(bookRes.data?.results) ? bookRes.data.results : [];
+        const myBookings = bookingList.filter(b => myProps.some(p => p.id === b.property));
+
+        const paymentList = Array.isArray(payRes.data?.results) ? payRes.data.results : [];
+        const myPayments = paymentList.filter(p => myProps.some(prop => prop.id === p.property));
 
         setProperties(myProps);
         setBookings(myBookings);
@@ -93,7 +93,7 @@ export default function LandlordDashboard() {
     fetchData();
   }, []);
 
-  const totalEarnings = payments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+  const totalEarnings = payments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
 
   return (
     <Box p={4}>
@@ -106,7 +106,7 @@ export default function LandlordDashboard() {
 
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard title="Total Earnings" value={`USD ${totalEarnings}`} icon={<MonetizationOn />} bg={green[600]} />
+          <StatCard title="Total Earnings" value={`USD ${totalEarnings.toFixed(2)}`} icon={<MonetizationOn />} bg={green[600]} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard title="Properties Listed" value={properties.length} icon={<Home />} bg={teal[500]} onClick={() => navigate('/manage-property')} />
@@ -135,9 +135,9 @@ export default function LandlordDashboard() {
             <TableBody>
               {bookings.map((booking, index) => (
                 <TableRow key={index}>
-                  <TableCell>{booking.property_details?.name}</TableCell>
+                  <TableCell>{booking.property_details?.name || 'N/A'}</TableCell>
                   <TableCell>
-                    {booking.buyer_details?.full_name || booking.buyer_details?.username} <br />
+                    {booking.buyer_details?.full_name || booking.buyer_details?.username || 'N/A'} <br />
                     ({booking.buyer_details?.phone_number || 'N/A'})
                   </TableCell>
                   <TableCell>{booking.booking_type}</TableCell>
@@ -164,13 +164,12 @@ export default function LandlordDashboard() {
             <TableBody>
               {payments.map((p, index) => (
                 <TableRow key={index}>
-                  <TableCell>{p.property_name}</TableCell>
-                  
+                  <TableCell>{p.property_name || 'N/A'}</TableCell>
                   <TableCell>
-                    {p.user_details?.full_name || p.user_details?.username} <br />
+                    {p.user_details?.full_name || p.user_details?.username || 'N/A'} <br />
                     ({p.user_details?.phone_number || 'N/A'})
                   </TableCell>
-                  <TableCell>{(p.months || []).join(', ')}</TableCell>
+                  <TableCell>{Array.isArray(p.months) ? p.months.join(', ') : 'N/A'}</TableCell>
                   <TableCell>{p.amount}</TableCell>
                   <TableCell>{new Date(p.date).toLocaleDateString()}</TableCell>
                 </TableRow>
@@ -194,7 +193,7 @@ export default function LandlordDashboard() {
             <Box mt={2}><ManageProperty /></Box>
           </Grid>
 
-          <Grid container spacing={3}>
+          <Grid container spacing={3} mt={2}>
             <Grid item xs={12}>
               <Button href="/add-property" fullWidth variant="contained" color="primary" startIcon={<AddHomeWork />}>
                 Add Property

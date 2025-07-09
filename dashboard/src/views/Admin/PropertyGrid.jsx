@@ -8,17 +8,19 @@ import {
   Delete, Edit
 } from '@mui/icons-material';
 
-export default function PropertyGrid({ properties, handleDeleteProperty, handleEditProperty }) {
+export default function PropertyGrid({ properties = [], handleDeleteProperty, handleEditProperty }) {
   const [page, setPage] = useState(1);
   const itemsPerPage = 8;
 
-  const pageCount = Math.ceil(properties.length / itemsPerPage);
-  const paginatedProperties = properties.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  // ✅ Ensure `properties` is an array before slicing
+  const validProperties = Array.isArray(properties) ? properties : [];
+  const pageCount = Math.ceil(validProperties.length / itemsPerPage);
+  const paginatedProperties = validProperties.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   return (
     <>
       <Typography variant="h5" fontWeight={600} gutterBottom mt={5}>
-        All Properties
+        All Listed Properties
       </Typography>
 
       <Grid container spacing={3}>

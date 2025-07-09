@@ -30,32 +30,28 @@ const EditProperty = () => {
     const fetchData = async () => {
       try {
         if (!token) {
-          navigate('/login');
+          navigate('/application/login');
           return;
         }
 
-        // Get current user info
-        const userRes = await axios.get('http://localhost:8000/api/users/me/', {
-          headers: { Authorization: `Token ${token}` }
-        });
+        const headers = { Authorization: `Token ${token}` };
+
+        // Get user
+        const userRes = await axios.get('http://localhost:8000/api/users/me/', { headers });
         const uid = userRes.data.id;
         setUserId(uid);
 
         // Get the property
-        const propRes = await axios.get(`http://localhost:8000/api/properties/${id}/`, {
-          headers: { Authorization: `Token ${token}` }
-        });
-
+        const propRes = await axios.get(`http://localhost:8000/api/properties/${id}/`, { headers });
         const prop = propRes.data;
 
-        // Confirm ownership
         if (prop.owner !== uid) {
           setSnack({ open: true, message: "Unauthorized: You can't edit this property.", severity: 'error' });
           navigate('/manage-property');
           return;
         }
 
-        // Set form with current data
+        // Set form
         setForm({
           name: prop.name || '',
           location: prop.location || '',
@@ -69,11 +65,13 @@ const EditProperty = () => {
           featured: prop.featured || false
         });
 
-        // Fetch user's own properties
-        const allProps = await axios.get('http://localhost:8000/api/properties/', {
-          headers: { Authorization: `Token ${token}` }
-        });
-        const userProps = allProps.data.filter(p => p.owner === uid && p.id !== parseInt(id));
+        // Fetch user's other properties
+        const allPropsRes = await axios.get('http://localhost:8000/api/properties/', { headers });
+        const allProps = Array.isArray(allPropsRes.data.results)
+          ? allPropsRes.data.results
+          : allPropsRes.data;
+
+        const userProps = allProps.filter(p => p.owner === uid && p.id !== parseInt(id));
         setUserProperties(userProps);
 
       } catch (err) {
@@ -114,24 +112,25 @@ const EditProperty = () => {
           <Typography variant="h5" gutterBottom>Edit Property #{id}</Typography>
 
           <Grid container spacing={3}>
-            {[{ label: 'Property Name', name: 'name' },
+            {[
+              { label: 'Property Name', name: 'name' },
               { label: 'Location', name: 'location' },
               { label: 'Rent (USD)', name: 'rent', type: 'number' },
               { label: 'Size (Sqm)', name: 'size', type: 'number' },
               { label: 'Bedrooms', name: 'beds', type: 'number' },
-              { label: 'Bathrooms', name: 'baths', type: 'number' }]
-              .map(({ label, name, type = 'text' }) => (
-                <Grid key={name} item xs={12} sm={6}>
-                  <TextField
-                    label={label}
-                    name={name}
-                    type={type}
-                    fullWidth
-                    value={form[name]}
-                    onChange={handleChange}
-                  />
-                </Grid>
-              ))}
+              { label: 'Bathrooms', name: 'baths', type: 'number' }
+            ].map(({ label, name, type = 'text' }) => (
+              <Grid key={name} item xs={12} sm={6}>
+                <TextField
+                  label={label}
+                  name={name}
+                  type={type}
+                  fullWidth
+                  value={form[name]}
+                  onChange={handleChange}
+                />
+              </Grid>
+            ))}
 
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
@@ -168,7 +167,13 @@ const EditProperty = () => {
 
             <Grid item xs={12}>
               <FormControlLabel
-                control={<Switch checked={form.featured} onChange={handleToggle} color="primary" />}
+                control={
+                  <Switch
+                    checked={form.featured}
+                    onChange={handleToggle}
+                    color="primary"
+                  />
+                }
                 label="Mark as Featured"
               />
             </Grid>
@@ -182,7 +187,7 @@ const EditProperty = () => {
         </CardContent>
       </Card>
 
-      {/* Other Properties Section */}
+      {/* Other Properties */}
       <Typography variant="h6" mb={2}>Your Other Properties</Typography>
       <Grid container spacing={2}>
         {userProperties.map(prop => (

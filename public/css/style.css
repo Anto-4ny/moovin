@@ -23,6 +23,20 @@
     }
   }
 
+  /* Prevent horizontal scrolling for dropdown text inside the offcanvas menu */
+@media (max-width: 991px) {
+  #moovinMenu .dropdown-menu .dropdown-item {
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
+  }
+
+  #moovinMenu .dropdown-menu .dropdown-item .small {
+    display: block;
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
+}
 /*** Override Bootstrap-like utility classes to use custom variables ***/
 
 /* Text color overrides */
@@ -754,7 +768,7 @@
 }
 
 /* White dividers */
-.footer .copyright {
+.footer {
     border-top: 1px solid #fff;
 }
 

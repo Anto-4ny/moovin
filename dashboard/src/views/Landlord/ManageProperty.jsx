@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
 import ProfessionalDirectory from '../../component/ProfessionalDirectory';
 
 const ManageProperty = () => {
@@ -19,20 +18,21 @@ const ManageProperty = () => {
   const fetchProperties = async () => {
     try {
       const token = localStorage.getItem('token');
+      const headers = { Authorization: `Token ${token}` };
 
       // 1. Get the current user
-      const userRes = await axios.get('http://localhost:8000/api/users/me/', {
-        headers: { Authorization: `Token ${token}` }
-      });
-      setUserId(userRes.data.id);
+      const userRes = await axios.get('http://localhost:8000/api/users/me/', { headers });
+      const userId = userRes.data.id;
+      setUserId(userId);
 
-      // 2. Get all properties and filter for only this user's
-      const res = await axios.get('http://localhost:8000/api/properties/', {
-        headers: { Authorization: `Token ${token}` }
-      });
-      const userProperties = res.data.filter(p => p.owner === userRes.data.id);
+      // 2. Get all properties (paginated response)
+      const res = await axios.get('http://localhost:8000/api/properties/', { headers });
+      const allProps = Array.isArray(res.data.results) ? res.data.results : [];
+
+      const userProperties = allProps.filter(p => p.owner === userId);
       setProperties(userProperties);
     } catch (err) {
+      console.error("Fetch error:", err);
       setSnack({ open: true, message: 'Failed to load your properties.', severity: 'error' });
     }
   };

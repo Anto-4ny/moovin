@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const BookProperty = () => {
-  const [properties, setProperties] = useState([]);
+  const [properties, setProperties] = useState([]); // Always initialize as array
   const [snack, setSnack] = useState({ open: false, message: '', severity: 'success' });
   const [favorites, setFavorites] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -19,11 +19,20 @@ const BookProperty = () => {
   useEffect(() => {
     axios.get('http://localhost:8000/api/properties/')
       .then(res => {
-        setProperties(res.data || []);
+        const data = res.data;
+        if (Array.isArray(data)) {
+          setProperties(data);
+        } else if (Array.isArray(data?.results)) {
+          setProperties(data.results);
+        } else {
+          setProperties([]); // fallback
+          console.warn('⚠️ Unexpected response shape:', data);
+        }
       })
-      .catch(() =>
-        setSnack({ open: true, message: 'Failed to load properties.', severity: 'error' })
-      );
+      .catch((error) => {
+        console.error('Property fetch failed:', error);
+        setSnack({ open: true, message: 'Failed to load properties.', severity: 'error' });
+      });
   }, []);
 
   const toggleFavorite = (propertyId) => {
@@ -56,74 +65,80 @@ const BookProperty = () => {
       </Typography>
 
       <Grid container spacing={4}>
-        {properties.map((prop) => (
-          <Grid item xs={12} md={6} lg={4} key={prop.id}>
-            <Card>
-              <CardMedia
-                component="img"
-                height="180"
-                image={prop.images?.[0]?.image || '/img/default.jpg'}
-                alt={prop.name}
-                onClick={() => openPropertyDetails(prop)}
-                sx={{ cursor: 'pointer' }}
-              />
-              <CardContent>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography
-                    variant="h6"
-                    fontWeight="bold"
-                    gutterBottom
-                    onClick={() => openPropertyDetails(prop)}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    {prop.name}
-                  </Typography>
-                  <Tooltip title="Add to favorites">
-                    <IconButton
-                      onClick={() => toggleFavorite(prop.id)}
-                      color={favorites.includes(prop.id) ? 'error' : 'default'}
+        {Array.isArray(properties) && properties.length > 0 ? (
+          properties.map((prop) => (
+            <Grid item xs={12} md={6} lg={4} key={prop.id}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  height="180"
+                  image={prop.images?.[0]?.image || '/img/default.jpg'}
+                  alt={prop.name}
+                  onClick={() => openPropertyDetails(prop)}
+                  sx={{ cursor: 'pointer' }}
+                />
+                <CardContent>
+                  <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography
+                      variant="h6"
+                      fontWeight="bold"
+                      gutterBottom
+                      onClick={() => openPropertyDetails(prop)}
+                      sx={{ cursor: 'pointer' }}
                     >
-                      <FavoriteBorder />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
+                      {prop.name}
+                    </Typography>
+                    <Tooltip title="Add to favorites">
+                      <IconButton
+                        onClick={() => toggleFavorite(prop.id)}
+                        color={favorites.includes(prop.id) ? 'error' : 'default'}
+                      >
+                        <FavoriteBorder />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
 
-                <Typography variant="body2" color="textSecondary">
-                  📍 {prop.location}
-                </Typography>
-                <Typography variant="body2" mt={1}>
-                  💰 {prop.status === 'sale' ? 'Price' : 'Rent'}: <strong>KES {prop.rent}</strong>
-                </Typography>
-                <Divider sx={{ my: 1 }} />
+                  <Typography variant="body2" color="textSecondary">
+                    📍 {prop.location}
+                  </Typography>
+                  <Typography variant="body2" mt={1}>
+                    💰 {prop.status === 'sale' ? 'Price' : 'Rent'}: <strong>USD {prop.rent}</strong>
+                  </Typography>
+                  <Divider sx={{ my: 1 }} />
 
-                <Box display="flex" gap={1} flexWrap="wrap">
-                  <Chip
-                    label={prop.status === 'sale' ? 'For Sale' : 'For Rent'}
-                    color={prop.status === 'sale' ? 'info' : 'success'}
-                    size="small"
-                  />
-                  {prop.is_booked && (
+                  <Box display="flex" gap={1} flexWrap="wrap">
                     <Chip
-                      label={prop.status === 'sale' ? 'Sold' : 'Rented'}
-                      color={prop.status === 'sale' ? 'error' : 'warning'}
+                      label={prop.status === 'sale' ? 'For Sale' : 'For Rent'}
+                      color={prop.status === 'sale' ? 'info' : 'success'}
                       size="small"
                     />
-                  )}
-                </Box>
+                    {prop.is_booked && (
+                      <Chip
+                        label={prop.status === 'sale' ? 'Sold' : 'Rented'}
+                        color={prop.status === 'sale' ? 'error' : 'warning'}
+                        size="small"
+                      />
+                    )}
+                  </Box>
 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  sx={{ mt: 2 }}
-                  onClick={() => goToPayment(prop.id)}
-                >
-                  {prop.status === 'sale' ? 'Buy Now' : 'Rent Now'}
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    sx={{ mt: 2 }}
+                    onClick={() => goToPayment(prop.id)}
+                  >
+                    {prop.status === 'sale' ? 'Buy Now' : 'Rent Now'}
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <Typography variant="body2" color="textSecondary" mt={2}>
+            No properties available at the moment.
+          </Typography>
+        )}
       </Grid>
 
       {/* Property Detail Modal */}
@@ -156,30 +171,18 @@ const BookProperty = () => {
             )}
           </Box>
           <List dense>
-            <ListItem>
-              <ListItemText primary="Location" secondary={selectedProperty?.location} />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Category" secondary={selectedProperty?.category} />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Size" secondary={`${selectedProperty?.size} Sqm`} />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Beds" secondary={selectedProperty?.beds} />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Baths" secondary={selectedProperty?.baths} />
-            </ListItem>
+            <ListItem><ListItemText primary="Location" secondary={selectedProperty?.location} /></ListItem>
+            <ListItem><ListItemText primary="Category" secondary={selectedProperty?.category} /></ListItem>
+            <ListItem><ListItemText primary="Size" secondary={`${selectedProperty?.size} Sqm`} /></ListItem>
+            <ListItem><ListItemText primary="Beds" secondary={selectedProperty?.beds} /></ListItem>
+            <ListItem><ListItemText primary="Baths" secondary={selectedProperty?.baths} /></ListItem>
             <ListItem>
               <ListItemText
-                primary={selectedProperty?.status === 'sale' ? 'Price' : 'Rent (KES)'}
+                primary={selectedProperty?.status === 'sale' ? 'Price' : 'Rent (USD)'}
                 secondary={selectedProperty?.rent}
               />
             </ListItem>
-            <ListItem>
-              <ListItemText primary="Description" secondary={selectedProperty?.description} />
-            </ListItem>
+            <ListItem><ListItemText primary="Description" secondary={selectedProperty?.description} /></ListItem>
           </List>
         </DialogContent>
         <DialogActions>
@@ -207,3 +210,4 @@ const BookProperty = () => {
 };
 
 export default BookProperty;
+

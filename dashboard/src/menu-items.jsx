@@ -29,13 +29,15 @@ const icons = {
   LogoutIcon
 };
 
+// ==============================|| COMMON MENU ||============================== //
+
 const commonPages = [
   {
     id: 'home',
     title: 'Home',
     type: 'item',
     icon: icons.HomeOutlinedIcon,
-    url: 'https://moovin-eight.vercel.app/.html',
+    url: 'https://moovin-eight.vercel.app/index.html',
     external: true,
     iconColor: 'black'
   },
@@ -65,7 +67,7 @@ const commonPages = [
     url: '/contact',
     iconColor: 'blue'
   },
-    {
+  {
     id: 'book-repair',
     title: 'Book Repair(s)',
     type: 'item',
@@ -73,8 +75,8 @@ const commonPages = [
     url: '/professionals-directory',
     iconColor: 'blue'
   },
-      {
-    id: 'Apply-as-Repairer',
+  {
+    id: 'apply-repairer',
     title: 'Apply as Repairer',
     type: 'item',
     icon: icons.BuildOutlinedIcon,
@@ -82,6 +84,8 @@ const commonPages = [
     iconColor: 'brown'
   }
 ];
+
+// ==============================|| TENANT PAGES ||============================== //
 
 const tenantPages = [
   {
@@ -101,6 +105,8 @@ const tenantPages = [
     iconColor: 'black'
   }
 ];
+
+// ==============================|| LANDLORD PAGES ||============================== //
 
 const landlordPages = [
   {
@@ -124,12 +130,12 @@ const landlordPages = [
     title: 'Edit Property',
     type: 'item',
     icon: icons.EditOutlinedIcon,
-    url: '/edit-property/${property.id}',
+    url: '/edit-property/:id', // use :id for route param, handled in router
     iconColor: 'red'
   },
   {
     id: 'manage-property',
-    title: 'Manage Propertie(s)',
+    title: 'Manage Properties',
     type: 'item',
     icon: icons.BuildOutlinedIcon,
     url: '/manage-property',
@@ -137,9 +143,11 @@ const landlordPages = [
   }
 ];
 
+// ==============================|| ADMIN PAGES ||============================== //
+
 const adminPages = [
   {
-    id: 'dashboard',
+    id: 'admin-dashboard',
     title: 'Admin Dashboard',
     type: 'item',
     icon: icons.DashboardOutlinedIcon,
@@ -150,16 +158,25 @@ const adminPages = [
   ...tenantPages
 ];
 
+// ==============================|| MENU BY ROLE ||============================== //
+
 const getMenuItemsByRole = (role) => {
   let pages = [];
 
-  if (role === 'tenant') {
-    pages = tenantPages;
-  } else if (role === 'landlord') {
-    pages = landlordPages;
-  } else if (role === 'admin') {
-    pages = adminPages;
-  }
+  switch (role) {
+    case 'tenant':
+      pages = tenantPages;
+      break;
+    case 'landlord':
+      pages = landlordPages;
+      break;
+    case 'admin':
+      pages = adminPages;
+      break;
+    default:
+      console.warn(`⚠️ Unknown role: "${role}". Defaulting to no role-based pages.`);
+      pages = [];
+  } 
 
   return {
     items: [
@@ -168,11 +185,11 @@ const getMenuItemsByRole = (role) => {
         title: 'Dashboard',
         caption: 'Quick access',
         type: 'group',
-        children: pages
+        children: Array.isArray(pages) ? pages : []
       },
       {
         id: 'common-section',
-        title: 'Explore the web',
+        title: 'Explore the Web',
         type: 'group',
         children: commonPages
       }
@@ -181,4 +198,3 @@ const getMenuItemsByRole = (role) => {
 };
 
 export default getMenuItemsByRole;
-

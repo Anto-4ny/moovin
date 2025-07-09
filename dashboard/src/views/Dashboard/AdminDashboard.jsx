@@ -46,23 +46,29 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const [usersRes, propsRes, bookingsRes, payRes] = await Promise.all([
-        axios.get('http://localhost:8000/api/users/', { headers }),
-        axios.get('http://localhost:8000/api/properties/', { headers }),
-        axios.get('http://localhost:8000/api/bookings/', { headers }),
-        axios.get('http://localhost:8000/api/payments/', { headers })
-      ]);
-      setUsers(usersRes.data);
-      setProperties(propsRes.data);
-      setBookings(bookingsRes.data);
-      setPayments(payRes.data);
-    } catch (err) {
-      console.error(err);
-      setSnack({ open: true, message: 'Failed to fetch admin data.', severity: 'error' });
-    }
-  };
+const fetchData = async () => {
+  try {
+    const [usersRes, propsRes, bookingsRes, payRes] = await Promise.all([
+      axios.get('http://localhost:8000/api/users/', { headers }),
+      axios.get('http://localhost:8000/api/properties/', { headers }),
+      axios.get('http://localhost:8000/api/bookings/', { headers }),
+      axios.get('http://localhost:8000/api/payments/', { headers })
+    ]);
+
+    const usersList = Array.isArray(usersRes.data.results) ? usersRes.data.results : [];
+    const propsList = Array.isArray(propsRes.data.results) ? propsRes.data.results : [];
+    const bookingsList = Array.isArray(bookingsRes.data.results) ? bookingsRes.data.results : [];
+    const paymentsList = Array.isArray(payRes.data.results) ? payRes.data.results : [];
+
+    setUsers(usersList);
+    setProperties(propsList);    
+    setBookings(bookingsList);
+    setPayments(paymentsList);
+  } catch (err) {
+    console.error(err);
+    setSnack({ open: true, message: 'Failed to fetch admin data.', severity: 'error' });
+  }
+};
 
   const handleDeleteUser = async (id) => {
     try {
@@ -120,9 +126,9 @@ export default function AdminDashboard() {
 
       <Grid container spacing={2} mb={3}>
         <Grid item xs={12} sm={6} md={3}><StatCard title="Administrators" value={users.length} icon={<PeopleAltOutlined />} bg={indigo[500]} /></Grid>
-        <Grid item xs={12} sm={6} md={3}><StatCard title="Properties" value={properties.length} icon={<HomeWork />} bg={deepPurple[500]} /></Grid>
-        <Grid item xs={12} sm={6} md={3}><StatCard title="Bookings" value={bookings.length} icon={<Domain />} bg={amber[500]} /></Grid>
-        <Grid item xs={12} sm={6} md={3}><StatCard title="Payments" value={payments.length} icon={<Payment />} bg={teal[500]} /></Grid>
+        <Grid item xs={12} sm={6} md={3}><StatCard title="All Listed Properties" value={properties.length} icon={<HomeWork />} bg={deepPurple[500]} /></Grid>
+        <Grid item xs={12} sm={6} md={3}><StatCard title="Properties Bought" value={bookings.length} icon={<Domain />} bg={amber[500]} /></Grid>
+        <Grid item xs={12} sm={6} md={3}><StatCard title="All Rent Payments" value={payments.length} icon={<Payment />} bg={teal[500]} /></Grid>
       </Grid>
 
       <Divider sx={{ my: 3 }} />
