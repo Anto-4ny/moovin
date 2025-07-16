@@ -24,27 +24,32 @@
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "/backend/backend/wsgi.py"
+    },
+
+    {
       "src": "/dashboard",
       "dest": "/dashboard/dist/index.html"
     },
     {
       "src": "/dashboard/(.*)",
-      "dest": "/dashboard/dist/$1"
+      "dest": "/dashboard/dist/index.html"
     },
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend/backend/wsgi.py"
-    },
+
     {
       "src": "^/([a-zA-Z0-9\\-_]+)$",
       "headers": { "x-matched-path": "/public/$1.html" },
       "dest": "/public/$1.html"
     },
+
+   
     {
       "src": "/(.*)",
       "dest": "/public/$1"
     }
   ]
 }
+
 
 
