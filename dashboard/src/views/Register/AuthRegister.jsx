@@ -49,53 +49,54 @@ const AuthRegister = ({ ...rest }) => {
           phone_number: Yup.string().matches(/^\+?\d{9,15}$/, 'Enter a valid phone number').required('Phone number is required'),
           terms: Yup.boolean().oneOf([true], 'You must accept the Terms and Conditions')
         })}
-        onSubmit={async (values, { setErrors, setSubmitting }) => {
-          try {
-            // Step 1: Register user
-            const response = await axios.post('https://moovin-jf0f.onrender.com/api/users/', {
-              username: values.username,
-              email: values.email,
-              password: values.password,
-              re_password: values.re_password,
-              role: role,
-              full_name: values.full_name,
-              phone_number: values.phone_number
-            });
+          onSubmit={async (values, { setErrors, setSubmitting }) => {
+            try {
+              // Step 1: Register user
+              const registerRes = await axios.post('https://moovin-jf0f.onrender.com/api/users/', {
+                username: values.username,
+                email: values.email,
+                password: values.password,
+                re_password: values.re_password,
+                role: role,
+                full_name: values.full_name,
+                phone_number: values.phone_number
+              });
 
-            console.log('✅ Registered:', response.data);
+              console.log('✅ Registered:', registerRes.data);
 
-            // Step 2: Log in immediately
-            const loginRes = await axios.post('https://moovin-jf0f.onrender.com/api/token/login/', {
-              username: values.username,
-              password: values.password
-            });
+              // Step 2: Log in immediately using email + password
+              const loginRes = await axios.post('https://moovin-jf0f.onrender.com/api/token/login/', {
+                email: values.email,
+                password: values.password
+              });
 
-            const token = loginRes.data?.key;
-            if (token) {
-              localStorage.setItem('token', token);
-              localStorage.setItem('role', role);
-              navigate(`/dashboard/${role}`);
-            } else {
-              throw new Error('Login failed after registration');
+              const token = loginRes.data?.auth_token; // or 'key' if that's what your backend returns
+
+              if (token) {
+                localStorage.setItem('token', token);
+                localStorage.setItem('role', role);
+                navigate(`/dashboard/${role}`);
+              } else {
+                throw new Error('Login failed after registration');
+              }
+            } catch (error) {
+              const responseData = error?.response?.data || {};
+              const errorObject = {
+                username: responseData?.username?.[0],
+                email: responseData?.email?.[0],
+                password: responseData?.password?.[0],
+                re_password: responseData?.re_password?.[0],
+                full_name: responseData?.full_name?.[0],
+                phone_number: responseData?.phone_number?.[0],
+                submit: responseData?.non_field_errors?.[0] || error.message
+              };
+
+              setErrors(errorObject);
+              console.error('📛 Registration error:', responseData);
+            } finally {
+              setSubmitting(false);
             }
-          } catch (error) {
-            const responseData = error?.response?.data || {};
-            const errorObject = {
-              username: responseData?.username?.[0],
-              email: responseData?.email?.[0],
-              password: responseData?.password?.[0],
-              re_password: responseData?.re_password?.[0],
-              full_name: responseData?.full_name?.[0],
-              phone_number: responseData?.phone_number?.[0],
-              submit: responseData?.non_field_errors?.[0] || error.message
-            };
-
-            setErrors(errorObject);
-            console.error('📛 Registration error:', responseData);
-          } finally {
-            setSubmitting(false);
-          }
-        }}
+          }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
           <form noValidate onSubmit={handleSubmit} {...rest}>
