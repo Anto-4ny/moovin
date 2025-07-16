@@ -404,7 +404,7 @@
     const location = document.getElementById('locationFilter').value.trim().toLowerCase();
     const price = document.getElementById('priceFilter').value;
 
-    const url = new URL('http://localhost:8000/api/properties/');
+    const url = new URL('https://moovin-jf0f.onrender.com/api/properties/');
     url.searchParams.append('page', page);
 
     fetch(url)
@@ -583,7 +583,7 @@
   let currentPage = 1;
 
   const fetchProfessionals = (page = 1) => {
-    fetch(`http://localhost:8000/api/professionals/?page=${page}`)
+    fetch(`https://moovin-jf0f.onrender.com/api/professionals/?page=${page}`)
       .then(res => res.json())
       .then(data => {
         professionalsList.innerHTML = "";
@@ -973,8 +973,8 @@ sendBtn.onclick = async () => {
 
   try {
     const [propsRes, prosRes] = await Promise.all([
-      fetch('http://localhost:8000/api/properties/'),
-      fetch('http://localhost:8000/api/professionals/')
+      fetch('https://moovin-jf0f.onrender.com/api/properties/'),
+      fetch('https://moovin-jf0f.onrender.com/api/professionals/')
     ]);
     const propsData = await propsRes.json();
     const prosData = await prosRes.json();
