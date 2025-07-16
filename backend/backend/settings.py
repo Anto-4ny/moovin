@@ -1,4 +1,6 @@
 from pathlib import Path
+import os
+import dj_database_url
 
 # -----------------------------
 # ✅ BASE CONFIGURATION
@@ -97,15 +99,21 @@ TEMPLATES = [
 # -----------------------------
 # ✅ DATABASE
 # -----------------------------
+#DATABASES = {
+  #  'default': {
+  #      'ENGINE': 'django.db.backends.postgresql',
+  #      'NAME': 'moovin_db',
+  #      'USER': 'postgres',
+  #      'PASSWORD': 'Anto-4ny',
+  #      'HOST': 'localhost',
+ #       'PORT': '5433',
+#    }
+#}
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'moovin_db',
-        'USER': 'postgres',
-        'PASSWORD': 'Anto-4ny',
-        'HOST': 'localhost',
-        'PORT': '5433',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
 
 # -----------------------------
