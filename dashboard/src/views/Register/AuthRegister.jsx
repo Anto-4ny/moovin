@@ -35,6 +35,7 @@ const AuthRegister = ({ ...rest }) => {
           username: '',
           email: '',
           password: '',
+          re_password: '',
           full_name: '',
           phone_number: '',
           submit: null
@@ -43,6 +44,7 @@ const AuthRegister = ({ ...rest }) => {
           username: Yup.string().max(150).required('Username is required'),
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().min(6, 'Password must be at least 6 characters').max(255).required('Password is required'),
+          re_password: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match').required('Please confirm your password'),
           full_name: Yup.string().max(255).required('Full name is required'),
           phone_number: Yup.string().matches(/^\+?\d{9,15}$/, 'Enter a valid phone number').required('Phone number is required'),
           terms: Yup.boolean().oneOf([true], 'You must accept the Terms and Conditions')
@@ -54,6 +56,7 @@ const AuthRegister = ({ ...rest }) => {
               username: values.username,
               email: values.email,
               password: values.password,
+              re_password: values.re_password,
               role: role,
               full_name: values.full_name,
               phone_number: values.phone_number
@@ -81,6 +84,7 @@ const AuthRegister = ({ ...rest }) => {
               username: responseData?.username?.[0],
               email: responseData?.email?.[0],
               password: responseData?.password?.[0],
+              re_password: responseData?.re_password?.[0],
               full_name: responseData?.full_name?.[0],
               phone_number: responseData?.phone_number?.[0],
               submit: responseData?.non_field_errors?.[0] || error.message
@@ -172,6 +176,34 @@ const AuthRegister = ({ ...rest }) => {
                 <FormHelperText error>{errors.password}</FormHelperText>
               )}
             </FormControl>
+
+            <FormControl fullWidth variant="outlined" sx={{ mt: theme.spacing(2) }}>
+  <InputLabel htmlFor="re_password">Confirm Password</InputLabel>
+  <OutlinedInput
+    id="re_password"
+    type={showPassword ? 'text' : 'password'}
+    name="re_password"
+    value={values.re_password}
+    onBlur={handleBlur}
+    onChange={handleChange}
+    label="Confirm Password"
+    error={Boolean(touched.re_password && errors.re_password)}
+    endAdornment={
+      <InputAdornment position="end">
+        <IconButton
+          onClick={handleClickShowPassword}
+          onMouseDown={handleMouseDownPassword}
+          edge="end"
+        >
+          {showPassword ? <Visibility /> : <VisibilityOff />}
+        </IconButton>
+      </InputAdornment>
+    }
+  />
+  {touched.re_password && errors.re_password && (
+    <FormHelperText error>{errors.re_password}</FormHelperText>
+  )}
+</FormControl>
 
             {/* Role Selection */}
             <Box mt={2}>

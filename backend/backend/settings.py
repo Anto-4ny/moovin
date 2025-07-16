@@ -176,10 +176,10 @@ REST_FRAMEWORK = {
 REST_USE_JWT = False  # Set to True if using JWT later
 
 # -----------------------------
-# ✅ ALLAUTH / SOCIAL, 'password2*'
+# ✅ ALLAUTH / SOCIAL
 # -----------------------------
 ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*']
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 SOCIALACCOUNT_PROVIDERS = {
