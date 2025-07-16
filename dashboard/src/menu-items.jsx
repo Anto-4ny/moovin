@@ -37,7 +37,7 @@ const commonPages = [
     title: 'Home',
     type: 'item',
     icon: icons.HomeOutlinedIcon,
-    url: 'https://moovin-eight.vercel.app/index.html',
+    url: 'https://moovin-eight.vercel.app/index',
     external: true,
     iconColor: 'black'
   },
@@ -46,7 +46,7 @@ const commonPages = [
     title: 'About',
     type: 'item',
     icon: icons.InfoOutlinedIcon,
-    url: 'https://moovin-eight.vercel.app/about.html',
+    url: 'https://moovin-eight.vercel.app/about',
     external: true,
     iconColor: 'blue'
   },
@@ -55,7 +55,7 @@ const commonPages = [
     title: 'Services',
     type: 'item',
     icon: icons.AppsOutlinedIcon,
-    url: 'https://moovin-eight.vercel.app/services.html',
+    url: '#',
     external: true,
     iconColor: 'black'
   },
@@ -64,7 +64,7 @@ const commonPages = [
     title: 'Contact Us',
     type: 'item',
     icon: icons.ContactSupportOutlinedIcon,
-    url: '/contact',
+    url: 'https://moovin-eight.vercel.app/contact',
     iconColor: 'blue'
   },
   {
@@ -72,7 +72,7 @@ const commonPages = [
     title: 'Book Repair(s)',
     type: 'item',
     icon: icons.BuildOutlinedIcon,
-    url: '/professionals-directory',
+    url: '/dashboard/professionals-directory',
     iconColor: 'blue'
   },
   {
@@ -80,7 +80,7 @@ const commonPages = [
     title: 'Apply as Repairer',
     type: 'item',
     icon: icons.BuildOutlinedIcon,
-    url: '/professionals-application',
+    url: '/dashboard/professionals-application',
     iconColor: 'brown'
   }
 ];
@@ -101,7 +101,7 @@ const tenantPages = [
     title: 'Purchase or Rent Property',
     type: 'item',
     icon: icons.HomeWorkOutlinedIcon,
-    url: '/book-property',
+    url: '/dashboard/book-property',
     iconColor: 'black'
   }
 ];
@@ -122,7 +122,7 @@ const landlordPages = [
     title: 'Add Property',
     type: 'item',
     icon: icons.DomainAddOutlinedIcon,
-    url: '/add-property',
+    url: '/dashboard/add-property',
     iconColor: 'black'
   },
   {
@@ -130,7 +130,7 @@ const landlordPages = [
     title: 'Edit Property',
     type: 'item',
     icon: icons.EditOutlinedIcon,
-    url: '/edit-property/:id', // use :id for route param, handled in router
+    url: '/dashboard/edit-property/:id', 
     iconColor: 'red'
   },
   {
@@ -138,7 +138,7 @@ const landlordPages = [
     title: 'Manage Properties',
     type: 'item',
     icon: icons.BuildOutlinedIcon,
-    url: '/manage-property',
+    url: '/dashboard/manage-property',
     iconColor: 'black'
   }
 ];

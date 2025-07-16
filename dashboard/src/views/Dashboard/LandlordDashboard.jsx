@@ -187,7 +187,7 @@ export default function LandlordDashboard() {
           <Divider sx={{ mb: 2 }} />
 
           <Grid item xs={12}>
-            <Button href="/manage-property" fullWidth variant="outlined" color="success" startIcon={<ListAlt />}>
+            <Button href="/dashboard/manage-property" fullWidth variant="outlined" color="success" startIcon={<ListAlt />}>
               Manage Properties
             </Button>
             <Box mt={2}><ManageProperty /></Box>
@@ -195,7 +195,7 @@ export default function LandlordDashboard() {
 
           <Grid container spacing={3} mt={2}>
             <Grid item xs={12}>
-              <Button href="/add-property" fullWidth variant="contained" color="primary" startIcon={<AddHomeWork />}>
+              <Button href="/dashboard/add-property" fullWidth variant="contained" color="primary" startIcon={<AddHomeWork />}>
                 Add Property
               </Button>
               <Box mt={2}><AddProperty /></Box>
