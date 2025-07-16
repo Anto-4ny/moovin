@@ -89,7 +89,7 @@ const AuthLogin = ({ ...rest }) => {
             }
 
             // Fetch actual user role from backend
-            const userRes = await axios.get('http://localhost:8000/api/users/me/', {
+            const userRes = await axios.get('https://moovin-jf0f.onrender.com/api/users/me/', {
               headers: { Authorization: `Token ${auth_token}` }
             });
 
