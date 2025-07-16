@@ -39,11 +39,11 @@ const MainRoutes = [
     path: '/',
     element: <MinimalLayout />,
     children: [
-      { path: '/dashboard', element: <AuthLogin /> },
-      { path: '/dashboard/application/login', element: <AuthLogin /> },
-      { path: '/dashboard/application/register', element: <AuthRegister /> },
-      { path: '/dashboard/forgot-password', element: <ForgotPassword /> },
-      { path: '/dashboard/password/reset/confirm/:uid/:token', element: <ResetPasswordConfirm /> }
+      { path: '/', element: <AuthLogin /> },
+      { path: '/application/login', element: <AuthLogin /> },
+      { path: '/application/register', element: <AuthRegister /> },
+      { path: '/forgot-password', element: <ForgotPassword /> },
+      { path: '/password/reset/confirm/:uid/:token', element: <ResetPasswordConfirm /> }
     ]
   },
   {
@@ -60,7 +60,7 @@ const MainRoutes = [
         )
       },
       {
-        path: '/dashboard/property-grid',
+        path: '/property-grid',
         element: (
           <ProtectedRoute allowedRoles={['admin']}>
             <PropertyGrid />
@@ -68,7 +68,7 @@ const MainRoutes = [
         )
       },
             {
-        path: '/dashboard/dashboard-tables',
+        path: '/dashboard-tables',
         element: (
           <ProtectedRoute allowedRoles={['admin']}>
             <DashboardTables />
@@ -78,7 +78,7 @@ const MainRoutes = [
 
       // ------------------------ Tenant Routes ------------------------
       {
-        path: '/dashboard/dashboard/tenant',
+        path: '/dashboard/tenant',
         element: (
           <ProtectedRoute allowedRoles={['tenant', 'admin']}>
             <TenantDashboard />
@@ -86,7 +86,7 @@ const MainRoutes = [
         )
       },
       {
-        path: '/dashboard/book-property',
+        path: '/book-property',
         element: (
           <ProtectedRoute allowedRoles={['tenant', 'admin']}>
             <BookProperty />
@@ -94,7 +94,7 @@ const MainRoutes = [
         )
       },
       {
-        path: '/dashboard/payment/:id',
+        path: '/payment/:id',
         element: (
           <ProtectedRoute allowedRoles={['tenant', 'admin']}>
             <PaymentPage />
@@ -112,7 +112,7 @@ const MainRoutes = [
         )
       },
       {
-        path: '/dashboard/manage-property',
+        path: '/manage-property',
         element: (
           <ProtectedRoute allowedRoles={['landlord', 'admin']}>
             <ManageProperty />
@@ -120,7 +120,7 @@ const MainRoutes = [
         )
       },
       {
-        path: '/dashboard/add-property',
+        path: '/add-property',
         element: (
           <ProtectedRoute allowedRoles={['landlord', 'admin']}>
             <AddProperty />
@@ -128,7 +128,7 @@ const MainRoutes = [
         )
       },
       {
-        path: '/dashboard/edit-property/:id',
+        path: '/edit-property/:id',
         element: (
           <ProtectedRoute allowedRoles={['landlord', 'admin']}>
             <EditProperty />
@@ -136,7 +136,7 @@ const MainRoutes = [
         )
       },
             {
-        path: '/dashboard/professionals-directory',
+        path: '/professionals-directory',
         element: (
           <ProtectedRoute allowedRoles={['tenant', 'admin', 'landlord']}>
             <ProfessionalDirectory />
@@ -144,7 +144,7 @@ const MainRoutes = [
         )
       },
                   {
-        path: '/dashboard/professionals-application',
+        path: '/professionals-application',
         element: (
           <ProtectedRoute allowedRoles={['tenant', 'admin', 'landlord']}>
             <ProfessionalApplication />

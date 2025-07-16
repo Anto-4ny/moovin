@@ -72,7 +72,7 @@ const commonPages = [
     title: 'Book Repair(s)',
     type: 'item',
     icon: icons.BuildOutlinedIcon,
-    url: '/dashboard/professionals-directory',
+    url: '/professionals-directory',
     iconColor: 'blue'
   },
   {
@@ -80,7 +80,7 @@ const commonPages = [
     title: 'Apply as Repairer',
     type: 'item',
     icon: icons.BuildOutlinedIcon,
-    url: '/dashboard/professionals-application',
+    url: '/professionals-application',
     iconColor: 'brown'
   }
 ];
@@ -101,7 +101,7 @@ const tenantPages = [
     title: 'Purchase or Rent Property',
     type: 'item',
     icon: icons.HomeWorkOutlinedIcon,
-    url: '/dashboard/book-property',
+    url: '/book-property',
     iconColor: 'black'
   }
 ];
@@ -122,7 +122,7 @@ const landlordPages = [
     title: 'Add Property',
     type: 'item',
     icon: icons.DomainAddOutlinedIcon,
-    url: '/dashboard/add-property',
+    url: '/add-property',
     iconColor: 'black'
   },
   {
@@ -130,7 +130,7 @@ const landlordPages = [
     title: 'Edit Property',
     type: 'item',
     icon: icons.EditOutlinedIcon,
-    url: '/dashboard/edit-property/:id', 
+    url: '/edit-property/:id', 
     iconColor: 'red'
   },
   {
@@ -138,7 +138,7 @@ const landlordPages = [
     title: 'Manage Properties',
     type: 'item',
     icon: icons.BuildOutlinedIcon,
-    url: '/dashboard/manage-property',
+    url: '/manage-property',
     iconColor: 'black'
   }
 ];
