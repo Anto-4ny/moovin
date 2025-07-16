@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-li@hk-_ic_=s8h$+=-8j^$&)ptz^6ai93azzbc7qdp40zzs1t7'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['moovin-jf0f.onrender.com', '127.0.0.1', 'localhost']
 
 # -----------------------------
 # ✅ CORS SETTINGS
