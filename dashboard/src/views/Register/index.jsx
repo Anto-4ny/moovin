@@ -16,7 +16,7 @@ const Register = () => {
   const theme = useTheme();
 
   // Replace with your backend OAuth URL
-  const GOOGLE_AUTH_URL = 'https://moovin-jf0f.onrender.com/auth/o/google-oauth2/?redirect_uri=http://localhost:3000/oauth/callback';
+  const GOOGLE_AUTH_URL = 'https://moovin-jf0f.onrender.com/auth/o/google-oauth2/?redirect_uri=https://moovin-eight.vercel.app/dashboard/oauth/callback';
 
   return (
     <Grid

@@ -4,8 +4,8 @@ import { useRoutes, useNavigate } from 'react-router-dom';
 import MainRoutes from './MainRoutes';
 
 export default function ThemeRoutes() {
-  const navigate = useNavigate(); // ✅ Always top-level
-  const routing = useRoutes(MainRoutes); // ✅ Always top-level
+  const navigate = useNavigate(); 
+  const routing = useRoutes(MainRoutes); 
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function ThemeRoutes() {
       return;
     }
 
-    fetch('http://localhost:8000/api/users/me/', {
+    fetch('https://moovin-jf0f.onrender.com/api/users/me/', {
       headers: {
         Authorization: `Token ${token}`
       }
