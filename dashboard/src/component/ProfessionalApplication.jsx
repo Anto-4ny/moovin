@@ -43,7 +43,7 @@ export default function ProfessionalApplication() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:8000/api/professionals/', formData, {
+      await axios.post('https://moovin-jf0f.onrender.com/api/professionals/', formData, {
         headers: { Authorization: `Token ${token}` }
       });
       setSnack({ open: true, message: 'Application submitted successfully!', severity: 'success' });

@@ -21,12 +21,12 @@ const ManageProperty = () => {
       const headers = { Authorization: `Token ${token}` };
 
       // 1. Get the current user
-      const userRes = await axios.get('http://localhost:8000/api/users/me/', { headers });
+      const userRes = await axios.get('https://moovin-jf0f.onrender.com/api/users/me/', { headers });
       const userId = userRes.data.id;
       setUserId(userId);
 
       // 2. Get all properties (paginated response)
-      const res = await axios.get('http://localhost:8000/api/properties/', { headers });
+      const res = await axios.get('https://moovin-jf0f.onrender.com/api/properties/', { headers });
       const allProps = Array.isArray(res.data.results) ? res.data.results : [];
 
       const userProperties = allProps.filter(p => p.owner === userId);
@@ -44,7 +44,7 @@ const ManageProperty = () => {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8000/api/properties/${deleteDialog.id}/`, {
+      await axios.delete(`https://moovin-jf0f.onrender.com/api/properties/${deleteDialog.id}/`, {
         headers: { Authorization: `Token ${token}` }
       });
       setSnack({ open: true, message: 'Property deleted successfully.', severity: 'success' });

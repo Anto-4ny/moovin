@@ -50,7 +50,7 @@ const AuthRegister = ({ ...rest }) => {
         onSubmit={async (values, { setErrors, setSubmitting }) => {
           try {
             // Step 1: Register user
-            const response = await axios.post('http://localhost:8000/api/users/', {
+            const response = await axios.post('https://moovin-jf0f.onrender.com/api/users/', {
               username: values.username,
               email: values.email,
               password: values.password,
@@ -62,7 +62,7 @@ const AuthRegister = ({ ...rest }) => {
             console.log('✅ Registered:', response.data);
 
             // Step 2: Log in immediately
-            const loginRes = await axios.post('http://localhost:8000/api/token/login/', {
+            const loginRes = await axios.post('https://moovin-jf0f.onrender.com/api/token/login/', {
               email: values.email,
               password: values.password
             });

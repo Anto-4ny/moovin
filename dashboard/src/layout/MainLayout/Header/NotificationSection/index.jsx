@@ -27,7 +27,7 @@ const fetchNotifications = async () => {
   if (!token) return;
 
   try {
-    const res = await axios.get('http://localhost:8000/api/notifications/', {
+    const res = await axios.get('https://moovin-jf0f.onrender.com/api/notifications/', {
       headers: { Authorization: `Token ${token}` }
     });
 

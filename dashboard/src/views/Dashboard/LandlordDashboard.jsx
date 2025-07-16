@@ -63,14 +63,14 @@ export default function LandlordDashboard() {
       try {
         const headers = { Authorization: `Token ${token}` };
 
-        const userRes = await axios.get('http://localhost:8000/api/users/me/', { headers });
+        const userRes = await axios.get('https://moovin-jf0f.onrender.com/api/users/me/', { headers });
         const user = userRes.data;
         setUserId(user.id);
 
         const [propRes, bookRes, payRes] = await Promise.all([
-          axios.get('http://localhost:8000/api/properties/', { headers }),
-          axios.get('http://localhost:8000/api/bookings/', { headers }),
-          axios.get('http://localhost:8000/api/payments/', { headers })
+          axios.get('https://moovin-jf0f.onrender.com/api/properties/', { headers }),
+          axios.get('https://moovin-jf0f.onrender.com/api/bookings/', { headers }),
+          axios.get('https://moovin-jf0f.onrender.com/api/payments/', { headers })
         ]);
 
         const propList = Array.isArray(propRes.data?.results) ? propRes.data.results : [];

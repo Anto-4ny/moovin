@@ -17,7 +17,7 @@ const BookProperty = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/properties/')
+    axios.get('https://moovin-jf0f.onrender.com/api/properties/')
       .then(res => {
         const data = res.data;
         if (Array.isArray(data)) {

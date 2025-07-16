@@ -49,10 +49,10 @@ export default function AdminDashboard() {
 const fetchData = async () => {
   try {
     const [usersRes, propsRes, bookingsRes, payRes] = await Promise.all([
-      axios.get('http://localhost:8000/api/users/', { headers }),
-      axios.get('http://localhost:8000/api/properties/', { headers }),
-      axios.get('http://localhost:8000/api/bookings/', { headers }),
-      axios.get('http://localhost:8000/api/payments/', { headers })
+      axios.get('https://moovin-jf0f.onrender.com/api/users/', { headers }),
+      axios.get('https://moovin-jf0f.onrender.com/api/properties/', { headers }),
+      axios.get('https://moovin-jf0f.onrender.com/api/bookings/', { headers }),
+      axios.get('https://moovin-jf0f.onrender.com/api/payments/', { headers })
     ]);
 
     const usersList = Array.isArray(usersRes.data.results) ? usersRes.data.results : [];
@@ -72,7 +72,7 @@ const fetchData = async () => {
 
   const handleDeleteUser = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/users/${id}/`, { headers });
+      await axios.delete(`https://moovin-jf0f.onrender.com/api/users/${id}/`, { headers });
       setUsers(prev => prev.filter(u => u.id !== id));
       setSnack({ open: true, message: 'User deleted.', severity: 'success' });
     } catch {

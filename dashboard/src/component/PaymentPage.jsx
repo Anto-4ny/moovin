@@ -13,7 +13,7 @@ const PaymentPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/properties/${id}/`)
+    axios.get(`https://moovin-jf0f.onrender.com/api/properties/${id}/`)
       .then(res => setProperty(res.data))
       .catch(err => {
         console.error('Error loading property:', err);
@@ -39,7 +39,7 @@ const PaymentPage = () => {
         booking_type: property?.status === 'sale' ? 'buy' : 'rent'
       };
 
-      const response = await axios.post(`http://localhost:8000/api/bookings/`, payload, {
+      const response = await axios.post(`https://moovin-jf0f.onrender.com/api/bookings/`, payload, {
         headers: {
           Authorization: `Token ${token}`
         }

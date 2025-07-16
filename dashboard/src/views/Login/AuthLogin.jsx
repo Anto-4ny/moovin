@@ -19,7 +19,7 @@ import Google from 'assets/images/social-google.svg';
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
-const BACKEND_URL = 'http://localhost:8000/api/token/login/';
+const BACKEND_URL = 'https://moovin-jf0f.onrender.com/api/token/login/';
 
 const AuthLogin = ({ ...rest }) => {
   const theme = useTheme();
@@ -33,7 +33,7 @@ const AuthLogin = ({ ...rest }) => {
     const savedRole = localStorage.getItem('role');
 
     if (token && savedRole) {
-      fetch('http://localhost:8000/api/users/me/', {
+      fetch('https://moovin-jf0f.onrender.com/api/users/me/', {
         headers: {
           Authorization: `Token ${token}`
         }

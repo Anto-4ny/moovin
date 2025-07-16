@@ -16,7 +16,7 @@ const Login = () => {
   const theme = useTheme();
 
   // Update this to match your backend Google login URL
-  const GOOGLE_LOGIN_URL = 'http://localhost:8000/accounts/google/login/';
+  const GOOGLE_LOGIN_URL = 'https://moovin-jf0f.onrender.com/accounts/google/login/';
 
   const handleGoogleLogin = () => {
     window.location.href = GOOGLE_LOGIN_URL;

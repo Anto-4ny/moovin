@@ -17,7 +17,7 @@ export default function ProfessionalDirectory() {
 
   const fetchProfessionals = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/professionals/');
+      const res = await axios.get('https://moovin-jf0f.onrender.com/api/professionals/');
       // ✅ Extract only the array of results
       const professionalList = Array.isArray(res.data.results) ? res.data.results : [];
       setProfessionals(professionalList);

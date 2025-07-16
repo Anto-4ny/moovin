@@ -37,12 +37,12 @@ const EditProperty = () => {
         const headers = { Authorization: `Token ${token}` };
 
         // Get user
-        const userRes = await axios.get('http://localhost:8000/api/users/me/', { headers });
+        const userRes = await axios.get('https://moovin-jf0f.onrender.com/api/users/me/', { headers });
         const uid = userRes.data.id;
         setUserId(uid);
 
         // Get the property
-        const propRes = await axios.get(`http://localhost:8000/api/properties/${id}/`, { headers });
+        const propRes = await axios.get(`https://moovin-jf0f.onrender.com/api/properties/${id}/`, { headers });
         const prop = propRes.data;
 
         if (prop.owner !== uid) {

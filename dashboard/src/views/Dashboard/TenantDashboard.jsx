@@ -32,11 +32,11 @@ const TenantDashboard = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('http://localhost:8000/api/users/me/', {
+      axios.get('https://moovin-jf0f.onrender.com/api/users/me/', {
         headers: { Authorization: `Token ${token}` }
       }).then((res) => setUser(res.data));
 
-      axios.get('http://localhost:8000/api/bookings/', {
+      axios.get('https://moovin-jf0f.onrender.com/api/bookings/', {
         headers: { Authorization: `Token ${token}` }
       }).then((res) => {
         const data = Array.isArray(res.data) ? res.data : res.data.results || [];
@@ -72,14 +72,14 @@ const TenantDashboard = () => {
       property: selectedBooking?.property || property.id || null
     };
 
-    axios.post('http://localhost:8000/api/payments/', payload, {
+    axios.post('https://moovin-jf0f.onrender.com/api/payments/', payload, {
       headers: { Authorization: `Token ${token}` }
     }).then(() => {
       setSnackbar({ open: true, message: 'Payment submitted successfully.', severity: 'success' });
       setPaymentOpen(false);
       setFormData({ amount: '', months: [], cardNumber: '', cvv: '', expiry: '', date: new Date() });
 
-      axios.get('http://localhost:8000/api/bookings/', {
+      axios.get('https://moovin-jf0f.onrender.com/api/bookings/', {
         headers: { Authorization: `Token ${token}` }
       }).then((res) => {
         const data = Array.isArray(res.data) ? res.data : res.data.results || [];
@@ -97,7 +97,7 @@ const TenantDashboard = () => {
 
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:8000/api/bookings/${bookingId}/`, {
+      await axios.delete(`https://moovin-jf0f.onrender.com/api/bookings/${bookingId}/`, {
         headers: { Authorization: `Token ${token}` }
       });
       setSnackbar({ open: true, message: 'You have successfully quit the house.', severity: 'success' });
@@ -225,7 +225,7 @@ const TenantDashboard = () => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                label="Amount (KES)"
+                label="Amount (USD)"
                 name="amount"
                 type="number"
                 fullWidth

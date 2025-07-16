@@ -9,7 +9,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await axios.post('http://localhost:8000/api/password/reset/', { email });
+    await axios.post('https://moovin-jf0f.onrender.com/api/password/reset/', { email });
     setSubmitted(true);
   };
 

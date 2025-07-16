@@ -66,7 +66,7 @@ const AddProperty = () => {
 
     try {
       // ✅ 1. Update landlord profile with name and phone
-      await axios.patch('http://localhost:8000/api/users/me/', {
+      await axios.patch('https://moovin-jf0f.onrender.com/api/users/me/', {
         full_name,
         phone_number
       }, {

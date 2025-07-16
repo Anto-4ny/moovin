@@ -14,7 +14,7 @@ const ResetPasswordConfirm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await axios.post('http://localhost:8000/api/password/reset/confirm/', {
+    await axios.post('https://moovin-jf0f.onrender.com/api/password/reset/confirm/', {
       uid,
       token,
       new_password: newPassword,
