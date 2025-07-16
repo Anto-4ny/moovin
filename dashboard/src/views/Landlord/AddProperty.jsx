@@ -87,7 +87,7 @@ const AddProperty = () => {
       formData.append('featured', featured);
       images.forEach((img) => formData.append('uploaded_images', img));
 
-      await axios.post('http://localhost:8000/api/properties/', formData, {
+      await axios.post('https://moovin-jf0f.onrender.com/api/properties/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Token ${token}`
@@ -147,7 +147,7 @@ const AddProperty = () => {
             {/* Property Info */}
             {[{ label: 'Property Name', name: 'name' },
               { label: 'Location', name: 'location' },
-              { label: 'Rent (KES)', name: 'rent', type: 'number' },
+              { label: 'Rent (USD)', name: 'rent', type: 'number' },
               { label: 'Size (Sqm)', name: 'size', type: 'number' },
               { label: 'Bedrooms', name: 'beds', type: 'number' },
               { label: 'Bathrooms', name: 'baths', type: 'number' }
