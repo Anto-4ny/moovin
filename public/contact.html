@@ -46,7 +46,7 @@
 <div class="container-fluid nav-bar bg-white sticky-top">
   <nav class="navbar navbar-expand-lg navbar-light py-0 px-3 shadow-sm">
     <a href="index" class="navbar-brand d-flex align-items-center">
-      <img src="img/moovin-logo.png" alt="Moovin Logo" style="width: 54px; height: 54px;" class="me-2">
+      <!--<img src="img/moovin-logo.png" alt="Moovin Logo" style="width: 54px; height: 54px;" class="me-2">-->
       <div class="text-start">
         <h4 class="m-0 text-secondary" style="font-size: 18px;">Moovin</h4>
         <small class="text-muted" style="font-size: 10px;">Rental housing services</small>
@@ -63,24 +63,63 @@
         <a href="index" class="nav-link">Home</a>
         <a href="about" class="nav-link">About</a>
 
-            <!-- Services -->
-            <div class="nav-item dropdown">
+          <!-- Services -->
+          <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
-            <div class="dropdown-menu p-2" style="min-width: 280px;">
-                <a href="property-list" class="dropdown-item">
-                Browse Properties
-                <div class="small text-muted">Explore available rentals across Australia</div>
-                </a>
-                <a href="/dashboard/professionals-directory" class="dropdown-item">
-                Book a Repair
-                <div class="small text-muted">Report issues for quick maintenance</div>
-                </a>
-                <a href="#" class="dropdown-item">
-                Track Repair
-                <div class="small text-muted">Monitor your repair progress in real-time</div>
-                </a>
+            <div class="dropdown-menu p-2" style="min-width: 300px;">
+              
+              <a href="#" class="dropdown-item">
+                Property Listing & Advertising
+                <div class="small text-muted">Marketing units, viewings, platform promotion, social media.</div>
+              </a>
+              
+              <a href="#" class="dropdown-item">
+                Tenant Screening & Placement
+                <div class="small text-muted">Background, income checks, lease signing, references.</div>
+              </a>
+
+              <a href="#" class="dropdown-item">
+                Rent Collection & Financial Management
+                <div class="small text-muted">Rent collection, arrears, receipts, financial reports.</div>
+              </a>
+
+              <a href="#" class="dropdown-item">
+                Property Maintenance & Repairs
+                <div class="small text-muted">Inspections, emergency repairs, outdoor upkeep, technicians.</div>
+              </a>
+
+              <a href="#" class="dropdown-item">
+                Lease Management
+                <div class="small text-muted">Drafting, renewals, terminations, enforcement, deposits.</div>
+              </a>
+
+              <a href="#" class="dropdown-item">
+                Tenant Relations & Support
+                <div class="small text-muted">Complaints, conflict resolution, 24/7 tenant support.</div>
+              </a>
+
+              <a href="#" class="dropdown-item">
+                Move-In / Move-Out Services
+                <div class="small text-muted">Inspections, cleaning, tenant coordination, turnover.</div>
+              </a>
+
+              <a href="#" class="dropdown-item">
+                Legal & Compliance Services
+                <div class="small text-muted">Evictions, legal disputes, housing law compliance.</div>
+              </a>
+
+              <a href="#" class="dropdown-item">
+                Utility Management <span class="badge bg-warning text-dark ms-1">Optional</span>
+                <div class="small text-muted">Electricity, water, gas setup and billing.</div>
+              </a>
+
+              <a href="#" class="dropdown-item">
+                Furnishing & Setup <span class="badge bg-warning text-dark ms-1">Optional</span>
+                <div class="small text-muted">Furnished rentals, staging, arrangement support.</div>
+              </a>
+
             </div>
-            </div>
+          </div>
 
             <!-- Explore Moovin -->
             <div class="nav-item dropdown">
@@ -156,8 +195,8 @@
 
       <!-- Desktop Nav Right -->
       <div class="ms-auto d-none d-lg-flex align-items-center">
-        <a href="/dashboard/application/register" class="nav-link small">Sign Up</a>
-        <a href="/dashboard/application/login" class="nav-link small">Sign In</a>
+        <a href="/dashboard/" class="nav-link small auth-only">Sign Up</a>
+        <a href="/dashboard/" class="nav-link small auth-only">Sign In</a>
         <a href="/dashboard/add-property" class="btn btn-dark border border-white text-white btn-sm ms-2">Add Property</a>
       </div>
     </div>
@@ -176,22 +215,65 @@
           <i class="fas fa-info-circle me-2"></i> About
         </a>
 
-        <!-- Services Dropdown -->
-        <div class="dropdown">
-        <a class="nav-link dropdown-toggle text-black" data-bs-toggle="dropdown" href="#">
-            <i class="fas fa-cogs me-2"></i> Services
-        </a>
-        <div class="dropdown-menu px-2">
-            <a href="property-list" class="dropdown-item text-black">
-            Browse Properties
-            <div class="small text-muted">Explore rentals across Australia</div>
+          <!-- Services Dropdown -->
+          <div class="dropdown">
+            <a class="nav-link dropdown-toggle text-black" data-bs-toggle="dropdown" href="#">
+              <i class="fas fa-cogs me-2"></i> Services
             </a>
-            <a href="/dashboard/professionals-directory" class="dropdown-item text-black">
-            Book a Repair
-            <div class="small text-muted">Log an issue for quick fixing</div>
-            </a>
-        </div>
-        </div>
+            <div class="dropdown-menu px-2" style="min-width: 300px;">
+              
+              <a href="#" class="dropdown-item text-black">
+                Property Listing & Advertising
+                <div class="small text-muted">Marketing units, viewings, platform promotion, social media.</div>
+              </a>
+              
+              <a href="#" class="dropdown-item text-black">
+                Tenant Screening & Placement
+                <div class="small text-muted">Background, income checks, lease signing, references.</div>
+              </a>
+
+              <a href="#" class="dropdown-item text-black">
+                Rent Collection & Financial Management
+                <div class="small text-muted">Rent collection, arrears, receipts, financial reports.</div>
+              </a>
+
+              <a href="#" class="dropdown-item text-black">
+                Property Maintenance & Repairs
+                <div class="small text-muted">Inspections, emergency repairs, outdoor upkeep, technicians.</div>
+              </a>
+
+              <a href="#" class="dropdown-item text-black">
+                Lease Management
+                <div class="small text-muted">Drafting, renewals, terminations, enforcement, deposits.</div>
+              </a>
+
+              <a href="#" class="dropdown-item text-black">
+                Tenant Relations & Support
+                <div class="small text-muted">Complaints, conflict resolution, 24/7 tenant support.</div>
+              </a>
+
+              <a href="#" class="dropdown-item text-black">
+                Move-In / Move-Out Services
+                <div class="small text-muted">Inspections, cleaning, tenant coordination, turnover.</div>
+              </a>
+
+              <a href="#" class="dropdown-item text-black">
+                Legal & Compliance Services
+                <div class="small text-muted">Evictions, legal disputes, housing law compliance.</div>
+              </a>
+
+              <a href="#" class="dropdown-item text-black">
+                Utility Management <span class="badge bg-warning text-dark ms-1">Optional</span>
+                <div class="small text-muted">Electricity, water, gas setup and billing.</div>
+              </a>
+
+              <a href="#" class="dropdown-item text-black">
+                Furnishing & Setup <span class="badge bg-warning text-dark ms-1">Optional</span>
+                <div class="small text-muted">Furnished rentals, staging, arrangement support.</div>
+              </a>
+
+            </div>
+          </div>
 
         <!-- Tenant Dropdown -->
         <div class="dropdown">
@@ -241,10 +323,10 @@
         <a href="contact" class="nav-link text-black bg-white">
           <i class="fas fa-envelope me-2"></i> Contact
         </a>
-        <a href="/dashboard/application/login" class="nav-link text-black bg-white">
+        <a href="/dashboard" class="nav-link text-black bg-white auth-only">
           <i class="fas fa-user-plus me-2"></i> Sign In
         </a>
-        <a href="/dashboard/application/register" class="nav-link text-black bg-white">
+        <a href="/dashboard" class="nav-link text-black bg-white auth-only">
           <i class="fas fa-user-plus me-2"></i> Sign Up
         </a>
         <a href="/dashboard/add-property" class="btn btn-primary text-white mt-3">
@@ -258,6 +340,18 @@
   </nav>
 </div>
 <!-- Navbar End -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const token = localStorage.getItem('token');
+
+    const hideIfLoggedIn = document.querySelectorAll('.auth-only');
+
+    if (token) {
+      hideIfLoggedIn.forEach(el => el.style.display = 'none');
+    }
+  });
+</script>
 
 
         <!-- Header Start -->
@@ -419,9 +513,9 @@
             <!-- Contact Info -->
             <div class="col-lg-3 col-md-6">
                 <h5 class="text-white mb-4">Get In Touch</h5>
-                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Level 2, 456 King Street, Perth, WA</p>
-                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+61 0 0000 0000</p>
-                <p class="mb-2"><i class="fa fa-envelope me-3"></i>support@moovin.au</p>
+                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i></p>
+                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i></p>
+                <p class="mb-2"><i class="fa fa-envelope me-3"></i></p>
                 <div class="d-flex pt-2">
                     <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
                     <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
@@ -462,12 +556,12 @@
 </div>
 <style>
   .copyright {
-    font-size: 14px;
-    color: #666;
+    font-size: 2px;
+    color: black;
   }
 
   .copyright a {
-    color: #0d6efd;
+    color: black;
   }
 
   .copyright a:hover {
@@ -654,8 +748,8 @@ sendBtn.onclick = async () => {
 
   try {
     const [propsRes, prosRes] = await Promise.all([
-      fetch('http://localhost:8000/api/properties/'),
-      fetch('http://localhost:8000/api/professionals/')
+      fetch('https://moovin-jf0f.onrender.com/api/properties/'),
+      fetch('https://moovin-jf0f.onrender.com/api/professionals/')
     ]);
     const propsData = await propsRes.json();
     const prosData = await prosRes.json();
